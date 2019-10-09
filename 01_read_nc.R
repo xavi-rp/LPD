@@ -1,3 +1,5 @@
+#source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+
 
 ## Reading in 'Phenolo' data
 nc <- nc_open(paste0(path2data, "\\europe.nc"))
@@ -109,8 +111,11 @@ r2 <- raster(t(SeasonLenght[, , 1]))
 extent(r2) <- c(range(lon),  range(lat))
 writeRaster(r2, paste0(path2saveTests, "/SeasonLenght_y1_EndStep01.tif"), overwrite = TRUE)
 
+jpeg(paste0(path2saveTests, "\\SeasonLenght_y1_EndStep01.jpg"), width = 480, height = 480)
+plot(r2)
+dev.off()
 
-save(SeasonLenght, lon, lat, time, file = paste0(path2tempResults, "/season_length_days.RData"))
+save(SeasonLenght, lon, lat, time, file = paste0(path2tempResults, "/season_length_EndStep01.RData"))
 nc_close(nc)
 
 

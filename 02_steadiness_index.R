@@ -7,7 +7,7 @@
 rm(list = ls()[!ls() %in% c("path2data", "path2saveTests", "path2tempResults")])
 
 ## Reading in data (season length)
-load(paste0(path2tempResults, "/season_length_days.RData"), verbose = TRUE)
+load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
 
 dim(SeasonLenght)
 is.array(SeasonLenght)
@@ -22,6 +22,11 @@ SeasonLenght <- brick(SeasonLenght)
 SeasonLenght <- t(SeasonLenght)
 extent(SeasonLenght) <- c(range(lon),  range(lat))
 SeasonLenght
+
+#jpeg(paste0(path2saveTests, "\\SeasonLenght_y1.jpg"))
+#plot(SeasonLenght)
+#dev.off()
+
 
 years <- nlayers(SeasonLenght)   #1999 - 2013
 
@@ -38,7 +43,7 @@ slp_lm <- function(x){ if (is.na(x[1])){ NA } else { lm(x ~ yrs)$coefficients[2]
 #slope_rstr
 
 
-#with parallelization                         # It takes 1 hour
+#with parallelization                         # It takes 1 hour (0.5h after 0 to NA)
 Sys.getenv("NUMBER_OF_PROCESSORS")
 
 t0 <- Sys.time()
@@ -60,14 +65,44 @@ length(getValues(slope_rstr))
 sum(getValues(slope_rstr) < -31.25, na.rm = T)
 sum(getValues(slope_rstr) > 11.3, na.rm = T)
 sum(getValues(slope_rstr) < -11.9, na.rm = T)
+sum(getValues(slope_rstr) == 0, na.rm = T)
 
 
 
 # plotting for checking
 jpeg(paste0(path2saveTests, "\\slope_rstr.jpg"))
 plot(slope_rstr)
+#cuts <- seq(-430, 337, length.out = 100)
+#pal <- colorRampPalette(c("red", "blue"))
+#plot(slope_rstr, breaks = cuts, col = pal(100)) #plot with defined breaks
 dev.off()
 
+
+
+
+## Computing net change: MTID (Multi Temporal Image Differencing)
+
+#years1 <- years
+#years <- years1
+#years <- 14
+
+mtid_function <- function(x, na.rm = TRUE){  if (is.na(x[years])){ NA } else {  ((years - 1) * x[years]) - sum(x[1:(years - 1)]) }}  
+
+
+#with parallelization           
+
+t0 <- Sys.time()
+beginCluster()   # it uses n - 1 clusters
+mtid_rstr <- clusterR(SeasonLenght, calc, args = list(fun = mtid_function), export = "years")
+endCluster()
+Sys.time() - t0
+
+
+save(mtid_rstr, file = paste0(path2tempResults, "/mtid_raster.RData"))
+writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = TRUE)
+
+# The problem here is that when the last year has NA in one pixel, MTID becomes NA. And the last year has quite a lot of NA
+# See 'mtid_raster.tif' for the last year and 'mtid_raster_14.tif' for the last year-1, which has much less NA (but still some)
 
 
 ## 

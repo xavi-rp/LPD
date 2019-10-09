@@ -5,6 +5,7 @@
 library(ncdf4)
 library(fields)
 library(raster)
+library(rgdal)
 
 ### Settings ####
 path2data <- "E:\\rotllxa\\Documents\\phenolo_res"
