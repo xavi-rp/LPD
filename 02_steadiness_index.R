@@ -6,7 +6,8 @@
 
 rm(list = ls()[!ls() %in% c("path2data", "path2saveTests", "path2tempResults")])
 
-## Reading in data (season length)
+
+## Reading in data (season length) ####
 load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
 
 dim(SeasonLenght)
@@ -14,9 +15,7 @@ is.array(SeasonLenght)
 
 
 
-
-
-## Array to raster brick
+## Array to raster brick ####
 
 SeasonLenght <- brick(SeasonLenght)
 SeasonLenght <- t(SeasonLenght)
@@ -27,11 +26,11 @@ SeasonLenght
 #plot(SeasonLenght)
 #dev.off()
 
-
 years <- nlayers(SeasonLenght)   #1999 - 2013
 
 
-## Fitting a linear regression and getting the slope
+
+## Fitting a linear regression and getting the slope ####
 
 yrs <- 1:years
 
@@ -80,7 +79,7 @@ dev.off()
 
 
 
-## Computing net change: MTID (Multi Temporal Image Differencing)
+## Computing net change: MTID (Multi Temporal Image Differencing) ####
 
 #years1 <- years
 #years <- years1
@@ -90,7 +89,6 @@ mtid_function <- function(x, na.rm = TRUE){  if (is.na(x[years])){ NA } else {  
 
 
 #with parallelization           
-
 t0 <- Sys.time()
 beginCluster()   # it uses n - 1 clusters
 mtid_rstr <- clusterR(SeasonLenght, calc, args = list(fun = mtid_function), export = "years")
@@ -105,10 +103,43 @@ writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = T
 # See 'mtid_raster.tif' for the last year and 'mtid_raster_14.tif' for the last year-1, which has much less NA (but still some)
 
 
-## 
+
+
+## Calculating steadiness classes ####
+
+SteadInd_rstr <- raster(mtid_rstr)
+
+t0 <- Sys.time()
+SteadInd_rstr[slope_rstr < 0 & mtid_rstr > 0] <- 1   # strong negative ecosystem dynamics
+SteadInd_rstr[slope_rstr < 0 & mtid_rstr < 0] <- 2   # moderate negative ecoystem dynamics
+SteadInd_rstr[slope_rstr > 0 & mtid_rstr < 0] <- 3   # moderate positive ecosystem dynamics
+SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem dynamics
+Sys.time() - t0
+
+# saving
+save(SteadInd_rstr, file = paste0(path2tempResults, "/SteadInd_raster.RData"))
+writeRaster(SteadInd_rstr, paste0(path2saveTests, "/SteadInd_raster.tif"), overwrite = TRUE)
+
+# plotting
+jpeg(paste0(path2saveTests, "\\SteadInd_rstr.jpg"), width = 15, height = 15, units = "cm", res = 300)
+#plot(SteadInd_rstr)
+par(mar = c(9, 4, 4, 0))
+pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
+par(xpd = FALSE)
+plot(SteadInd_rstr, col = pal(4), legend = FALSE) 
+par(xpd = TRUE)
+legend("bottom",
+       legend = c("Strong negative ecosystem dynamics", "Moderate negative ecoystem dynamics",
+                  "Moderate positive ecosystem dynamics", "Strong positive ecosystem dynamics"),
+       fill = pal(4), inset = -0.5)
+title(main = "Steadiness Index (classes) : SeasonLength", cex.main = 1.3)
+
+
+dev.off()
 
 
 
+##
 
 
 
