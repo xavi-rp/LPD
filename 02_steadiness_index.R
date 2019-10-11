@@ -95,12 +95,10 @@ mtid_rstr <- clusterR(SeasonLenght, calc, args = list(fun = mtid_function), expo
 endCluster()
 Sys.time() - t0
 
+summary(getValues(mtid_rstr))
 
 save(mtid_rstr, file = paste0(path2tempResults, "/mtid_raster.RData"))
 writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = TRUE)
-
-# The problem here is that when the last year has NA in one pixel, MTID becomes NA. And the last year has quite a lot of NA
-# See 'mtid_raster.tif' for the last year and 'mtid_raster_14.tif' for the last year-1, which has much less NA (but still some)
 
 
 
@@ -117,6 +115,7 @@ SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem
 Sys.time() - t0
 
 # saving
+#crs(SteadInd_rstr) <- CRS("+init=EPSG:4326")
 save(SteadInd_rstr, file = paste0(path2tempResults, "/SteadInd_raster.RData"))
 writeRaster(SteadInd_rstr, paste0(path2saveTests, "/SteadInd_raster.tif"), overwrite = TRUE)
 

@@ -14,25 +14,31 @@ head(lat)
 summary(lat)
 
 time <- ncvar_get(nc, "time")
-range(time)  # However, 1998 is not complete (removing...)
+range(time)  # However, 1998 and 2013 (first and last) are not complete (removing...)
 
 
 SeasonLenght <- ncvar_get(nc, "SeasonLenght")
-SeasonLenght <- SeasonLenght[, , -1]
+SeasonLenght <- SeasonLenght[, , - c(1, length(time))]
 dim(SeasonLenght)
 
 StartWeek <- ncvar_get(nc, "StartWeek")
 Endweek <- ncvar_get(nc, "Endweek")
 lapply(list(StartWeek, Endweek), dim)
-StartWeek <- StartWeek[, , -1]
-Endweek <- Endweek[, , -1]
+StartWeek <- StartWeek[, , - c(1, length(time))]
+Endweek <- Endweek[, , - c(1, length(time))]
 lapply(list(StartWeek, Endweek), dim)
+
+SeasonIntegral <- ncvar_get(nc, "SeasonIntegral")
+SeasonIntegral <- SeasonIntegral[, , - c(1, length(time))]
+dim(SeasonIntegral)
+
 
 
 head(SeasonLenght)
 summary(as.vector(SeasonLenght[, , 1]))
 summary(as.vector(StartWeek[, , 1]))
 summary(as.vector(Endweek[, , 1]))
+summary(as.vector(SeasonIntegral[, , 1]))
 
 
 ## plotting year 1 to check
@@ -116,6 +122,8 @@ plot(r2)
 dev.off()
 
 save(SeasonLenght, lon, lat, time, file = paste0(path2tempResults, "/season_length_EndStep01.RData"))
+
+save(SeasonIntegral, lon, lat, time, file = paste0(path2tempResults, "/Season_Integral_EndStep01.RData"))
 nc_close(nc)
 
 
