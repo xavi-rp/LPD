@@ -34,7 +34,8 @@ years <- nlayers(SeasonLenght)   #1999 - 2013
 
 yrs <- 1:years
 
-slp_lm <- function(x){ if (is.na(x[1])){ NA } else { lm(x ~ yrs)$coefficients[2] }}
+#slp_lm <- function(x){ if (is.na(x[1])){ NA } else { lm(x ~ yrs)$coefficients[2] }}
+slp_lm <- function(x){ if (all(is.na(x))){ NA } else { lm(x ~ yrs)$coefficients[2] }}
 
 # without parallelization                     # It takes 3.5 hours
 #slope_rstr <- calc(SeasonLenght, slp_lm)
@@ -65,6 +66,21 @@ sum(getValues(slope_rstr) < -31.25, na.rm = T)
 sum(getValues(slope_rstr) > 11.3, na.rm = T)
 sum(getValues(slope_rstr) < -11.9, na.rm = T)
 sum(getValues(slope_rstr) == 0, na.rm = T)
+
+#library(devtools)
+#install_github("danlwarren/ENMTools", force = TRUE)
+#library(ENMTools)
+#ENMTools::raster.overlap(slope_rstr, slope_rstr, verbose = FALSE)
+#ENMTools::raster.overlap(slope_rstr, slope_rstr1, verbose = FALSE)
+
+#https://gis.stackexchange.com/questions/265717/statistical-comparison-between-different-rasters-using-r
+RMSE <- function(x, y) { sqrt(mean((x - y)^2, na.rm = TRUE)) } 
+RMSE(getValues(slope_rstr), getValues(slope_rstr1))
+sum(is.na(getValues(slope_rstr)))
+sum(is.na(getValues(slope_rstr1)))
+r_diff <- slope_rstr1 - slope_rstr
+writeRaster(r_diff, paste0(path2saveTests, "/r_diff.tif"), overwrite = TRUE)
+
 
 
 

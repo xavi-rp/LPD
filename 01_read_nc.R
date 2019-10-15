@@ -2,7 +2,7 @@
 
 
 ## Reading in 'Phenolo' data
-nc <- nc_open(paste0(path2data, "\\europe.nc"))
+nc <- nc_open(paste0(path2data, "/", nc_file))
 nc
 #str(nc)
 
