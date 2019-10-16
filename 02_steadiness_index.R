@@ -53,7 +53,8 @@ endCluster()
 Sys.time() - t0
 
 
-save(slope_rstr, file = paste0(path2tempResults, "/slope_raster.RData"))
+stuff2save <- c("SeasonLenght", "slope_rstr")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(slope_rstr, paste0(path2saveTests, "/slope_raster.tif"), overwrite = TRUE)
 
 
@@ -113,7 +114,8 @@ Sys.time() - t0
 
 summary(getValues(mtid_rstr))
 
-save(mtid_rstr, file = paste0(path2tempResults, "/mtid_raster.RData"))
+stuff2save <- c(stuff2save, "mtid_rstr")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = TRUE)
 
 
@@ -132,7 +134,8 @@ Sys.time() - t0
 
 # saving
 #crs(SteadInd_rstr) <- CRS("+init=EPSG:4326")
-save(SteadInd_rstr, file = paste0(path2tempResults, "/SteadInd_raster.RData"))
+stuff2save <- c(stuff2save, "SteadInd_rstr")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(SteadInd_rstr, paste0(path2saveTests, "/SteadInd_raster.tif"), overwrite = TRUE)
 
 # plotting

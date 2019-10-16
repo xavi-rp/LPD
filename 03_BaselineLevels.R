@@ -12,7 +12,7 @@ load(paste0(path2tempResults, "/Season_Integral_EndStep01.RData"), verbose = TRU
 summary(SeasonIntegral, na.rm = T)
 
 
-## normalising data set (0-1)
+## Normalising data set (0-1) 
 do_normalize <- "no"
 
 if(grepl("^[Yy]", do_normalize)){
@@ -46,7 +46,7 @@ SeasonIntegral_01
 #dev.off()
 
 
-## averaging 
+## Averaging ####
 mean_years_function <- function(x, na.rm = TRUE){ mean(x[yrs]) }  #where x is the data set and yrs is a vector with the years to be averaged (e.g. yrs = c(1:3))
 
 
@@ -58,6 +58,9 @@ SeasonIntegral_01_avg13 <- clusterR(SeasonIntegral_01, calc, args = list(fun = m
 endCluster()
 Sys.time() - t0
 
+stuff2save <- c("SeasonIntegral_01_avg13")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
+
 
 #some checks...
 jpeg(paste0(path2saveTests, "\\SeasonIntegral_avg13.jpg"))
@@ -68,10 +71,10 @@ chk_avg <- round(mean(SeasonIntegral_01[2900, 1900][1:3]), 4) == round(SeasonInt
 if(chk_avg != TRUE) stop("Something wrong in the averaging process")
 
 
-## classification of averaged pixels
+## Classification of averaged pixels ####
 
 # Method found in 'zonal10class.pro'; However, it's not reclassifying into groups with similar number of pixels, 
-#                                     but groups with regular range of values. It's not an ISODATA methodology
+#                                     but groups with regular range of values. It's not an ISODATA methodology either
 rg_SI <- range(getValues(SeasonIntegral_01_avg13), na.rm = TRUE)
 thr <- (rg_SI[2] - rg_SI[1]) / 10
 thr
@@ -126,11 +129,9 @@ for(i in 1:nrow(pix_categs1)){
 #head(SeasonIntegral_01_avg13_df_class10)
 #unique(SeasonIntegral_01_avg13_df_class10[SeasonIntegral_01_avg13_df_class10$V1 <= 0.1430105, ]$class10)
 #sum(SeasonIntegral_01_avg13_df_class10[SeasonIntegral_01_avg13_df_class10$V1 <= 0.1430105, ]$class10 == 2)
-table(SeasonIntegral_01_avg13_df_class10$class10)
-as.data.frame(SeasonIntegral_01_avg13_df_class10 %>% group_by(class10) %>% summarise_all(.funs = c("min", "max", "mean", "sd")))
+#table(SeasonIntegral_01_avg13_df_class10$class10)
+SeasonIntegral_class10_stats <- as.data.frame(SeasonIntegral_01_avg13_df_class10 %>% group_by(class10) %>% summarise_all(.funs = c(n = "length", min = "min", max = "max", mean = "mean", sd = "sd")))
 
-
-#
 
 #pix_categs2 <- as.data.frame(matrix(nrow = 3, ncol = 0))
 #pix_categs2$from <- c(1, 5, 10)
@@ -144,9 +145,61 @@ SeasonIntegral_3class <- reclassify(SeasonIntegral_01_avg13, rcl = pix_categs2, 
 SeasonIntegral_3class
 writeRaster(SeasonIntegral_3class, paste0(path2saveTests, "/SeasonIntegral_3class_begin.tif"), overwrite = TRUE)
 
+stuff2save <- c(stuff2save, "SeasonIntegral_class10_stats", "pix_categs2", "SeasonIntegral_3class")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
+
 jpeg(paste0(path2saveTests, "\\SeasonIntegral_3class.jpg"))
 plot(SeasonIntegral_3class)
 dev.off()
+
+
+
+
+
+## Combining Steadiness Index with baseline levels for Standing Biomass ####
+load(file = paste0(path2tempResults, "/results_Step2.RData"), verbose = TRUE)
+rm(SeasonLenght, slope_rstr, mtid_rstr)
+
+SteadInd_SeasInt <- raster(SeasonIntegral_3class)
+
+SteadInd_SeasInt[SteadInd_rstr == 1 & SeasonIntegral_3class == 1] <- 1   # Steadiness Index 1 (Strong Negative) - Standing Biomass 1 (low)      -> St1-low
+SteadInd_SeasInt[SteadInd_rstr == 1 & SeasonIntegral_3class == 2] <- 2   # Steadiness Index 1 (Strong Negative) - Standing Biomass 2 (medium)   -> St1-medium
+SteadInd_SeasInt[SteadInd_rstr == 1 & SeasonIntegral_3class == 3] <- 3   # Steadiness Index 1 (Strong Negative) - Standing Biomass 3 (high)     -> St1-high
+SteadInd_SeasInt[SteadInd_rstr == 2 & SeasonIntegral_3class == 1] <- 4   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 1 (low)    -> St2-low
+SteadInd_SeasInt[SteadInd_rstr == 2 & SeasonIntegral_3class == 2] <- 5   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 2 (medium) -> St2-medium
+SteadInd_SeasInt[SteadInd_rstr == 2 & SeasonIntegral_3class == 3] <- 6   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 3 (high)   -> St2-high
+SteadInd_SeasInt[SteadInd_rstr == 3 & SeasonIntegral_3class == 1] <- 7   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 1 (low)    -> St3-low
+SteadInd_SeasInt[SteadInd_rstr == 3 & SeasonIntegral_3class == 2] <- 8   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 2 (medium) -> St3-medium
+SteadInd_SeasInt[SteadInd_rstr == 3 & SeasonIntegral_3class == 3] <- 9   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 3 (high)   -> St3-high
+SteadInd_SeasInt[SteadInd_rstr == 4 & SeasonIntegral_3class == 1] <- 10   # Steadiness Index 4 (Strong Positive) - Standing Biomass 1 (low)     -> St4-low
+SteadInd_SeasInt[SteadInd_rstr == 4 & SeasonIntegral_3class == 2] <- 11   # Steadiness Index 4 (Strong Positive) - Standing Biomass 2 (medium)  -> St4-medium
+SteadInd_SeasInt[SteadInd_rstr == 4 & SeasonIntegral_3class == 3] <- 12   # Steadiness Index 4 (Strong Positive) - Standing Biomass 3 (high)    -> St4-high
+SteadInd_SeasInt
+
+stuff2save <- c(stuff2save, "SteadInd_SeasInt")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
+
+
+jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"))
+plot(SteadInd_SeasInt)
+dev.off()
+
+# plotting
+jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"), width = 16, height = 15, units = "cm", res = 300)
+par(mar = c(5, 4, 4, 4))
+pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "skyblue2", "skyblue3", "skyblue4", "palegreen2", "palegreen3", "palegreen4"))
+par(xpd = FALSE)
+plot(SteadInd_rstr, col = pal(12), legend = FALSE) 
+par(xpd = TRUE)
+legend("right",
+       legend = c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high"),
+       fill = pal(12), inset = - 0.25)
+title(main = "Steadiness Index combined with baseline levels \nof Standing Biomass", cex.main = 1.3)
+dev.off()
+
+
+
+
 
 
 
