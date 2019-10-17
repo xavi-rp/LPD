@@ -178,6 +178,8 @@ SteadInd_SeasInt
 
 stuff2save <- c(stuff2save, "SteadInd_SeasInt")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
+writeRaster(SteadInd_SeasInt, paste0(path2saveTests, "/SteadInd_SeasInt.tif"), overwrite = TRUE)
+
 
 
 jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"))
@@ -185,21 +187,41 @@ plot(SteadInd_SeasInt)
 dev.off()
 
 # plotting
-jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"), width = 16, height = 15, units = "cm", res = 300)
-par(mar = c(5, 4, 4, 4))
-pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "skyblue2", "skyblue3", "skyblue4", "palegreen2", "palegreen3", "palegreen4"))
+jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"), width = 28, height = 20, units = "cm", res = 300)
+par(mar = c(9, 4, 4, 4), mfrow = c(1, 2))
+pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "palegreen2", "palegreen3", "palegreen4", "skyblue2", "skyblue3", "skyblue4"))
+categs <- c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high")
 par(xpd = FALSE)
 plot(SteadInd_rstr, col = pal(12), legend = FALSE) 
 par(xpd = TRUE)
-legend("right",
-       legend = c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high"),
+title(main = "Steadiness Index combined with baseline levels of Standing Biomass", 
+      outer = TRUE,
+      #adj = 0,
+      line = - 1.5,
+      cex.main = 1.3)
+legend("bottom",
+       ncol = 4,
+       legend = categs,
        fill = pal(12), inset = - 0.25)
-title(main = "Steadiness Index combined with baseline levels \nof Standing Biomass", cex.main = 1.3)
+mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos", 
+      side = 1, line = 7, 
+      #at = 5,
+      adj = 1,
+      cex = 0.8)
+#dev.off()
+
+
+## Some statistics
+cont_table <- as.data.frame(table(getValues(SteadInd_SeasInt)))
+cont_table$Var1 <- categs
+names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
+cont_table
+barplot(cont_table$Freq, names.arg = cont_table$SteadInd_StandBiomass_categs, las = 3, axis.lty = 1,
+        ylab = "Number of pixels per category", 
+        #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",
+        col = pal(12))
+#abline(0, 0)
 dev.off()
-
-
-
-
 
 
 
