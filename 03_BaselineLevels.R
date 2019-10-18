@@ -1,10 +1,8 @@
-#source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
-
 
 #### Base Line Calculation (Standing Biomass)  ####
 
-
-rm(list = ls()[!ls() %in% c("path2data", "path2saveTests", "path2tempResults")])
+#rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
+source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
 ## Reading in data (Season_Integral) ####
@@ -16,7 +14,7 @@ summary(SeasonIntegral, na.rm = T)
 do_normalize <- "no"
 
 if(grepl("^[Yy]", do_normalize)){
-  range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
+  #range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
   
   SeasonIntegral_01 <- range01(SeasonIntegral, na.rm = TRUE)
   dim(SeasonIntegral_01)
@@ -47,8 +45,6 @@ SeasonIntegral_01
 
 
 ## Averaging ####
-mean_years_function <- function(x, na.rm = TRUE){ mean(x[yrs]) }  #where x is the data set and yrs is a vector with the years to be averaged (e.g. yrs = c(1:3))
-
 
 #with parallelization           
 t0 <- Sys.time()
@@ -58,7 +54,7 @@ SeasonIntegral_01_avg13 <- clusterR(SeasonIntegral_01, calc, args = list(fun = m
 endCluster()
 Sys.time() - t0
 
-stuff2save <- c("SeasonIntegral_01_avg13")
+stuff2save <- c("SeasonIntegral_01", "SeasonIntegral_01_avg13")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 
@@ -145,7 +141,7 @@ SeasonIntegral_3class <- reclassify(SeasonIntegral_01_avg13, rcl = pix_categs2, 
 SeasonIntegral_3class
 writeRaster(SeasonIntegral_3class, paste0(path2saveTests, "/SeasonIntegral_3class_begin.tif"), overwrite = TRUE)
 
-stuff2save <- c(stuff2save, "SeasonIntegral_class10_stats", "pix_categs2", "SeasonIntegral_3class")
+stuff2save <- c(stuff2save, "pix_categs1", "SeasonIntegral_10class", "SeasonIntegral_class10_stats", "pix_categs2", "SeasonIntegral_3class")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 jpeg(paste0(path2saveTests, "\\SeasonIntegral_3class.jpg"))

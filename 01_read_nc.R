@@ -1,4 +1,5 @@
-#source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+#rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
+source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
 ## Reading in 'Phenolo' data

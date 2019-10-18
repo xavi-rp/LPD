@@ -1,10 +1,8 @@
-#source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
-
 
 #### Steadiness Index I: Tendency of the change ####
 
-
-rm(list = ls()[!ls() %in% c("path2data", "path2saveTests", "path2tempResults")])
+#rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
+source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
 ## Reading in data (season length) ####
@@ -33,9 +31,6 @@ years <- nlayers(SeasonLenght)   #1999 - 2013
 ## Fitting a linear regression and getting the slope ####
 
 yrs <- 1:years
-
-#slp_lm <- function(x){ if (is.na(x[1])){ NA } else { lm(x ~ yrs)$coefficients[2] }}
-slp_lm <- function(x){ if (all(is.na(x))){ NA } else { lm(x ~ yrs)$coefficients[2] }}
 
 # without parallelization                     # It takes 3.5 hours
 #slope_rstr <- calc(SeasonLenght, slp_lm)
@@ -75,7 +70,7 @@ sum(getValues(slope_rstr) == 0, na.rm = T)
 #ENMTools::raster.overlap(slope_rstr, slope_rstr1, verbose = FALSE)
 
 #https://gis.stackexchange.com/questions/265717/statistical-comparison-between-different-rasters-using-r
-RMSE <- function(x, y) { sqrt(mean((x - y)^2, na.rm = TRUE)) } 
+#RMSE <- function(x, y) { sqrt(mean((x - y)^2, na.rm = TRUE)) } 
 RMSE(getValues(slope_rstr), getValues(slope_rstr1))
 sum(is.na(getValues(slope_rstr)))
 sum(is.na(getValues(slope_rstr1)))
@@ -101,8 +96,6 @@ dev.off()
 #years1 <- years
 #years <- years1
 #years <- 14
-
-mtid_function <- function(x, na.rm = TRUE){  if (is.na(x[years])){ NA } else {  ((years - 1) * x[years]) - sum(x[1:(years - 1)]) }}  
 
 
 #with parallelization           
