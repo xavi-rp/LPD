@@ -1,5 +1,6 @@
 
 #### Packages and Settings #### 
+#rm(list = ls())
 
 ## Packages ####
 library(ncdf4)

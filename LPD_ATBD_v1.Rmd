@@ -1,0 +1,106 @@
+---
+title: "LAND PRODUCTIVITY DYNAMICS"
+author: ""
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output: 
+  word_document:
+    reference_docx: LPD_MS_styles.docx
+    toc: true #table of content true
+    toc_depth: 3  #up to three depths of headings (specified by #, ## and ###)
+    #number_sections: true  #number sections at each table header
+    #theme: united  #options for theme
+    #highlight: tango  #syntax highlighting style
+    #css: my.css   #custom css, should be in same folder
+bibliography: lpd_biblio.bib
+#csl: methods-in-ecology-and-evolution.csl
+---
+
+
+```{r setup, include = FALSE, results='asis'}
+library(knitr)
+library(pander)
+library(captioner)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include = FALSE}
+#load("/Users/xavi_rp/Google Drive/MinBA/minba_env.RData", verbose = TRUE)
+source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+
+table_num <- captioner::captioner(prefix = "Table")
+fig_num <- captioner::captioner(prefix = "Figure")
+#ts <- 0
+```
+
+
+
+# Abstract
+
+[@ivits_assessing_2016]
+
+
+# Introduction (Background)
+
+```{r echo=FALSE}
+
+tb1 <- table_num(name = "t1", caption = "bla bla bla")
+ 
+```
+ 
+`r table_num("t1", display = "cite")`
+
+
+
+# Phenolo
+
+
+
+
+# Long-Term Change Map of Land-Productivity
+
+
+## Steadiness Index for Standing Biomass
+
+```{r echo=FALSE}
+fig1 <- fig_num(name = "f1", caption = "ble ble ble")
+slp_rstr <- paste0(path2saveTests, "/slope_rstr.jpg")
+```
+
+
+`r fig_num("f1", display = "cite")`
+
+![`r fig1`](`r slp_rstr`)
+
+
+
+
+
+
+## Combining Steadiness Index with Baseline Levels of Standing Biomass
+
+
+## Standing Biomass State Change
+
+
+## Land-Productivity Long Term Change Map
+
+```{r echo=FALSE}
+fig5 <- fig_num(name = "f5", caption = "blu blu blu")
+LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
+```
+
+
+![`r fig5`](`r LandProd_change`)
+
+
+# Current Status Map of Land-Productivity
+
+
+# Long Term Change Map + Current Status Map of Land-Productivity
+
+
+
+
+
+# References
+

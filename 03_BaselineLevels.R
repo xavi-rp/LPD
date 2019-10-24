@@ -71,15 +71,15 @@ if(chk_avg != TRUE) stop("Something wrong in the averaging process")
 
 # Method found in 'zonal10class.pro'; However, it's not reclassifying into groups with similar number of pixels, 
 #                                     but groups with regular range of values. It's not an ISODATA methodology either
-rg_SI <- range(getValues(SeasonIntegral_01_avg13), na.rm = TRUE)
-thr <- (rg_SI[2] - rg_SI[1]) / 10
-thr
-
-rg_SI[1] 
-rg_SI[1] + 1 * thr
-rg_SI[1] + 2 * thr
-rg_SI[1] + 3 * thr
-
+#rg_SI <- range(getValues(SeasonIntegral_01_avg13), na.rm = TRUE)
+#thr <- (rg_SI[2] - rg_SI[1]) / 10
+#thr
+#
+#rg_SI[1] 
+#rg_SI[1] + 1 * thr
+#rg_SI[1] + 2 * thr
+#rg_SI[1] + 3 * thr
+#
 
 
 # Alternative method: it calculates percentiles in order to make groups with similar number of pixels
@@ -144,8 +144,20 @@ writeRaster(SeasonIntegral_3class, paste0(path2saveTests, "/SeasonIntegral_3clas
 stuff2save <- c(stuff2save, "pix_categs1", "SeasonIntegral_10class", "SeasonIntegral_class10_stats", "pix_categs2", "SeasonIntegral_3class")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
+
 jpeg(paste0(path2saveTests, "\\SeasonIntegral_3class.jpg"))
-plot(SeasonIntegral_3class)
+#plot(SeasonIntegral_3class)
+par(mar = c(3, 4, 4, 6))
+pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
+par(xpd = FALSE)
+plot(SeasonIntegral_3class, col = pal(4), legend = FALSE) 
+par(xpd = TRUE)
+legend("right",
+       title = "Ecosystem Dynamics",
+       legend = c("Strong Negative", "Moderate Negative",
+                  "Moderate Positive", "Strong Positive"),
+       fill = pal(4), inset = - 0.4)
+title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
 dev.off()
 
 
@@ -153,6 +165,7 @@ dev.off()
 
 
 ## Combining Steadiness Index with baseline levels for Standing Biomass ####
+
 load(file = paste0(path2tempResults, "/results_Step2.RData"), verbose = TRUE)
 rm(SeasonLenght, slope_rstr, mtid_rstr)
 
@@ -178,17 +191,18 @@ writeRaster(SteadInd_SeasInt, paste0(path2saveTests, "/SteadInd_SeasInt.tif"), o
 
 
 
-jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"))
-plot(SteadInd_SeasInt)
-dev.off()
+#jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"))
+#plot(SteadInd_SeasInt)
+#dev.off()
 
-# plotting
+
+# plotting for report
 jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"), width = 28, height = 20, units = "cm", res = 300)
-par(mar = c(9, 4, 4, 4), mfrow = c(1, 2))
+par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
 pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "palegreen2", "palegreen3", "palegreen4", "skyblue2", "skyblue3", "skyblue4"))
 categs <- c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high")
 par(xpd = FALSE)
-plot(SteadInd_rstr, col = pal(12), legend = FALSE) 
+plot(SteadInd_SeasInt, col = pal(12), legend = FALSE) 
 par(xpd = TRUE)
 title(main = "Steadiness Index combined with baseline levels of Standing Biomass", 
       outer = TRUE,
@@ -202,8 +216,24 @@ legend("bottom",
 mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos", 
       side = 1, line = 7, 
       #at = 5,
-      adj = 1,
+      adj = 0,
       cex = 0.8)
+if((length(time) - 2) == dim(SeasonIntegral)[3]){
+  y2plot <- time[-c(1,length(time))]
+  y2plot <- y2plot[yrs][c(1,length(yrs))]
+}else if((length(time)) == dim(SeasonIntegral)[3]){
+  y2plot <- time[yrs][c(1,length(yrs))]
+}else{
+  y2plot <- ""
+}
+
+y2plot <- paste0("Baseline years: average of ", paste(y2plot, collapse = "-"))
+mtext(y2plot, 
+      side = 1, line = 8, 
+      #at = 5,
+      adj = 0,
+      cex = 0.8)
+
 #dev.off()
 
 
@@ -211,7 +241,6 @@ mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos",
 cont_table <- as.data.frame(table(getValues(SteadInd_SeasInt)))
 cont_table$Var1 <- categs
 names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
-cont_table
 barplot(cont_table$Freq, names.arg = cont_table$SteadInd_StandBiomass_categs, las = 3, axis.lty = 1,
         ylab = "Number of pixels per category", 
         #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",

@@ -1,5 +1,5 @@
 
-#### Land-Productivity   ####
+#### Land-Productivity Long Term Change Map  ####
 
 #rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
 source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
@@ -70,10 +70,10 @@ writeRaster(LandProd_change, paste0(path2saveTests, "/LandProd_change.tif"), ove
 
 
 
-## Some plots and statistics
+## Some plots and statistics for report
 # plotting
 jpeg(paste0(path2saveTests, "\\LandProd_change.jpg"), width = 29, height = 21, units = "cm", res = 300)
-par(mar = c(9, 4, 4, 4), mfrow = c(1, 3))
+par(mar = c(5, 4, 7, 4), mfrow = c(1, 3))
 pal <- colorRampPalette(c("brown", "darkkhaki", "darkgreen"))
 categs <- c("St1-low-No Change", "St1-low-Change 1 categ", "St1-low-Change 2 or more categs", 
             "St1-medium-No Change", "St1-medium-Change 1 categ", "St1-medium-Change 2 or more categ", 
@@ -94,8 +94,8 @@ par(xpd = TRUE)
 title(main = "Land-Productivity Long Term Change Map", 
       outer = TRUE,
       #adj = 0,
-      line = - 1.5,
-      cex.main = 1.3)
+      line = - 3,
+      cex.main = 2)
 
 
 
@@ -108,9 +108,9 @@ brplt <- barplot((cont_table$Freq / 1000), names.arg = as.character(c(1:22)), #n
                  ylab = "Number of pixels per category (x1000)", 
                  #main = "")#,
                  col = pal(22))
-text(x = brplt, y = ((cont_table$Freq) /1000), 
+text(x = (brplt + 0.25), y = (((cont_table$Freq) / 1000) + 20), 
      label = paste0(round(((cont_table$Freq) * 100)/sum(cont_table$Freq), 1), " %"), 
-     cex = 0.9, pos = 3, col = "black", xpd = TRUE)
+     cex = 0.9, pos = 3, col = "black", xpd = TRUE, srt = 90)
 
 
 
@@ -131,16 +131,5 @@ legend("center",
 
 #abline(0, 0)
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
 
 

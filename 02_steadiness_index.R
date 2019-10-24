@@ -5,26 +5,31 @@
 source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
-## Reading in data (season length) ####
-load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
+## Reading in data (season integral) ####
+#load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
+load(paste0(path2tempResults, "/Season_Integral_EndStep01.RData"), verbose = TRUE)
 
-dim(SeasonLenght)
-is.array(SeasonLenght)
+#var2process <- SeasonLenght
+#var2process_name <- "SeasonLenght"
+var2process <- SeasonIntegral
+var2process_name <- "SeasonIntegral"
 
+dim(var2process)
+is.array(var2process)
 
 
 ## Array to raster brick ####
 
-SeasonLenght <- brick(SeasonLenght)
-SeasonLenght <- t(SeasonLenght)
-extent(SeasonLenght) <- c(range(lon),  range(lat))
-SeasonLenght
+var2process <- brick(var2process)
+var2process <- t(var2process)
+extent(var2process) <- c(range(lon),  range(lat))
+var2process
 
-#jpeg(paste0(path2saveTests, "\\SeasonLenght_y1.jpg"))
-#plot(SeasonLenght)
+#jpeg(paste0(path2saveTests, "/", var2process_name, ".jpg"))
+#plot(var2process)
 #dev.off()
 
-years <- nlayers(SeasonLenght)   #1999 - 2013
+years <- nlayers(var2process)   #1999 - 2013
 
 
 
@@ -33,7 +38,7 @@ years <- nlayers(SeasonLenght)   #1999 - 2013
 yrs <- 1:years
 
 # without parallelization                     # It takes 3.5 hours
-#slope_rstr <- calc(SeasonLenght, slp_lm)
+#slope_rstr <- calc(var2process, slp_lm)
 #Sys.time()
 #slope_rstr
 
@@ -43,12 +48,13 @@ Sys.getenv("NUMBER_OF_PROCESSORS")
 
 t0 <- Sys.time()
 beginCluster()   # it uses n - 1 clusters
-slope_rstr <- clusterR(SeasonLenght, calc, args = list(fun = slp_lm), export = "yrs")
+#slope_rstr_SL <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
+slope_rstr <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
 endCluster()
 Sys.time() - t0
 
 
-stuff2save <- c("SeasonLenght", "slope_rstr")
+stuff2save <- c(var2process_name, "slope_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(slope_rstr, paste0(path2saveTests, "/slope_raster.tif"), overwrite = TRUE)
 
@@ -57,6 +63,9 @@ writeRaster(slope_rstr, paste0(path2saveTests, "/slope_raster.tif"), overwrite =
 summary(getValues(slope_rstr))
 quantile(getValues(slope_rstr), c(0.05, 0.95), na.rm = TRUE)
 quantile(getValues(slope_rstr), c(0.01, 0.99), na.rm = TRUE)
+quantile(getValues(slope_rstr), c(0.001, 0.999), na.rm = TRUE)
+quantile(getValues(slope_rstr), c(0.1835), na.rm = TRUE)
+quantile(getValues(slope_rstr), seq(0, 1, 0.1), na.rm = TRUE)
 length(getValues(slope_rstr))
 sum(getValues(slope_rstr) < -31.25, na.rm = T)
 sum(getValues(slope_rstr) > 11.3, na.rm = T)
@@ -71,21 +80,35 @@ sum(getValues(slope_rstr) == 0, na.rm = T)
 
 #https://gis.stackexchange.com/questions/265717/statistical-comparison-between-different-rasters-using-r
 #RMSE <- function(x, y) { sqrt(mean((x - y)^2, na.rm = TRUE)) } 
-RMSE(getValues(slope_rstr), getValues(slope_rstr1))
-sum(is.na(getValues(slope_rstr)))
-sum(is.na(getValues(slope_rstr1)))
-r_diff <- slope_rstr1 - slope_rstr
-writeRaster(r_diff, paste0(path2saveTests, "/r_diff.tif"), overwrite = TRUE)
+#RMSE(getValues(slope_rstr), getValues(slope_rstr1))
+#sum(is.na(getValues(slope_rstr)))
+#sum(is.na(getValues(slope_rstr1)))
+#r_diff <- slope_rstr1 - slope_rstr
+#writeRaster(r_diff, paste0(path2saveTests, "/r_diff.tif"), overwrite = TRUE)
 
 
 
 
-# plotting for checking
+# plotting for report
 jpeg(paste0(path2saveTests, "\\slope_rstr.jpg"))
-plot(slope_rstr)
-#cuts <- seq(-430, 337, length.out = 100)
-#pal <- colorRampPalette(c("red", "blue"))
-#plot(slope_rstr, breaks = cuts, col = pal(100)) #plot with defined breaks
+#plot(slope_rstr)
+slope_rstr_vls <- getValues(slope_rstr)
+slope_rstr2plot <- slope_rstr
+slope_rstr2plot[slope_rstr2plot < 0 ] <- -1
+slope_rstr2plot[slope_rstr2plot > 0 ] <- 1
+slope_rstr2plot[slope_rstr2plot == 0 ] <- 0
+
+par(mar = c(3, 4, 4, 4.5))
+pal <- colorRampPalette(c("coral1", "yellow", "palegreen3"))
+par(xpd = FALSE)
+plot(slope_rstr2plot, col = pal(3), legend = FALSE) 
+par(xpd = TRUE)
+legend("right",
+       legend = c("Negative", "Zero",
+                  "Positive"),
+       fill = pal(3), inset = - 0.3)
+title(main = "Tendency of Change (Slope)", cex.main = 1.3)
+
 dev.off()
 
 
@@ -101,7 +124,7 @@ dev.off()
 #with parallelization           
 t0 <- Sys.time()
 beginCluster()   # it uses n - 1 clusters
-mtid_rstr <- clusterR(SeasonLenght, calc, args = list(fun = mtid_function), export = "years")
+mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
 endCluster()
 Sys.time() - t0
 
@@ -110,6 +133,28 @@ summary(getValues(mtid_rstr))
 stuff2save <- c(stuff2save, "mtid_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = TRUE)
+
+
+# plotting for report
+jpeg(paste0(path2saveTests, "\\mtid_rstr.jpg"))
+#plot(slope_rstr)
+mtid_rstr_rstr2plot <- mtid_rstr
+mtid_rstr_rstr2plot[mtid_rstr_rstr2plot < 0 ] <- -1
+mtid_rstr_rstr2plot[mtid_rstr_rstr2plot > 0 ] <- 1
+mtid_rstr_rstr2plot[mtid_rstr_rstr2plot == 0 ] <- 0
+
+par(mar = c(3, 4, 4, 4.5))
+pal <- colorRampPalette(c("tomato3", "yellow", "seagreen4"))
+par(xpd = FALSE)
+plot(slope_rstr2plot, col = pal(3), legend = FALSE) 
+par(xpd = TRUE)
+legend("right",
+       legend = c("Negative", "Zero",
+                  "Positive"),
+       fill = pal(3), inset = - 0.3)
+title(main = "Net Change (MTID)", cex.main = 1.3)
+
+dev.off()
 
 
 
@@ -131,24 +176,23 @@ stuff2save <- c(stuff2save, "SteadInd_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(SteadInd_rstr, paste0(path2saveTests, "/SteadInd_raster.tif"), overwrite = TRUE)
 
-# plotting
-jpeg(paste0(path2saveTests, "\\SteadInd_rstr.jpg"), width = 15, height = 15, units = "cm", res = 300)
+
+# plotting for report
+jpeg(paste0(path2saveTests, "\\SteadInd_rstr.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
 #plot(SteadInd_rstr)
-par(mar = c(9, 4, 4, 0))
+par(mar = c(3, 4, 4, 6))
 pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
 par(xpd = FALSE)
 plot(SteadInd_rstr, col = pal(4), legend = FALSE) 
 par(xpd = TRUE)
-legend("bottom",
-       legend = c("Strong negative ecosystem dynamics", "Moderate negative ecoystem dynamics",
-                  "Moderate positive ecosystem dynamics", "Strong positive ecosystem dynamics"),
-       fill = pal(4), inset = -0.5)
-title(main = "Steadiness Index (classes) : SeasonLength", cex.main = 1.3)
-
+legend("right",
+       title = "Ecosystem Dynamics",
+       legend = c("Strong Negative", "Moderate Negative",
+                  "Moderate Positive", "Strong Positive"),
+       fill = pal(4), inset = - 0.4)
+title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
 
 dev.off()
-
-
 
 ##
 

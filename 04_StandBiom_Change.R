@@ -6,6 +6,8 @@ source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
 ## Reading in data (Season_Integral) ####
+load(paste0(path2tempResults, "/Season_Integral_EndStep01.RData"), verbose = TRUE)
+rm(SeasonIntegral, lon, lat)
 
 load(paste0(path2tempResults, "/results_Step3.RData"), verbose = TRUE)
 rm(SeasonIntegral_01_avg13, SeasonIntegral_class10_stats, pix_categs2, SeasonIntegral_3class, SteadInd_SeasInt)
@@ -65,7 +67,7 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step4.RData"))
 ## Some plots and statistics
 # plotting
 jpeg(paste0(path2saveTests, "\\SeasInt_Change.jpg"), width = 28, height = 20, units = "cm", res = 300)
-par(mar = c(9, 4, 4, 4), mfrow = c(1, 2))
+par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
 pal <- colorRampPalette(c("wheat2", "skyblue2", "blue"))
 categs <- c("No Change", "Changed 1 categ", expression("Changed" >= "2 categs"))
 par(xpd = FALSE)
@@ -80,11 +82,30 @@ legend("bottom",
        ncol = 1,
        legend = categs,
        fill = pal(3), inset = - 0.25)
-#mtext("", 
-#      side = 1, line = 7, 
-#      #at = 5,
-#      adj = 1,
-#      cex = 0.8)
+
+if((length(time) - 2) == dim(SeasonIntegral_01)[3]){
+   y2plot <- time[-c(1,length(time))]
+   y2plot_beg <- y2plot[1:3][c(1,length(yrs))]
+   y2plot_end <- y2plot[yrs][c(1,length(yrs))]
+}else if((length(time)) == dim(SeasonIntegral)[3]){
+   y2plot_beg <- time[c(1, 3)]
+   y2plot_end <- time[c((length(time) - 2), length(time))]
+}else{
+   y2plot <- ""
+}
+
+y2plot_beg <- paste0("Beginning years: average of ", paste(y2plot_beg, collapse = "-"))
+mtext(y2plot_beg, 
+      side = 1, line = 7, 
+      #at = 5,
+      adj = 0,
+      cex = 0.8)
+y2plot_end <- paste0("End years: average of ", paste(y2plot_end, collapse = "-"))
+mtext(y2plot_end, 
+      side = 1, line = 8, 
+      #at = 5,
+      adj = 0,
+      cex = 0.8)
 #dev.off()
 
 cont_table <- as.data.frame(table(getValues(SeasonIntegral_3classChange)))

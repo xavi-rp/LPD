@@ -40,6 +40,8 @@ summary(as.vector(SeasonLenght[, , 1]))
 summary(as.vector(StartWeek[, , 1]))
 summary(as.vector(Endweek[, , 1]))
 summary(as.vector(SeasonIntegral[, , 1]))
+summary(as.vector(SeasonIntegral[, , 14]))
+(sum(as.vector(SeasonIntegral[, , 14]) < 0, na.rm = TRUE)/length(as.vector(SeasonIntegral[, , 14]))) * 100  # 0.0037% negatives (-1, 0)
 
 
 ## plotting year 1 to check
