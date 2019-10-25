@@ -6,7 +6,7 @@ source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 
 ## Reading in data (Season_Integral) ####
-load(paste0(path2tempResults, "/Season_Integral_EndStep01.RData"), verbose = TRUE)
+load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
 rm(SeasonIntegral, lon, lat)
 
 load(paste0(path2tempResults, "/results_Step3.RData"), verbose = TRUE)

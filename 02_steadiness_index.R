@@ -7,7 +7,7 @@ source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 
 ## Reading in data (season integral) ####
 #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
-load(paste0(path2tempResults, "/Season_Integral_EndStep01.RData"), verbose = TRUE)
+load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
 
 #var2process <- SeasonLenght
 #var2process_name <- "SeasonLenght"

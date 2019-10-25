@@ -24,21 +24,30 @@ dim(SeasonLenght)
 
 StartWeek <- ncvar_get(nc, "StartWeek")
 Endweek <- ncvar_get(nc, "Endweek")
-lapply(list(StartWeek, Endweek), dim)
+SeasonIntegral <- ncvar_get(nc, "SeasonIntegral")
+SeasonPermanentIntegral <- ncvar_get(nc, "SeasonPermanentIntegral")
+CycleFraction <- ncvar_get(nc, "CycleFraction")
+#ActiveFractionIntegral <- ncvar_get(nc, "ActiveFractionIntegral")
+#lapply(list(StartWeek, Endweek, SeasonIntegral, SeasonPermanentIntegral, CycleFraction, ActiveFractionIntegral), dim)
+lapply(list(StartWeek, Endweek, SeasonIntegral, SeasonPermanentIntegral, CycleFraction), dim)
+
 StartWeek <- StartWeek[, , - c(1, length(time))]
 Endweek <- Endweek[, , - c(1, length(time))]
-lapply(list(StartWeek, Endweek), dim)
-
-SeasonIntegral <- ncvar_get(nc, "SeasonIntegral")
 SeasonIntegral <- SeasonIntegral[, , - c(1, length(time))]
-dim(SeasonIntegral)
-
+SeasonPermanentIntegral <- SeasonPermanentIntegral[, , - c(1, length(time))]
+CycleFraction <- CycleFraction[, , - c(1, length(time))]
+#ActiveFractionIntegral <- ActiveFractionIntegral[, , - c(1, length(time))]
+#lapply(list(StartWeek, Endweek, SeasonIntegral, SeasonPermanentIntegral, CycleFraction, ActiveFractionIntegral), dim)
+lapply(list(StartWeek, Endweek, SeasonIntegral, SeasonPermanentIntegral, CycleFraction), dim)
 
 
 head(SeasonLenght)
 summary(as.vector(SeasonLenght[, , 1]))
 summary(as.vector(StartWeek[, , 1]))
 summary(as.vector(Endweek[, , 1]))
+summary(as.vector(SeasonPermanentIntegral[, , 1]))
+summary(as.vector(CycleFraction[, , 1]))
+#summary(as.vector(ActiveFractionIntegral[, , 1]))
 summary(as.vector(SeasonIntegral[, , 1]))
 summary(as.vector(SeasonIntegral[, , 14]))
 (sum(as.vector(SeasonIntegral[, , 14]) < 0, na.rm = TRUE)/length(as.vector(SeasonIntegral[, , 14]))) * 100  # 0.0037% negatives (-1, 0)
@@ -124,9 +133,20 @@ jpeg(paste0(path2saveTests, "\\SeasonLenght_y1_EndStep01.jpg"), width = 480, hei
 plot(r2)
 dev.off()
 
+
 save(SeasonLenght, lon, lat, time, file = paste0(path2tempResults, "/season_length_EndStep01.RData"))
 
-save(SeasonIntegral, lon, lat, time, file = paste0(path2tempResults, "/Season_Integral_EndStep01.RData"))
+save(StartWeek, lon, lat, time, file = paste0(path2tempResults, "/StartWeek_EndStep01.RData"))
+save(Endweek, lon, lat, time, file = paste0(path2tempResults, "/Endweek_EndStep01.RData"))
+save(SeasonIntegral, lon, lat, time, file = paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"))
+save(SeasonPermanentIntegral, lon, lat, time, file = paste0(path2tempResults, "/SeasonPermanentIntegral_EndStep01.RData"))
+save(CycleFraction, lon, lat, time, file = paste0(path2tempResults, "/CycleFraction_EndStep01.RData"))
+#save(ActiveFractionIntegral, lon, lat, time, file = paste0(path2tempResults, "/ActiveFractionIntegral_EndStep01.RData"))
+
+
+
+
+
 nc_close(nc)
 
 
