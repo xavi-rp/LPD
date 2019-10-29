@@ -9,6 +9,8 @@ library(raster)
 library(rgdal)
 library(dplyr)
 library(data.table)
+library(virtualspecies)
+
 
 ## Settings ####
 path2project <- "E:\\rotllxa\\LPD"
