@@ -29,7 +29,8 @@ lat <- ls_ini[[1]][[3]]
 ## Calculating averages ####
 
 vrbles <- c()
-stack_rstrs_avg <- stack()  
+stack_rstrs_avg <- stack() 
+stuff2save <- c()
 
 t0 <- Sys.time()
 for (i in 1:length(ls_ini)){
@@ -50,9 +51,12 @@ for (i in 1:length(ls_ini)){
   names(rstr_average) <- names(ls_ini[[i]])[1]
   vrbles <- c(vrbles, names(ls_ini[[i]])[1])
   assign(paste0(names(ls_ini[[i]])[1], "_avrge"), rstr_average)
+  writeRaster(get(paste0(names(ls_ini[[i]])[1], "_avrge")), filename = paste0(path2tempResults, "/", names(ls_ini[[i]])[1], "_avrge.tif"))
+  assign(paste0(names(ls_ini[[i]])[1], "_avrge"), raster(paste0(path2tempResults, "/", names(ls_ini[[i]])[1], "_avrge.tif")))
 
   stack_rstrs_avg <- stack(stack_rstrs_avg, get(paste0(names(ls_ini[[i]])[1], "_avrge")))
   print(paste0(names(ls_ini[[i]])[1], " ... average calculated"))
+  stuff2save <- c(stuff2save, paste0(names(ls_ini[[i]])[1], "_avrge"))
 }
 
 Sys.time() - t0
@@ -98,13 +102,15 @@ dev.off()
 
 Sys.time() - t0
 
+
+stack_rstrs_avg
+stack_rstrs_avg@layers[[1]]@file@name
+
 # removing correlated variables
 stack_rstrs_avg_noC <- stack(stack_rstrs_avg@layers[names(stack_rstrs_avg) %in% vrbles_NoC])
 
 
 # saving results
-stuff2save <- c("vrbles", "stack_rstrs_avg", "multicol_df", "vrbles_NoC", "stack_rstrs_avg_noC")
+stuff2save <- c(stuff2save, "vrbles", "stack_rstrs_avg", "multicol_df", "vrbles_NoC", "stack_rstrs_avg_noC")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step6.RData"))
-
-
 
