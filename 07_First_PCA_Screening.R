@@ -97,6 +97,6 @@ screeningPCA_variables <- names(which(apply(screeningPCA_variables_df, 1, sum) !
 if(length(screeningPCA_variables) != nPCs) stop("inconsistency among number of variables selected for the next step ('final PCA') and number of PCs")
 
 
-stuff2save <- c("stack_rstrs_avg_noC_df", "pca", "pca_importance", "pca.rotated", "screeningPCA_cumul_variance", "screeningPCA_variables")
+stuff2save <- c("stack_rstrs_avg_noC", "stack_rstrs_avg_noC_df", "pca", "pca_importance", "pca.rotated", "screeningPCA_cumul_variance", "screeningPCA_variables")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step7.RData"))
 
