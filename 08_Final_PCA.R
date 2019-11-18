@@ -24,8 +24,9 @@ stack_rstrs_avg_noC_df_final <- stack_rstrs_avg_noC_df[, names(stack_rstrs_avg_n
 #pca <- prcomp(na.omit(stack_rstrs_df), scale = TRUE)   
 pca_final <- prcomp(na.omit(stack_rstrs_avg_noC_df_final),
                     retx = TRUE, 
-                    center = TRUE, 
-                    scale. = TRUE)   
+                    center = TRUE, # variables are zero centered 
+                    scale. = TRUE  # scaling variables to have unit variance
+                    )   
 
 pca_final
 pca_final$rotation

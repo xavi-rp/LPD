@@ -18,8 +18,9 @@ stack_rstrs_avg_noC_df <- as.data.frame(stack_rstrs_avg_noC)
 #pca <- prcomp(na.omit(stack_rstrs_df), scale = TRUE)   
 pca <- prcomp(na.omit(stack_rstrs_avg_noC_df), 
               retx = TRUE, 
-              center = TRUE, 
-              scale. = TRUE)   
+              center = TRUE, # variables are zero centered 
+              scale. = TRUE  # scaling variables to have unit variance
+              )      
 
 #save(pca, file = paste0(path2tempResults, "/results_Step7.RData")) 
 #load(paste0(path2tempResults, "/results_Step7.RData"), verbose = TRUE)
