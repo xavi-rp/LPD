@@ -10,6 +10,8 @@ library(rgdal)
 library(dplyr)
 library(data.table)
 library(virtualspecies)
+library(parallel)
+
 
 
 ## Settings ####

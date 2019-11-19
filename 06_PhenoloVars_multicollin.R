@@ -27,6 +27,7 @@ lat <- ls_ini[[1]][[3]]
 
 
 ## Calculating averages ####
+## For now, average it is calculated over ALL the available years, but this might be included as an argument
 
 vrbles <- c()
 stack_rstrs_avg <- stack() 
