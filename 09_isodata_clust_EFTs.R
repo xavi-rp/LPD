@@ -34,10 +34,27 @@ head(pca_data_ini)
 ## Settings for clustering ####
 #number of initial clusters
 nclust_ini <- 15 # initial number of clusters (hard-coded; 10 < nclust_ini < 500)
+nclust_ini <- 50 # initial number of clusters (hard-coded; 10 < nclust_ini < 500)
+
+max_num_clustrs <- 500
+
+
 max_SD_intraclust <- 0.65 # maximum SD intracluster allowed. If some cluster has bigger, split in 2
-min_dist_interclust <- 0.4
-max_iter <- 500
-max_iter <- 10
+                          # Make it extremelly small if you want it not to be limitant
+max_SD_intraclust <- 0.5 
+max_SD_intraclust <- 0.3 
+              
+
+min_dist_interclust <- 0.4 # If the distance is smaller, then both clusters are merged
+                           # Make it extremelly high if you want it not to be limitant
+min_dist_interclust <- 0.5
+min_dist_interclust <- 0.8
+
+
+max_iter <- 5
+max_iter <- 3
+max_iter <- 100
+
 
 
 
@@ -58,6 +75,8 @@ nrow(clust_centr_ini)
 repeat{
   iter_num <- iter_num + 1
   print(paste0("iteration # ", iter_num, " (max allowed = ", max_iter, ")"))
+  print(paste0("Starting at ", Sys.time()))
+  
   
   pca_data_ini_noCentr <- pca_data_ini[!rownames(pca_data_ini) %in% rownames(clust_centr_ini), ]
   nrow(pca_data_ini)
@@ -89,7 +108,7 @@ repeat{
   stuff2save <- c("pca_data_ini_noCentr", "clust_centr_ini")
   save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9_iter", iter_num, ".RData"))
   
-  
+  print(paste0("End of calculating centroids at ", Sys.time()))
   
   
   ## Step3: SD intra-cluster ####
@@ -99,7 +118,6 @@ repeat{
   cl <- makeCluster(3)
   clusterExport(cl, c("clust_centr_ini", "nvars"))
   
-  t0 <- Sys.time()
   clsts <- parRapply(cl = cl, 
                      x = pca_data_ini_noCentr, 
                      FUN = function(y) {
@@ -108,9 +126,9 @@ repeat{
                        return(y2)
                      }
   )
-  Sys.time() - t0
   ## verification: dist(rbind(pca_data_ini_noCentr[1, 1:4], clust_centr_ini[rownames(clust_centr_ini) == 6662183, ]))
   stopCluster(cl)
+  print(paste0("End of calculating distance to centroids at ", Sys.time()))
   
   
   ## Not parallel: it takes much longer
@@ -131,7 +149,6 @@ repeat{
   
   stuff2save <- c("clust_centr_ini", "pca_data_ini_noCentr", "iter_num")
   save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9_iter", iter_num, ".RData"))
-  #load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
   
   
   
@@ -147,32 +164,36 @@ repeat{
   dist_interclust <- as.data.frame(as.matrix(dist_interclust))
   
   clust_mergd <- c()
-  for (sml_ctrds in small_centroids){
-    clusts2merge <- rownames(which(dist_interclust == sml_ctrds, arr.ind = TRUE))
-    #clusts2merge <- (which(dist_interclust == sml_ctrds, arr.ind = TRUE))
-    #print(sml_ctrds)
-    clust_mergd <- c(clust_mergd, clusts2merge)
-    centroids_back <- clust_centr_ini[rownames(clust_centr_ini) %in% clusts2merge, ]
-    centroids_back$closest <- 0
-    centroids_back$dist2closest <- 0
-    centroids_back
-    pca_data_ini_noCentr <- rbind(pca_data_ini_noCentr, centroids_back)
-    pca_data_ini_noCentr <- pca_data_ini_noCentr[order(as.numeric(rownames(pca_data_ini_noCentr))), ]
-    clust_centr_ini <- clust_centr_ini[!rownames(clust_centr_ini) %in% clusts2merge, ]
-    
-    sml_cluster2merge <- pca_data_ini_noCentr[pca_data_ini_noCentr$closest %in% clusts2merge, ]
-    sml_cluster2merge <- sml_cluster2merge[sample(nrow(sml_cluster2merge), 1), ][, 1:nvars]
-    clust_centr_ini <- rbind(clust_centr_ini, sml_cluster2merge)
+  if(sum(small_centroids) > 0){
+    for (sml_ctrds in small_centroids){
+      clusts2merge <- rownames(which(dist_interclust == sml_ctrds, arr.ind = TRUE))
+      #clusts2merge <- (which(dist_interclust == sml_ctrds, arr.ind = TRUE))
+      #print(sml_ctrds)
+      clust_mergd <- c(clust_mergd, clusts2merge)
+      centroids_back <- clust_centr_ini[rownames(clust_centr_ini) %in% clusts2merge, ]
+      centroids_back$closest <- 0
+      centroids_back$dist2closest <- 0
+      centroids_back
+      pca_data_ini_noCentr <- rbind(pca_data_ini_noCentr, centroids_back)
+      pca_data_ini_noCentr <- pca_data_ini_noCentr[order(as.numeric(rownames(pca_data_ini_noCentr))), ]
+      clust_centr_ini <- clust_centr_ini[!rownames(clust_centr_ini) %in% clusts2merge, ]
+      
+      sml_cluster2merge <- pca_data_ini_noCentr[pca_data_ini_noCentr$closest %in% clusts2merge, ]
+      sml_cluster2merge <- sml_cluster2merge[sample(nrow(sml_cluster2merge), 1), ][, 1:nvars]
+      clust_centr_ini <- rbind(clust_centr_ini, sml_cluster2merge)
+    }
   }
-  
   clust_mergd
-  nrow(clust_centr_ini)        
+  nrow(clust_centr_ini)
+  
+  print(paste0("End of distance inter-clusters at ", Sys.time()))
+  
   #
   
   
   
   ## SD intra-cluster (if bigger than a threshold, split the cluster in two)
-  str(pca_data_ini_noCentr)
+  #str(pca_data_ini_noCentr)
   
   stats_intraclustr <- as.data.frame(pca_data_ini_noCentr[pca_data_ini_noCentr$closest != 0, ] %>% group_by(closest) %>% summarise_at(.vars = "dist2closest", .funs = c("mean_intraclust" = mean, "SD_intraclust" = sd, "max_intraclust" = max, "min_intraclust" = min)))
   stats_intraclustr
@@ -185,55 +206,83 @@ repeat{
   nrow(pca_data_ini_noCentr)
   tail(pca_data_ini_noCentr)
   
-  centroids_back <- clust_centr_ini[rownames(clust_centr_ini) %in% big_clusters, ]
-  centroids_back$closest <- 0
-  centroids_back$dist2closest <- 0
-  centroids_back
-  pca_data_ini_noCentr <- rbind(pca_data_ini_noCentr, centroids_back)
-  pca_data_ini_noCentr <- pca_data_ini_noCentr[order(as.numeric(rownames(pca_data_ini_noCentr))), ]
-  
-  clust_centr_ini <- clust_centr_ini[!rownames(clust_centr_ini) %in% big_clusters, ]
-  
-  for (bg_clstr in big_clusters) {
-    bg_cluster2split <- pca_data_ini_noCentr[pca_data_ini_noCentr$closest %in% bg_clstr, ]
-    bg_cluster2split <- bg_cluster2split[sample(nrow(bg_cluster2split), 2), ][, 1:nvars]
-    clust_centr_ini <- rbind(clust_centr_ini, bg_cluster2split)
+  if(length(big_clusters) > 0){
+    centroids_back <- clust_centr_ini[rownames(clust_centr_ini) %in% big_clusters, ]
+    centroids_back$closest <- 0
+    centroids_back$dist2closest <- 0
+    centroids_back
+    pca_data_ini_noCentr <- rbind(pca_data_ini_noCentr, centroids_back)
+    pca_data_ini_noCentr <- pca_data_ini_noCentr[order(as.numeric(rownames(pca_data_ini_noCentr))), ]
+    
+    clust_centr_ini <- clust_centr_ini[!rownames(clust_centr_ini) %in% big_clusters, ]
+    
+    for (bg_clstr in big_clusters) {
+      bg_cluster2split <- pca_data_ini_noCentr[pca_data_ini_noCentr$closest %in% bg_clstr, ]
+      bg_cluster2split <- bg_cluster2split[sample(nrow(bg_cluster2split), 2), ][, 1:nvars]
+      clust_centr_ini <- rbind(clust_centr_ini, bg_cluster2split)
+    }
   }
+  
+  stuff2save <- c("clust_centr_ini", "pca_data_ini_noCentr", "iter_num", "clust_mergd", "big_clusters")
+  save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9_iter", iter_num, ".RData"))
+  #load(file = paste0(path2tempResults, "/results_Step9_iter3.RData"), verbose = TRUE)
+  print(paste0("End of SD inter-centroids at ", Sys.time()))
   
   
   ## conditions to stop the ISODATA clustering
+  if(iter_num == max_iter){
+    print("maximum number of iterations reached")
+    break  
+  } 
+  if(is.null(clust_mergd) & length(big_clusters) == 0){
+    print("all clusters are within defined parameters (max_SD_intraclust and min_dist_interclust)")
+    break  
+  }
+  if(nrow(clust_centr_ini) >= max_num_clustrs){
+    print("maximum number of clusters reached")
+    break
+  }
   
-  if(iter_num == max_iter) break
-  if(iter_num == max_iter) break
-  
-  
-  print(Sys.time())
+  print(paste0("End of iteration #", iter_num, " at ", Sys.time()))
 }
 
 
-#
 
+# some checkings
+iters <- c("iter1", "iter2", "iter3")
 
-
-
-
-
-
-
-
-
+for (i in iters) {
+  print(i)
+  load(paste0(path2tempResults, "/results_Step9_", i, ".RData"), verbose = FALSE)
+  print(paste0("clust_mergd: ", paste0(clust_mergd, collapse = ", ")))
+  print(paste0("big_clusters to split: ", paste0(big_clusters, collapse = ", ")))
+  assign(paste0("pca_data_ini_noCentr_", i), pca_data_ini_noCentr)
+  frmla <- as.formula(paste0("closest ~ ", paste0(colnames(pca_data_ini_noCentr)[1:nvars], collapse = " + ")))
+  wilks_formula <- Wilks.test(frmla, data = pca_data_ini_noCentr)
+  print(paste0("Wilks' Lambda for... ", i))
+  print(wilks_formula)
+}
 
 
 
 
 ## Wilk's (lambda) test
-library(rrcov)
-head(pca_data_ini_noCentr[, colnames(pca_data_ini_noCentr) %in% c("closest", "dist2closest")])
+head(pca_data_ini_noCentr)
+length(unique(pca_data_ini_noCentr$closest))
+#wilks_formula <- Wilks.test(closest ~ PC1 + PC2 + PC3 + PC4, data = pca_data_ini_noCentr)
+frmla <- as.formula(paste0("closest ~ ", paste0(colnames(pca_data_ini_noCentr)[1:nvars], collapse = " + ")))
+wilks_formula <- Wilks.test(frmla, data = pca_data_ini_noCentr)
 
-wilks_formula <- Wilks.test(closest ~ PC1 + PC2 + PC3 + PC4, data = pca_data_ini_noCentr)
+wilks_formula
+wilks_formula$statistic
+wilks_formula$parameter
+wilks_formula$p.value
 
-head(as.numeric(as.character(as.matrix(pca_data_ini_noCentr[, !colnames(pca_data_ini_noCentr) %in% c("dist2closest")]))))
-wilks_matrix <- Wilks.test(, grouping = "closest")
+
+
+
+
+
 
 
 
