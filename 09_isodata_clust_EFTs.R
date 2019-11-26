@@ -221,12 +221,15 @@ repeat{
   ## SD intra-cluster (if bigger than a threshold, split the cluster in two)
   #str(pca_data_ini_noCentr)
   
-  stats_intraclustr <- as.data.frame(pca_data_ini_noCentr[pca_data_ini_noCentr$closest != 0, ] %>% group_by(closest) %>% summarise_at(.vars = "dist2closest", .funs = c("mean_intraclust" = mean, "SD_intraclust" = sd, "max_intraclust" = max, "min_intraclust" = min)))
+  stats_intraclustr <- as.data.frame(pca_data_ini_noCentr[!is.na(pca_data_ini_noCentr$closest), ] %>% group_by(closest) %>% summarise_at(.vars = "dist2closest", .funs = c("mean_intraclust" = mean, "SD_intraclust" = sd, "max_intraclust" = max, "min_intraclust" = min)))
   stats_intraclustr
   sd_intraclustr <- stats_intraclustr[, colnames(stats_intraclustr) %in% c("closest", "SD_intraclust")]
   sd_intraclustr
   big_clusters <- sd_intraclustr$closest[which(sd_intraclustr$SD_intraclust >= max_SD_intraclust)]
+  big_clusters <- big_clusters[big_clusters %in% rownames(clust_centr_ini)]
   big_clusters
+  
+  
   
   head(pca_data_ini_noCentr)
   nrow(pca_data_ini_noCentr)
