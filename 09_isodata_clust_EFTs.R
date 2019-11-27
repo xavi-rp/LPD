@@ -281,7 +281,7 @@ repeat{
 
 
 
-# some checkings
+## some checkings ####
 
 iters <- c("iter1", "iter2", "iter3") 
 iters <- paste0("iter", 1:iter_num) 
@@ -316,32 +316,41 @@ for (i in iters) {
 for (i in iters) {
   print(i)
   load(paste0(path2tempResults, "/results_Step9_", i, ".RData"), verbose = FALSE)
-  print(paste0("clust to merge unique: ", length(unique(clust_mergd))))
+  #print(paste0("clust to merge unique: ", length(unique(clust_mergd))))
   print(paste0("nrow(clust_centr_ini): ", nrow(clust_centr_ini)))
 }
 
 for (i in iters) {
   print(i)
   load(paste0(path2tempResults, "/results_Step9_", i, ".RData"), verbose = FALSE)
-  print((dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_4later) + nrow(pca_data_ini_NA) + nrow(pca_data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini)))
+  #print((dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_4later) + nrow(pca_data_ini_NA) + nrow(pca_data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini)))
+  print((dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_NA) + nrow(pca_data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini)))
 }
 
 
 
 
-jpeg(paste0(path2saveTests, "\\clusters.jpg"), width = 1500, height = 1500, res = 300)
-par(mfcol=c(3, 4))
+## Plotting clusterings (iterations) ####
+
+#jpeg(paste0(path2saveTests, "\\clusters.jpg"), width = 1500, height = 1500, res = 300)
+pdf(paste0(path2saveTests, "\\clusters.pdf"))
+par(mfcol = c(4, 3), mar = c(2.5, 1.5, 2, 1.5))
 
 for (i in iters) { 
   load(paste0(path2tempResults, "/results_Step9_", i, ".RData"), verbose = FALSE)
-
+  
+  frmla <- as.formula(paste0("closest ~ ", paste0(colnames(pca_data_ini_noCentr)[1:nvars], collapse = " + ")))
+  wilks_formula <- Wilks.test(frmla, data = pca_data_ini_noCentr)
+  
+  conon_corr <- cancor(pca_data_ini_noCentr[, 1], pca_data_ini_noCentr[, 2:nvars])
+  
   pca_final_raster1 <- pca_final_raster
 
-  nrow(pca_data_ini) == (nrow(pca_data_ini_noCentr[, 1:5]) + nrow(clust_centr_ini))
-  (dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_4later) + nrow(pca_data_ini_NA) + nrow(pca_data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini))
+  #nrow(pca_data_ini) == (nrow(pca_data_ini_noCentr[, 1:5]) + nrow(clust_centr_ini))
+  #(dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_4later) + nrow(pca_data_ini_NA) + nrow(pca_data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini))
   
   
-  all_data <- rbind(clust_centr_ini, pca_data_ini_NA, pca_data_ini_4later)
+  all_data <- rbind(clust_centr_ini, pca_data_ini_NA)#, pca_data_ini_4later)
   all_data$closest <- NA
   head(all_data)
   
@@ -354,31 +363,14 @@ for (i in iters) {
   
   pal <- colorRampPalette(c("red", "wheat2", "skyblue2", "blue", "yellow"))
   par(xpd = FALSE)
-  plot(pca_final_raster1, col = pal(length(unique(all_data$closest))), legend = FALSE) 
-  
+  plot(pca_final_raster1, col = pal(length(unique(all_data$closest))), legend = FALSE, main = paste0(i, ": ", length(unique(all_data$closest)), " clusters")) 
+  text(-25, 55, paste0("Wilks'\n lambda: \n", round(as.vector(wilks_formula$statistic), 5)))
+  text(40, 55, paste0("Canon.\n Correl.: \n", signif(as.vector(conon_corr$cor), 3)))
   
   
 }
 
 dev.off()
-
-
-
-
-## Wilk's (lambda) test
-head(pca_data_ini_noCentr)
-length(unique(pca_data_ini_noCentr$closest))
-#wilks_formula <- Wilks.test(closest ~ PC1 + PC2 + PC3 + PC4, data = pca_data_ini_noCentr)
-frmla <- as.formula(paste0("closest ~ ", paste0(colnames(pca_data_ini_noCentr)[1:nvars], collapse = " + ")))
-wilks_formula <- Wilks.test(frmla, data = pca_data_ini_noCentr)
-
-wilks_formula
-wilks_formula$statistic
-wilks_formula$parameter
-wilks_formula$p.value
-
-
-
 
 
 
