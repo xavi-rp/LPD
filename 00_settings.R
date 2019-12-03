@@ -12,6 +12,8 @@ library(data.table)
 library(virtualspecies)
 library(parallel)
 library(rrcov)
+library(lattice)
+library(latticeExtra)
 
 
 
