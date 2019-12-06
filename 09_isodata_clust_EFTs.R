@@ -94,34 +94,23 @@ isodata_test <- isodata_clustering(data_ini = pca_data_ini,
 
 ## Some checkings ####
 
-iters <- c("iter1", "iter2", "iter3") 
-iters <- paste0("iter", 1:iter_num) 
-#iters <- paste0("iter", 1:100) 
-#afegir totes les iteracions que s han generat (max 100) i comprovar els wilks
-
-#for (i in iters) {
-#  print(i)
-#  load(paste0(path2tempResults, "/results_isodata_", i, ".RData"), verbose = FALSE)
-#  print(paste0("clust_mergd: ", paste0(clust_mergd, collapse = ", ")))
-#  print(paste0("big_clusters to split: ", paste0(big_clusters, collapse = ", ")))
-#  #assign(paste0("data_ini_noCentr_", i), data_ini_noCentr)
-#  frmla <- as.formula(paste0("closest ~ ", paste0(colnames(data_ini_noCentr)[1:nvars], collapse = " + ")))
-#  wilks_formula <- Wilks.test(frmla, data = data_ini_noCentr)
-#  print(paste0("Wilks' Lambda for... ", i))
-#  print(wilks_formula$statistic)
-#}
-
-
 isodata_test$isodta_wilks
 isodata_test$centroids_isodta
 isodata_test$iterations
 isodata_test$number_clusters
 head(isodata_test$data_ini_centroids)
 length(unique(isodata_test$data_ini_centroids$centroid))
-length(isodata_test$number_clusters)
+(isodata_test$number_clusters)
 table(isodata_test$data_ini_centroids$centroid)
 
 
+
+iters <- c("iter1", "iter2", "iter3") 
+iters <- paste0("iter", 1:iter_num) 
+#iters <- paste0("iter", 1:100) 
+nvars <- length(names(pca_data_ini))
+
+wilks_clust_df <- isodata_test$isodta_wilks
 
 
 ## Plotting results in a scatterplot ####
@@ -139,7 +128,7 @@ plt <- xyplot(WilksLambda ~ Iteration, wilks_clust_df,
               panel=function(...) {
                 panel.xyplot(...)
                 panel.abline(h = min(wilks_clust_df$WilksLambda), col = "red")
-                panel.text((nrow(wilks_clust_df) * 90 / 100), 0, paste0("Min. Wilks' Lambda (iter: ", which.min(wilks_clust_df$WilksLambda), ")"), 
+                panel.text((nrow(wilks_clust_df) * 90 / 100), (min(wilks_clust_df$WilksLambda) * 90 / 100), paste0("Min. Wilks' Lambda (iter: ", which.min(wilks_clust_df$WilksLambda), ")"), 
                            cex = 0.5, col = "red")
                 panel.points(which.min(wilks_clust_df$WilksLambda), min(wilks_clust_df$WilksLambda), col = "red")
               }
@@ -194,14 +183,14 @@ plt <- xyplot(WilksLambda ~ Iteration, wilks_clust_df,
               panel=function(...) {
                 panel.xyplot(...)
                 panel.abline(h = min(wilks_clust_df$WilksLambda), col = "darkblue")
-                panel.text((nrow(wilks_clust_df) * 90 / 100), 0, paste0("Min. Wilks' Lambda (iter: ", which.min(wilks_clust_df$WilksLambda), ")"), 
+                panel.text((nrow(wilks_clust_df) * 90 / 100), (min(wilks_clust_df$WilksLambda) * 90 / 100), paste0("Min. Wilks' Lambda (iter: ", which.min(wilks_clust_df$WilksLambda), ")"), 
                            cex = 0.5, col = "darkblue")
                 panel.points(which.min(wilks_clust_df$WilksLambda), min(wilks_clust_df$WilksLambda), col = "darkblue")
               }
 )
 
 plt1 <- xyplot(CanonicalCorrel ~ Iteration, wilks_clust_df,
-               grid = TRUE,
+               grid = FALSE,
                scales = list(x = list(draw = FALSE)),
                #type = c("p", "r"))
                #type = c("p", "l"))
@@ -223,29 +212,15 @@ dev.off()
 
 
 
-#for (i in iters) {
-#  print(i)
-#  load(paste0(path2tempResults, "/results_isodata_", i, ".RData"), verbose = FALSE)
-#  #print(paste0("clust to merge unique: ", length(unique(clust_mergd))))
-#  print(paste0("nrow(clust_centr_ini): ", nrow(clust_centr_ini)))
-#}
-#
-#for (i in iters) {
-#  print(i)
-#  load(paste0(path2tempResults, "/results_isodata_", i, ".RData"), verbose = FALSE)
-#  #print((dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(data_ini_4later) + nrow(pca_data_ini_NA) + nrow(data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini)))
-#  print((dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(pca_data_ini_NA) + nrow(data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini)))
-#}
-
-
-
 
 ## Plotting clusterings (iterations) ####
 
 #jpeg(paste0(path2saveTests, "\\clusters.jpg"), width = 1500, height = 1500, res = 300)
 #pdf(paste0(path2saveTests, "\\clusters.pdf"), width = 7, height = 7)
-pdf(paste0(path2saveTests, "\\clusters1.pdf"), width = 18, height = 18)
-par(mfcol = c(10, 10), mar = c(2.5, 1.5, 2, 1.5))
+#pdf(paste0(path2saveTests, "\\clusters1.pdf"), width = 18, height = 18)
+#par(mfcol = c(10, 10), mar = c(2.5, 1.5, 2, 1.5))
+pdf(paste0(path2saveTests, "\\clusters1.pdf"), width = 9, height = 9)
+par(mfcol = c(4, 3), mar = c(2.5, 1.5, 2, 1.5))
 
 for (i in iters) { 
   load(paste0(path2tempResults, "/results_isodata_", i, ".RData"), verbose = FALSE)
@@ -286,8 +261,102 @@ dev.off()
 
 
 
+## In order to reduce the number of clusters two approaches can be implemented:
+##
+## 1) Hierarchical ISODATA Clustering (method used in the report)
+## 2) Hierarchical Cluster Analysis / Dendogram Analysis (method used in the Remote Sensing paper)
 
 
+## 1) Hierarchical ISODATA clustering ####
+
+path2data_isodata1 <- paste0(path2tempResults, "/isodata_test3")
+
+head(isodata_test$data_ini_centroids)
+nrow(isodata_test$data_ini_centroids)
+head(pca_data_ini)
+
+varbles <- names(pca_data_ini)
+nvars <- length(names(pca_data_ini))
+
+
+stats_intraclustr <- as.data.frame(isodata_test$data_ini_centroids %>% group_by(centroid) %>% summarise_at(.vars = varbles, .funs = c("mean")))
+stats_intraclustr
+
+data_centroids <- isodata_test$data_ini_centroids
+data_centroids$row_nms <- rownames(data_centroids)
+head(data_centroids[, c((nvars + 2), (nvars + 1))])
+
+pca_data_ini_avrge <- merge(data_centroids[, c((nvars + 2), (nvars + 1))], stats_intraclustr, 
+                            by = "centroid", all.x = TRUE)
+rownames(pca_data_ini_avrge) <- pca_data_ini_avrge$row_nms
+pca_data_ini_avrge <- pca_data_ini_avrge[order(as.numeric(pca_data_ini_avrge$row_nms)), ]
+
+pca_data_ini_avrge <- pca_data_ini_avrge[, - c(1, 2)]
+
+head(pca_data_ini_avrge)
+nrow(pca_data_ini_avrge)
+
+
+isodata_test1 <- isodata_clustering(data_ini = pca_data_ini_avrge,
+                                    nclust_ini = nclust_ini, 
+                                    max_num_clustrs = max_num_clustrs,
+                                    max_SD_intraclust = max_SD_intraclust,
+                                    min_dist_interclust = min_dist_interclust,
+                                    max_iter = max_iter, 
+                                    path2saveResults = path2tempResults)
+
+
+## And this should be repeated until the number of clusters stabilizes. But this is extremely slow...
+#
+
+
+
+## 2) Hierarchical Cluster Analysis / Dendogram Analysis ####
+
+path2data_isodata1 <- paste0(path2tempResults, "/isodata_test3")
+
+load(paste0(path2data_isodata1, "/results_isodata_iter", 11, ".RData"), verbose = TRUE)
+
+varbles <- names(data_ini_noCentr)[1:4]
+nvars <- length(names(data_ini_noCentr)[1:4])
+
+stats_intraclustr <- as.data.frame(data_ini_noCentr %>% group_by(closest) %>% summarise_at(.vars = varbles, .funs = c("mean")))
+stats_intraclustr
+
+head(data_ini_noCentr)
+
+head(clust_centr_ini)
+clust_centr_ini$closest <- rownames(clust_centr_ini)
+
+data_centroids <- data_ini_noCentr[, 1:5]
+data_centroids <- rbind(data_centroids, clust_centr_ini)
+data_centroids <- data_centroids[order(as.numeric(rownames(data_centroids))), ]
+head(data_centroids)
+
+data_centroids$row_nms <- rownames(data_centroids)
+head(data_centroids[, c((nvars + 2), (nvars + 1))])
+
+pca_data_ini_avrge <- merge(data_centroids[, c((nvars + 2), (nvars + 1))], stats_intraclustr, 
+                            by = "closest", all.x = TRUE)
+head(pca_data_ini_avrge)
+
+rownames(pca_data_ini_avrge) <- pca_data_ini_avrge$row_nms
+pca_data_ini_avrge <- pca_data_ini_avrge[order(as.numeric(pca_data_ini_avrge$row_nms)), ]
+
+pca_data_ini_avrge <- pca_data_ini_avrge[, - c(1, 2)]
+
+head(pca_data_ini_avrge)
+nrow(pca_data_ini_avrge)
+
+
+pca_data_ini_avrge_unique <- unique(pca_data_ini_avrge)
+
+d <- dist(as.matrix(pca_data_ini_avrge_unique))   # find distance matrix 
+hc <- hclust(d)                            # apply hirarchical clustering 
+plot(hc)                                   # plot the dendrogram
+
+
+nrow(pca_data_ini_avrge_unique)
 
 
 
