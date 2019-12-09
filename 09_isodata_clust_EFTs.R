@@ -307,56 +307,91 @@ isodata_test1 <- isodata_clustering(data_ini = pca_data_ini_avrge,
 
 
 ## And this should be repeated until the number of clusters stabilizes. But this is extremely slow...
+## and the iteration flow a bit weird (from time to time it reduces the number of clusters to 1).
+## In case this approach wants to be used, this issue should be carefully checked.
 #
 
 
 
 ## 2) Hierarchical Cluster Analysis / Dendogram Analysis ####
 
-path2data_isodata1 <- paste0(path2tempResults, "/isodata_test3")
+## It needs to be stablished either the height of the dendrogram where to cut for the grouping (new clustering) or 
+## the number of new clusters we want
+## And also the iteration of previous step we select (either the last or  the one with lower Wilks' lambda)
+height2cut <- 2
 
+#this two lines need to be generalized:
+path2data_isodata1 <- paste0(path2tempResults, "/isodata_test3")
 load(paste0(path2data_isodata1, "/results_isodata_iter", 11, ".RData"), verbose = TRUE)
+
 
 varbles <- names(data_ini_noCentr)[1:4]
 nvars <- length(names(data_ini_noCentr)[1:4])
 
 stats_intraclustr <- as.data.frame(data_ini_noCentr %>% group_by(closest) %>% summarise_at(.vars = varbles, .funs = c("mean")))
-stats_intraclustr
 
-head(data_ini_noCentr)
-
-head(clust_centr_ini)
 clust_centr_ini$closest <- rownames(clust_centr_ini)
 
 data_centroids <- data_ini_noCentr[, 1:5]
 data_centroids <- rbind(data_centroids, clust_centr_ini)
 data_centroids <- data_centroids[order(as.numeric(rownames(data_centroids))), ]
-head(data_centroids)
-
 data_centroids$row_nms <- rownames(data_centroids)
-head(data_centroids[, c((nvars + 2), (nvars + 1))])
 
 pca_data_ini_avrge <- merge(data_centroids[, c((nvars + 2), (nvars + 1))], stats_intraclustr, 
                             by = "closest", all.x = TRUE)
-head(pca_data_ini_avrge)
 
 rownames(pca_data_ini_avrge) <- pca_data_ini_avrge$row_nms
 pca_data_ini_avrge <- pca_data_ini_avrge[order(as.numeric(pca_data_ini_avrge$row_nms)), ]
-
 pca_data_ini_avrge <- pca_data_ini_avrge[, - c(1, 2)]
 
-head(pca_data_ini_avrge)
-nrow(pca_data_ini_avrge)
 
+pca_data_ini_avrge_unique <- pca_data_ini_avrge[rownames(pca_data_ini_avrge) %in% unique(clust_centr_ini$closest), ]
 
-pca_data_ini_avrge_unique <- unique(pca_data_ini_avrge)
 
 d <- dist(as.matrix(pca_data_ini_avrge_unique))   # find distance matrix 
-hc <- hclust(d)                            # apply hirarchical clustering 
-plot(hc)                                   # plot the dendrogram
+hc <- hclust(d)                                   # apply hirarchical clustering 
+plot(hc)                                          # plot the dendrogram
+#to plot rectangles
+rect.hclust(hc, 
+            h = height2cut, #height where to cut
+            #k = NULL, #exact number of clusters to produce
+            border = 2, #colours for the rectangles
+            #cluster = NULL
+            )
+#assigning new clusters
+new_clstrs <- as.data.frame(cutree(hc, h = height2cut))
+names(new_clstrs) <- "new_clst"
+
+data_centroids <- merge(data_centroids, new_clstrs, by.x = "closest", by.y = "row.names", all.x = TRUE)
+rownames(data_centroids) <- data_centroids$row_nms
+data_centroids <- data_centroids[order(as.numeric(data_centroids$row_nms)), ]
+data_centroids <- data_centroids[, !names(data_centroids) %in% c("closest", "row_nms")]
 
 
-nrow(pca_data_ini_avrge_unique)
+
+## Saving results ####
+
+pca_data_ini_NA$new_clst <- 0
+
+pca_data_ini_clusters <- rbind(data_centroids, pca_data_ini_NA)
+pca_data_ini_clusters <- pca_data_ini_clusters[order(as.numeric(rownames(pca_data_ini_clusters))), ]
+
+pca_final_clstrs_raster <- setValues(pca_final_raster, as.matrix(pca_data_ini_clusters))
+
+#quick plot to check
+jpeg(paste0(path2saveTests, "\\SpatialPatternsPCs_clstrs.jpg"))
+plot(pca_final_clstrs_raster[["new_clst"]])
+dev.off()
+
+
+stuff2save <- c("data_centroids", "pca_data_ini_clusters", "pca_final_clstrs_raster")
+save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9.RData"))
+writeRaster(pca_final_clstrs_raster[["new_clst"]], paste0(path2saveTests, "/SpatialPatternsPCs_clstrs.tif"), overwrite = TRUE)
+
+
+
+
+
 
 
 
