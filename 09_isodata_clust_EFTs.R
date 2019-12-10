@@ -348,9 +348,9 @@ pca_data_ini_avrge <- pca_data_ini_avrge[, - c(1, 2)]
 pca_data_ini_avrge_unique <- pca_data_ini_avrge[rownames(pca_data_ini_avrge) %in% unique(clust_centr_ini$closest), ]
 
 
-d <- dist(as.matrix(pca_data_ini_avrge_unique))   # find distance matrix 
-hc <- hclust(d)                                   # apply hirarchical clustering 
-plot(hc)                                          # plot the dendrogram
+d <- dist(as.matrix(pca_data_ini_avrge_unique))    
+hc <- hclust(d, method = "ward.D2")               # Ward's minimum variance method (the objective function is the error sum of squares; the dissimilarities are squared before cluster updating) 
+plot(hc)                                          # plotting dendrogram
 #to plot rectangles
 rect.hclust(hc, 
             h = height2cut, #height where to cut
