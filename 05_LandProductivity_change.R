@@ -60,6 +60,7 @@ LandProd_change[SteadInd_SeasInt == 11 & SeasonIntegral_3classChange == 3] <- 21
 LandProd_change[SteadInd_SeasInt == 12 & SeasonIntegral_3classChange == 1] <- 22    #St4-high-No Change
 LandProd_change[SteadInd_SeasInt == 12 & SeasonIntegral_3classChange == 2] <- 22    #St4-high-Change 1 categ
 LandProd_change[SteadInd_SeasInt == 12 & SeasonIntegral_3classChange == 3] <- 22    #St4-high-Change 2 or more categs
+LandProd_change[is.na(SeasonIntegral_3classChange)] <- NA                                  # Check if this line is necessary here or not!!!
 LandProd_change
 
 
