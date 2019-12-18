@@ -45,6 +45,39 @@ writeRaster(LPD_CombAssess, paste0(path2saveTests, "/LPD_CombinedAssessment.tif"
 
 
 
+## Plotting a map ####
+
+jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 21, height = 30, units = "cm", res = 300)
+par(mar = c(11, 4, 6, 0), mfrow = c(1, 1))
+pal <- colorRampPalette(c("red", "orange", "yellow", "greenyellow", "lightskyblue", "royalblue3"))
+categs <- c("1(d): Declining land productivity",
+            "2(ew): Early signs of decline of land productivity",
+            "3(nf): Negative fluctuation (stable, but stressed land prod.)",
+            "4(pf): Positive fluctuation (stable, not stressed land prod.)",
+            "5(i): Increasing land productivity",
+            "6(si): Strongly increasing land productivity"
+            )
+
+par(xpd = FALSE)
+plot(LPD_CombAssess, col = pal(6), legend = FALSE) 
+par(xpd = TRUE)
+title(main = "Land Productivity Dynamics:\nCombined Assessment", 
+      outer = TRUE,
+      #adj = 0,
+      line = - 4.5,
+      cex.main = 2)
+
+#plot(0,type='n', axes=FALSE, ann=FALSE)
+
+legend("bottom",
+       #x = - 30, y = 30,
+       ncol = 1,
+       legend = categs,
+       fill = pal(6), inset = - 0.23
+       )
+
+dev.off()
+
 
 
 
