@@ -13,6 +13,7 @@ load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE
 #var2process_name <- "SeasonLenght"
 var2process <- SeasonIntegral
 var2process_name <- "SeasonIntegral"
+var2process_name <- "SeasonIntegral_OldData"
 
 dim(var2process)
 is.array(var2process)
@@ -28,6 +29,8 @@ var2process
 #jpeg(paste0(path2saveTests, "/", var2process_name, ".jpg"))
 #plot(var2process)
 #dev.off()
+
+if(grepl("OldData", var2process_name))  assign(var2process_name, si); var2process <- SeasonIntegral_OldData
 
 years <- nlayers(var2process)   #1999 - 2013
 
