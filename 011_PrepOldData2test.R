@@ -50,15 +50,25 @@ for (vbl in vrbls_lst){
   assign(vbl, varbl)
 }
 
-for (vbl in vrbls_lst){
-  print(vbl)
-  kk <- get(vbl)
-  print(summary(getValues(kk[[1]])))
-  rm(kk)
-}
+#for (vbl in vrbls_lst){
+#  print(vbl)
+#  kk <- get(vbl)
+#  print(summary(getValues(kk[[1]])))
+#  rm(kk)
+#}
 
 dataType(si)
+si
 
+kk <- getValues(si$X1999)
+summary(kk)
+sum(kk < -32767)
+sum(kk < -10000)
+sum(kk > 32766)
+sum(kk > 10000)
+
+summary(getValues(sed$X1999))
+sum(getValues(sed$X1999) < -365)
 
 
 # extent: -11.16071, 27.05357, 33.66964, 71.13393  (xmin, xmax, ymin, ymax)
@@ -76,15 +86,18 @@ dataType(si)
 
 
 
+save(list = vrbls_lst, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+#load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
 
 
 
 
 
+varbl_simask <- stack(paste0(path2old_data, "si9913mskd.bil"))
+names(varbl_simask) <- 1999:2013
+varbl_simask
 
-
-
-
+summary(getValues(varbl_simask$X1999))
 
 
 

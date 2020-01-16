@@ -2,7 +2,13 @@
 #### Standing Biomass State Change  ####
 
 #rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
-source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+if(Sys.info()[4] == "D01RI1700371"){
+   source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+}else if(Sys.info()[4] == "h05-wad.ies.jrc.it"){
+   source("/home/rotllxa/LPD/LPD/00_settings.R")
+}else{
+   stop("Define your machine before to run LPD")
+}
 
 
 ## Reading in data (Season_Integral) ####

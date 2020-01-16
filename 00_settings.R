@@ -34,9 +34,9 @@ if(Iam == "PCxavi"){
   path2saveTests <- paste0(path2project, "/kk")
   path2tempResults <- paste0(path2project, "/temp_results")
 }else if(Iam == "Server05wad"){
-  path2project <- "home/rotllxa/LPD"
+  path2project <- "/home/rotllxa/LPD"
   path2data <- "/home/rotllxa/phenolo_res"
-  path2old_data <- "X:\\RS\\DER_TS\\PHENOL\\SPOT\\INDICIES/"
+  path2old_data <- "/wad-1/RS/DER_TS/PHENOL/SPOT/INDICIES/"
   path2saveTests <- paste0(path2project, "/kk")
   path2tempResults <- paste0(path2project, "/temp_results")
 }
