@@ -167,7 +167,9 @@ writeRaster(var2process_3class, paste0(path2saveTests, "/SeasonIntegral_3class_b
 assign(paste0(var2process_name, "_10class"), var2process_10class)
 assign(paste0(var2process_name, "_class10_stats"), var2process_class10_stats)
 assign(paste0(var2process_name, "_3class"), var2process_3class)
-stuff2save <- c(stuff2save, "pix_categs1", "SeasonIntegral_10class", "SeasonIntegral_class10_stats", "pix_categs2", "SeasonIntegral_3class")
+stuff2save <- c(stuff2save, "pix_categs1", paste0(var2process_name, "_10class"), 
+                paste0(var2process_name, "_class10_stats"), "pix_categs2", 
+                paste0(var2process_name, "_3class"))
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 
@@ -193,7 +195,7 @@ dev.off()
 ## Combining Steadiness Index with baseline levels for Standing Biomass ####
 
 load(file = paste0(path2tempResults, "/results_Step2.RData"), verbose = TRUE)
-rm(SeasonLenght, slope_rstr, mtid_rstr)
+rm(slope_rstr, mtid_rstr)
 
 SteadInd_SeasInt <- raster(var2process_3class)
 
