@@ -136,12 +136,24 @@ cleanSI <- "y"
 
 if(cleanSI == "y"){
   si_clean <- si
-  si_clean[si_clean <= 0] <- NA
-  si_clean[si_clean >= 7000] <- NA   # this is a bit random
+  #si_clean[si_clean <= 0] <- NA
+  #si_clean[si_clean >= 7000] <- NA   # this is a bit random
+  
+  valsM <- max(maxValue(si_clean))
+  valsm <- min(minValue(si_clean))
+  
+  rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
+  #si_clean <- reclassify(si_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  
+  t0 <- Sys.time()
+  beginCluster()   # it uses n - 1 clusters
+  si_clean <- clusterR(si_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  endCluster()
+  
   stuff2save <- c(vrbls_lst, si_clean)
+  
 }else{
   stuff2save <- vrbls_lst
-  
 }
 
 
@@ -152,11 +164,11 @@ save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011
 
 
 
-varbl_simask <- stack(paste0(path2old_data, "si9913mskd.bil"))
-names(varbl_simask) <- 1999:2013
-varbl_simask
-
-summary(getValues(varbl_simask$X1999))
+#varbl_simask <- stack(paste0(path2old_data, "si9913mskd.bil"))
+#names(varbl_simask) <- 1999:2013
+#varbl_simask
+#
+#summary(getValues(varbl_simask$X1999))
 
 
 

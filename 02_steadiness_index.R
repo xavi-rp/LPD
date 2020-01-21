@@ -37,15 +37,15 @@ if(grepl("OldData", var2process_name)){
   var2process
 } 
 
-summary(getValues(var2process$X1999))
-kk <- getValues(var2process$X1999)
-length(kk) #591655680
-sum(kk < -32760) #28
-sum(kk < -365) #159240
-sum(kk < -100) #324500
-sum(kk < 0) #685488
-sum(kk == 0) #416685362
-sum(kk > 0) #174284830
+#summary(getValues(var2process$X1999))
+#kk <- getValues(var2process$X1999)
+#length(kk) #591655680
+#sum(kk < -32760) #28
+#sum(kk < -365) #159240
+#sum(kk < -100) #324500
+#sum(kk < 0) #685488
+#sum(kk == 0) #416685362
+#sum(kk > 0) #174284830
 
 
 
@@ -164,10 +164,9 @@ t0 <- Sys.time()
 beginCluster()   # it uses n - 1 clusters
 mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
 endCluster()
-print("MTID calculated in: ")
-print(Sys.time() - t0)
+print(paste0("MTID calculated in: ", (Sys.time() - t0)))
 
-summary(getValues(mtid_rstr))
+#summary(getValues(mtid_rstr))
 
 stuff2save <- c(stuff2save, "mtid_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))

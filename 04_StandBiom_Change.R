@@ -12,14 +12,54 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 
 ## Reading in data (Season_Integral) ####
-load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
-rm(SeasonIntegral, lon, lat)
+var2process_name <- "SeasonIntegral"
+var2process_name <- "SeasonIntegral_OldData"
+
+
+if(grepl("OldData", var2process_name)){
+   load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+   assign(var2process_name, si)
+   var2process <- SeasonIntegral_OldData 
+   
+}else{
+   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
+   load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
+   
+   ## Normalising data set (0-1) 
+   do_normalize <- "no"
+   
+   if(grepl("^[Yy]", do_normalize)){
+      #range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
+      
+      SeasonIntegral_01 <- range01(SeasonIntegral, na.rm = TRUE)
+      dim(SeasonIntegral_01)
+      summary(as.vector(SeasonIntegral_01[, , 1]))
+      
+      hist(SeasonIntegral, breaks=10)
+      hist(SeasonIntegral_01[, , 1], breaks=10)
+      hist(SeasonIntegral_01, breaks=10)
+      
+      sum(is.na(SeasonIntegral_01[ , , 3]))
+   }else{
+      SeasonIntegral_01 <- SeasonIntegral
+   }
+   
+   
+   ## to a raster brick
+   var2process <- brick(SeasonIntegral_01)
+   var2process <- t(var2process)
+   extent(var2process) <- c(range(lon),  range(lat))
+   var2process
+   
+} 
+
+
 
 load(paste0(path2tempResults, "/results_Step3.RData"), verbose = TRUE)
-rm(SeasonIntegral_01_avg13, SeasonIntegral_class10_stats, pix_categs2, SeasonIntegral_3class, SteadInd_SeasInt)
+#rm(SeasonIntegral_01_avg13, SeasonIntegral_class10_stats, pix_categs2, SeasonIntegral_3class, SteadInd_SeasInt)
 
-SeasonIntegral_01
-SeasonIntegral_10class_begin <- SeasonIntegral_10class
+var2process
+assign(paste0(var2process_name, "_10class_begin"), get(paste0(var2process_name, "_10class")))
 
 
 ## Averaging last 3 years ####
@@ -27,13 +67,15 @@ SeasonIntegral_10class_begin <- SeasonIntegral_10class
 #with parallelization           
 t0 <- Sys.time()
 beginCluster()   # it uses n - 1 clusters
-num_yrs <- dim(SeasonIntegral_01)[3]
+num_yrs <- dim(var2process)[3]
 yrs <- ((num_yrs) - 2):(num_yrs)
-SeasonIntegral_01_avgLast3 <- clusterR(SeasonIntegral_01, calc, args = list(fun = mean_years_function), export = "yrs")
+#SeasonIntegral_01_avgLast3 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
+var2process_avgLast3 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
 endCluster()
 Sys.time() - t0
 
-stuff2save <- c("SeasonIntegral_01", "SeasonIntegral_10class_begin", "SeasonIntegral_01_avgLast3")
+assign(paste0(var2process_name, "_avgLast3"), var2process_avgLast3)
+stuff2save <- c(var2process_name , paste0(var2process_name, "_10class_begin"), paste0(var2process_name, "_avgLast3"))
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step4.RData"))
 
 
@@ -42,30 +84,33 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step4.RData"))
 # using same thresholds of average-first-3 to be consistent when calculating category shifts 
 
 pix_categs1[1, 1] <- 0
-pix_categs1[nrow(pix_categs1), 2] <- max(getValues(SeasonIntegral_01_avgLast3), na.rm = TRUE) + 1
-SeasonIntegral_10class_end <- reclassify(SeasonIntegral_01_avgLast3, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
-SeasonIntegral_10class_end
-writeRaster(SeasonIntegral_10class_end, paste0(path2saveTests, "/SeasonIntegral_10class_end.tif"), overwrite = TRUE)
+pix_categs1[nrow(pix_categs1), 2] <- max(getValues(var2process_avgLast3), na.rm = TRUE) + 1
+var2process_10class_end <- reclassify(var2process_avgLast3, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
+var2process_10class_end
+writeRaster(var2process_10class_end, paste0(path2saveTests, "/SeasonIntegral_10class_end.tif"), overwrite = TRUE)
 
 
 ## Calculating Standing Biomass change (difference begin - end; reclassifying into 3 categories)
-SeasonIntegral_10class_dif <- SeasonIntegral_10class_begin - SeasonIntegral_10class_end
-SeasonIntegral_10class_dif
-unique(getValues(SeasonIntegral_10class_dif))
-table(getValues(SeasonIntegral_10class_dif))
-writeRaster(SeasonIntegral_10class_dif, paste0(path2saveTests, "/SeasonIntegral_10class_dif.tif"), overwrite = TRUE)
+var2process_10class_dif <- get(paste0(var2process_name, "_10class_begin")) - var2process_10class_end
+var2process_10class_dif
+#unique(getValues(var2process_10class_dif))
+#table(getValues(var2process_10class_dif))
+writeRaster(var2process_10class_dif, paste0(path2saveTests, "/SeasonIntegral_10class_dif.tif"), overwrite = TRUE)
 
 pix_categs3 <- as.data.frame(matrix(nrow = 5, ncol = 0))
 pix_categs3$from    <- c(-10, -1.5, -0.5, 0.5, 1.5)
 pix_categs3$to      <- c( -2,   -1,    0,   1,   9)
 pix_categs3$becomes <- c(  3,    2,    1,   2,   3)
 
-SeasonIntegral_3classChange <- reclassify(SeasonIntegral_10class_dif, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
-SeasonIntegral_3classChange
-writeRaster(SeasonIntegral_3classChange, paste0(path2saveTests, "/SeasonIntegral_3classChange.tif"), overwrite = TRUE)
+var2process_3classChange <- reclassify(var2process_10class_dif, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
+var2process_3classChange
+writeRaster(var2process_3classChange, paste0(path2saveTests, "/SeasonIntegral_3classChange.tif"), overwrite = TRUE)
 
 
-stuff2save <- c(stuff2save, "SeasonIntegral_3classChange", "SeasonIntegral_10class_end", "SeasonIntegral_10class_dif")
+assign(paste0(var2process_name, "_3classChange"), var2process_3classChange)
+assign(paste0(var2process_name, "_10class_end"), var2process_10class_end)
+assign(paste0(var2process_name, "_10class_dif"), var2process_10class_dif)
+stuff2save <- c(stuff2save, paste0(var2process_name, "_3classChange"), paste0(var2process_name, "_10class_end"), paste0(var2process_name, "_10class_dif"))
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step4.RData"))
 
 
@@ -77,7 +122,7 @@ par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
 pal <- colorRampPalette(c("wheat2", "skyblue2", "blue"))
 categs <- c("No Change", "Changed 1 categ", expression("Changed" >= "2 categs"))
 par(xpd = FALSE)
-plot(SeasonIntegral_3classChange, col = pal(3), legend = FALSE) 
+plot(var2process_3classChange, col = pal(3), legend = FALSE) 
 par(xpd = TRUE)
 title(main = "Class Change for the Standing Biomass", 
       outer = TRUE,
@@ -89,11 +134,11 @@ legend("bottom",
        legend = categs,
        fill = pal(3), inset = - 0.25)
 
-if((length(time) - 2) == dim(SeasonIntegral_01)[3]){
+if((length(time) - 2) == dim(var2process)[3]){
    y2plot <- time[-c(1,length(time))]
    y2plot_beg <- y2plot[1:3][c(1,length(yrs))]
    y2plot_end <- y2plot[yrs][c(1,length(yrs))]
-}else if((length(time)) == dim(SeasonIntegral)[3]){
+}else if((length(time)) == dim(var2process)[3]){
    y2plot_beg <- time[c(1, 3)]
    y2plot_end <- time[c((length(time) - 2), length(time))]
 }else{
@@ -114,7 +159,7 @@ mtext(y2plot_end,
       cex = 0.8)
 #dev.off()
 
-cont_table <- as.data.frame(table(getValues(SeasonIntegral_3classChange)))
+cont_table <- as.data.frame(table(getValues(var2process_3classChange)))
 cont_table$Var1 <- categs
 names(cont_table)[1] <- "StandBiomass_change"
 #cont_table
