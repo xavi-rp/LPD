@@ -57,18 +57,63 @@ for (vbl in vrbls_lst){
 #  rm(kk)
 #}
 
-dataType(si)
-si
+#dataType(si)
+#si
+#
+#
+#kk <- getValues(si$X1999)
+#summary(kk)
+#length(kk)
+#sum(kk == 0)
+#sum(kk < -32767)
+#sum(kk < -10000) / length(kk)
+#sum(kk < 0) / length(kk)
+#sum(kk < 494) / length(kk)
+#sum(kk > 32766)
+#sum(kk > 10000)
+#
+#summary(getValues(sed$X1999))
+#sum(getValues(sed$X1999) < -365)
+#
+#jpeg(paste0(path2saveTests, "\\si_raw.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
+#plot(si$X1999)
+#dev.off()
+#writeRaster(si$X1999, paste0(path2saveTests, "/si_raw.tif"), overwrite = TRUE)
+#
+#si_clean <- si$X1999
+#si_clean[si_clean == 0 ] <- NA
+#si_clean[si_clean < -32767] <- NA
+#si_clean[si_clean > 32766] <- NA
+#
+#summary(getValues(si_clean))
+#quantile(getValues(si_clean), 0.25, na.rm = TRUE)  # 495
+#quantile(getValues(si_clean), 0.01, na.rm = TRUE)  # 33
+#quantile(getValues(si_clean), 0.001, na.rm = TRUE) # -343
+#quantile(getValues(si_clean), 0.005, na.rm = TRUE) # 15
+#
+#
+#si_clean <- si$X1999
+#si_clean[si_clean <= 0 ] <- NA
+#
+#quantile(getValues(si_clean), 0.90, na.rm = TRUE)  # 1658
+#quantile(getValues(si_clean), 0.95, na.rm = TRUE)  # 1820
+#quantile(getValues(si_clean), 0.99, na.rm = TRUE)  # 2189
+#quantile(getValues(si_clean), 0.999, na.rm = TRUE)  # 2775
+#quantile(getValues(si_clean), 0.9999, na.rm = TRUE)  # 27003 
+#quantile(getValues(si_clean), 0.9995, na.rm = TRUE)  # 6474 
+#
+#
+#si_clean <- si$X1999
+#si_clean[si_clean <= 0] <- NA
+#si_clean[si_clean >= 7000] <- NA   # this is a bit random
+#
+#
+#jpeg(paste0(path2saveTests, "\\si_clean.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
+#plot(si_clean)
+#dev.off()
+#writeRaster(si_clean, paste0(path2saveTests, "/si_clean.tif"), overwrite = TRUE)
 
-kk <- getValues(si$X1999)
-summary(kk)
-sum(kk < -32767)
-sum(kk < -10000)
-sum(kk > 32766)
-sum(kk > 10000)
 
-summary(getValues(sed$X1999))
-sum(getValues(sed$X1999) < -365)
 
 
 # extent: -11.16071, 27.05357, 33.66964, 71.13393  (xmin, xmax, ymin, ymax)
@@ -86,7 +131,21 @@ sum(getValues(sed$X1999) < -365)
 
 
 
-save(list = vrbls_lst, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+## Cleaning SI variable ####
+cleanSI <- "y"
+
+if(cleanSI == "y"){
+  si_clean <- si
+  si_clean[si_clean <= 0] <- NA
+  si_clean[si_clean >= 7000] <- NA   # this is a bit random
+  stuff2save <- c(vrbls_lst, si_clean)
+}else{
+  stuff2save <- vrbls_lst
+  
+}
+
+
+save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
 
 
