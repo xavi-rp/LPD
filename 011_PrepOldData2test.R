@@ -15,7 +15,6 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 
 
-
 ## Reading in data ####
 
 vrbls_lst <- list.files(path2old_data, pattern = ".bil$", full.names = FALSE)
@@ -34,7 +33,7 @@ vrbls_lst
 
 # sl9913.bil -> Season Length *
 
-# mi9913.bil -> Minimum Integral *
+# mi9913.bil -> Minimum Integral (also called Standing Biomass - SB) *
 
 # apl9913.bil -> Autocorrelation_peak_lag (???)
 
@@ -49,6 +48,9 @@ for (vbl in vrbls_lst){
   names(varbl) <- 1999:2013
   assign(vbl, varbl)
 }
+
+stuff2save <- vrbls_lst
+
 
 #for (vbl in vrbls_lst){
 #  print(vbl)
@@ -70,7 +72,7 @@ for (vbl in vrbls_lst){
 #sum(kk < 0) / length(kk)
 #sum(kk < 494) / length(kk)
 #sum(kk > 32766)
-#sum(kk > 10000)
+#sum(kk > 10000) / length(kk)
 #
 #summary(getValues(sed$X1999))
 #sum(getValues(sed$X1999) < -365)
@@ -137,7 +139,7 @@ cleanSI <- "y"
 if(cleanSI == "y"){
   si_clean <- si
   #si_clean[si_clean <= 0] <- NA
-  #si_clean[si_clean >= 7000] <- NA   # this is a bit random
+  #si_clean[si_clean >= 7000] <- NA   # this represents about 99.95% of pixels
   
   valsM <- max(maxValue(si_clean))
   valsm <- min(minValue(si_clean))
@@ -146,14 +148,45 @@ if(cleanSI == "y"){
   #si_clean <- reclassify(si_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
   
   t0 <- Sys.time()
-  beginCluster()   # it uses n - 1 clusters
+  beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
   si_clean <- clusterR(si_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
   endCluster()
+  print(paste0("Reclassification made in: ", (Sys.time() - t0)))
   
-  stuff2save <- c(vrbls_lst, si_clean)
+  stuff2save <- c(stuff2save, "si_clean")
   
 }else{
-  stuff2save <- vrbls_lst
+  stuff2save <- stuff2save
+}
+
+save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+#load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+
+
+
+cleanMI <- "y"
+
+if(cleanMI == "y"){
+  mi_clean <- mi
+  #mi_clean[mi_clean <= 0] <- NA
+  #mi_clean[mi_clean >= 7000] <- NA   # # this represents about 99.95% of pixels
+  
+  valsM <- max(maxValue(mi_clean))
+  valsm <- min(minValue(mi_clean))
+  
+  rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
+  #mi_clean <- reclassify(mi_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  
+  t0 <- Sys.time()
+  beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
+  mi_clean <- clusterR(mi_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  endCluster()
+  print(paste0("Reclassification made in: ", (Sys.time() - t0)))
+  
+  stuff2save <- c(stuff2save, "mi_clean")
+  
+}else{
+  stuff2save <- stuff2save
 }
 
 

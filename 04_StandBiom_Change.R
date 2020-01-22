@@ -12,9 +12,6 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 
 ## Reading in data (Season_Integral) ####
-var2process_name <- "SeasonIntegral"
-var2process_name <- "SeasonIntegral_OldData"
-
 
 if(grepl("OldData", var2process_name)){
    load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
@@ -66,7 +63,7 @@ assign(paste0(var2process_name, "_10class_begin"), get(paste0(var2process_name, 
 
 #with parallelization           
 t0 <- Sys.time()
-beginCluster()   # it uses n - 1 clusters
+beginCluster(cors2use)   
 num_yrs <- dim(var2process)[3]
 yrs <- ((num_yrs) - 2):(num_yrs)
 #SeasonIntegral_01_avgLast3 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")

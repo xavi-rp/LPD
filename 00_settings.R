@@ -42,9 +42,23 @@ if(Iam == "PCxavi"){
 }
 
 
-#nc file
+# nc file
 nc_file <- "europe.nc"
 
+## Setting the data set to use ####
+#var2process <- SeasonLenght
+#var2process_name <- "SeasonLenght"
+var2process_name <- "SeasonIntegral"
+var2process_name <- "SeasonIntegral_OldData" # This is an old data set which might be the one used by Ivits in 2013, although there's no Standing Biomass (SB) variable
+
+
+# Number of available cores for parallel processing
+avlble_cors <- detectCores()
+if(avlble_cors == 4){
+  cors2use <- 3
+}else{
+  cors2use <- ceiling(avlble_cors / 1.5)
+}
 
 ## Sourcing functions ####
 source(paste0(path2project, "/LPD/001_functions.R"))

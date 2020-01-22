@@ -11,20 +11,14 @@ if(Sys.info()[4] == "D01RI1700371"){
 }
 
 
-## Setting the data set to use ####
-#var2process <- SeasonLenght
-#var2process_name <- "SeasonLenght"
-var2process_name <- "SeasonIntegral"
-var2process_name <- "SeasonIntegral_OldData"
-
-
 
 ## Reading in data (season integral) ####
 
 if(grepl("OldData", var2process_name)){
   load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-  assign(var2process_name, si)
-  var2process <- SeasonIntegral_OldData     
+  assign(var2process_name, si_clean)
+  var2process <- SeasonIntegral_OldData  
+  print("processing 'si_clean")
 }else{
   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
   load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
@@ -34,7 +28,7 @@ if(grepl("OldData", var2process_name)){
   var2process <- brick(var2process)
   var2process <- t(var2process)
   extent(var2process) <- c(range(lon),  range(lat))
-  var2process
+  print("processing 'SeasonIntegral'")
 } 
 
 #summary(getValues(var2process$X1999))
@@ -70,15 +64,15 @@ yrs <- 1:years
 
 
 #with parallelization                         # It takes 1 hour (0.5h after 0 to NA)
-Sys.getenv("NUMBER_OF_PROCESSORS")
+detectCores()
 
 t0 <- Sys.time()
-beginCluster()   # it uses n - 1 clusters
+beginCluster(cors2use)   
 #slope_rstr_SL <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
 slope_rstr <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
 endCluster()
-print("Slope calculated in: ")
-print(Sys.time() - t0)
+print(paste0("Slope calculated in: ", (Sys.time() - t0)))
+cat("Slope calculated in: ",(Sys.time() - t0), "\n")
 
 
 stuff2save <- c(var2process_name, "slope_rstr")
@@ -161,7 +155,7 @@ if(rning_plts == "y"){
 
 #with parallelization           
 t0 <- Sys.time()
-beginCluster()   # it uses n - 1 clusters
+beginCluster(cors2use)   
 mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
 endCluster()
 print(paste0("MTID calculated in: ", (Sys.time() - t0)))
