@@ -49,7 +49,7 @@ nc_file <- "europe.nc"
 #var2process <- SeasonLenght
 #var2process_name <- "SeasonLenght"
 var2process_name <- "SeasonIntegral"
-var2process_name <- "SeasonIntegral_OldData" # This is an old data set which might be the one used by Ivits in 2013, although there's no Standing Biomass (SB) variable
+var2process_name <- "StandingBiomass_OldData" # This is an old data set which might be the one used by Ivits in 2013 (SB = MI)
 
 
 # Number of available cores for parallel processing

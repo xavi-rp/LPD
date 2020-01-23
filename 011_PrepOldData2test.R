@@ -137,27 +137,34 @@ stuff2save <- vrbls_lst
 cleanSI <- "y"
 
 if(cleanSI == "y"){
-  si_clean <- si
+  #si_clean <- si
   #si_clean[si_clean <= 0] <- NA
   #si_clean[si_clean >= 7000] <- NA   # this represents about 99.95% of pixels
   
-  valsM <- max(maxValue(si_clean))
-  valsm <- min(minValue(si_clean))
+  #si_clean <- crop(si_clean, extent(-11.16071, 27.05357, 33.66964, 71.13393))
+  
+  valsM <- max(maxValue(si))
+  valsm <- min(minValue(si))
   
   rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
   #si_clean <- reclassify(si_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
   
   t0 <- Sys.time()
   beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
-  si_clean <- clusterR(si_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  si_clean <- clusterR(si, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
   endCluster()
-  print(paste0("Reclassification made in: ", (Sys.time() - t0)))
+  print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   
   stuff2save <- c(stuff2save, "si_clean")
   
 }else{
   stuff2save <- stuff2save
 }
+
+
+#jpeg(paste0(path2saveTests, "\\si_clean.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
+#plot(si_clean_01[[1]])
+#dev.off()
 
 save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
@@ -167,21 +174,21 @@ save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011
 cleanMI <- "y"
 
 if(cleanMI == "y"){
-  mi_clean <- mi
+  #mi_clean <- mi
   #mi_clean[mi_clean <= 0] <- NA
   #mi_clean[mi_clean >= 7000] <- NA   # # this represents about 99.95% of pixels
   
-  valsM <- max(maxValue(mi_clean))
-  valsm <- min(minValue(mi_clean))
+  valsM <- max(maxValue(mi))
+  valsm <- min(minValue(mi))
   
   rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
   #mi_clean <- reclassify(mi_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
   
   t0 <- Sys.time()
   beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
-  mi_clean <- clusterR(mi_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  mi_clean <- clusterR(mi, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
   endCluster()
-  print(paste0("Reclassification made in: ", (Sys.time() - t0)))
+  print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   
   stuff2save <- c(stuff2save, "mi_clean")
   
@@ -192,6 +199,20 @@ if(cleanMI == "y"){
 
 save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+
+#summary(getValues(mi_clean[[1]]))
+
+
+
+
+
+
+
+
+#jpeg(paste0(path2saveTests, "\\mi_clean.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
+#plot(mi_clean[[1]])
+#dev.off()
+#writeRaster(mi_clean$layer.1, paste0(path2saveTests, "/mi_clean.tif"), overwrite = TRUE)
 
 
 

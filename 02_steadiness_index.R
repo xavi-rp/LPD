@@ -12,17 +12,17 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 
 
-## Reading in data (season integral) ####
+## Reading in data (Standing Biomass) ####
 
 if(grepl("OldData", var2process_name)){
   load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-  assign(var2process_name, si_clean)
-  var2process <- SeasonIntegral_OldData  
-  print("processing 'si_clean")
+  assign(var2process_name, mi_clean)
+  var2process <- mi_clean  
+  print("processing 'mi_clean")
 }else{
   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
   load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
-  var2process <- SeasonIntegral
+  var2process <- SeasonIntegral   # It should use Standing Biomass!!
         
   ## Array to raster brick 
   var2process <- brick(var2process)
@@ -64,15 +64,14 @@ yrs <- 1:years
 
 
 #with parallelization                         # It takes 1 hour (0.5h after 0 to NA)
-detectCores()
+#detectCores()
 
 t0 <- Sys.time()
 beginCluster(cors2use)   
 #slope_rstr_SL <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
 slope_rstr <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
 endCluster()
-print(paste0("Slope calculated in: ", (Sys.time() - t0)))
-cat("Slope calculated in: ",(Sys.time() - t0), "\n")
+cat("Slope calculated in: ",(Sys.time() - t0), " ", attr((Sys.time() - t0), "units"), "\n")
 
 
 stuff2save <- c(var2process_name, "slope_rstr")
@@ -158,7 +157,7 @@ t0 <- Sys.time()
 beginCluster(cors2use)   
 mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
 endCluster()
-print(paste0("MTID calculated in: ", (Sys.time() - t0)))
+print(paste0("MTID calculated in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
 
 #summary(getValues(mtid_rstr))
 
