@@ -51,6 +51,9 @@ nc_file <- "europe.nc"
 var2process_name <- "SeasonIntegral"
 var2process_name <- "StandingBiomass_OldData" # This is an old data set which might be the one used by Ivits in 2013 (SB = MI)
 
+if(grepl("OldData", var2process_name)) vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+
+
 
 # Number of available cores for parallel processing
 avlble_cors <- detectCores()
@@ -58,6 +61,7 @@ if(avlble_cors == 4){
   cors2use <- 3
 }else{
   cors2use <- ceiling(avlble_cors / 1.5)
+  cors2use <- 61
 }
 
 ## Sourcing functions ####

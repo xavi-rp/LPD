@@ -41,15 +41,19 @@ vrbls_lst
 
 # status9913.bil -> Status.9813spotvgt30 (???); This has one year more (1998)
 
-vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+#vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
 
 for (vbl in vrbls_lst){
-  varbl <- stack(paste0(path2old_data, vbl, "9913.bil"))
+  varbl <- brick(paste0(path2old_data, vbl, "9913.bil"))
   names(varbl) <- 1999:2013
   assign(vbl, varbl)
 }
 
 stuff2save <- vrbls_lst
+
+## Cleaning variables??
+## This means giving NA to oceans (as 0 in th raw data set), removing outliers, etc
+clean_vrbls <- "y"
 
 
 #for (vbl in vrbls_lst){
@@ -133,16 +137,55 @@ stuff2save <- vrbls_lst
 
 
 
-## Cleaning SI variable ####
-cleanSI <- "y"
 
-if(cleanSI == "y"){
+## Cleaning MI variable ####
+
+if(clean_vrbls == "y"){
+  #mi_clean <- mi
+  #mi_clean[mi_clean <= 0] <- NA
+  #mi_clean[mi_clean >= 7000] <- NA   # # this represents about 99.95% of pixels
+  
+  valsM <- max(maxValue(mi))
+  valsm <- min(minValue(mi))
+  
+  rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
+  #mi_clean <- reclassify(mi_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  
+  t0 <- Sys.time()
+  beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
+  mi_clean <- clusterR(mi, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  endCluster()
+  print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
+  
+  stuff2save <- c(stuff2save, "mi_clean")
+  
+}else{
+  stuff2save <- stuff2save
+}
+
+writeRaster(mi_clean, paste0(path2tempResults, "/mi_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+#load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+
+#summary(getValues(mi_clean[[1]]))
+
+
+
+
+## Cleaning SI variable ####
+
+if(clean_vrbls == "y"){
   #si_clean <- si
   #si_clean[si_clean <= 0] <- NA
   #si_clean[si_clean >= 7000] <- NA   # this represents about 99.95% of pixels
   
   #si_clean <- crop(si_clean, extent(-11.16071, 27.05357, 33.66964, 71.13393))
   
+  if(any(dim(si) != dim(mi))){
+    crop(si, mi, filename = paste0(path2tempResults, "/si_crop.tif"))
+    si <- stack(paste0(path2tempResults, "/si_crop.tif"))
+  } 
+
   valsM <- max(maxValue(si))
   valsm <- min(minValue(si))
   
@@ -166,43 +209,130 @@ if(cleanSI == "y"){
 #plot(si_clean_01[[1]])
 #dev.off()
 
+writeRaster(si_clean, paste0(path2tempResults, "/si_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
 save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
 
 
 
-cleanMI <- "y"
 
-if(cleanMI == "y"){
-  #mi_clean <- mi
-  #mi_clean[mi_clean <= 0] <- NA
-  #mi_clean[mi_clean >= 7000] <- NA   # # this represents about 99.95% of pixels
+## Cleaning SL variable ####
+
+if(clean_vrbls == "y"){
+  sl_clean <- sl
   
-  valsM <- max(maxValue(mi))
-  valsm <- min(minValue(mi))
+  #summary(getValues(sl_clean$X1999))
+  #quantile(getValues(sl_clean$X1999), seq(0, 1, 0.1))
+  #length(getValues(sl_clean$X1999))      # 591600687
+  #sum(getValues(sl_clean$X1999) == 0)    # 188
+  #sum(getValues(sl_clean$X1999) < 0)     # 416623938
+  #sum(getValues(sl_clean$X1999) < -1)    # 637
+  #sum(getValues(sl_clean$X1999) == -1)    # 416623301   #This is the value for NA (oceans)
+  #quantile(getValues(sl_clean$X1999), 0.99)    # 295
+  #quantile(getValues(sl_clean$X1999), 0.9995)  # 363
+  #quantile(getValues(sl_clean$X1999), 0.9999)  # 420
+  #sum(getValues(sl_clean$X1999) > 420)  # 58638
+  #quantile(getValues(sl_clean$X1999), 0.99999) # 483
+  #sum(getValues(sl_clean$X1999) > 483)  # 5844
+  #sum(getValues(sl_clean$X1999) > 730)  # 0         # this is two full years season
+  #sum(getValues(sl_clean$X1999) > 365)  # 207245    # this is one full year season
   
-  rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
-  #mi_clean <- reclassify(mi_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  #sl_clean[sl_clean <= 0] <- NA
+  #sl_clean[sl_clean > 730] <- NA   # # this represents about ???% of pixels
+  
+  valsM <- max(maxValue(sl))
+  valsm <- min(minValue(sl))
+  
+  rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(731, (valsM + 1), NA)))
+  #sl_clean <- reclassify(sl_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
   
   t0 <- Sys.time()
   beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
-  mi_clean <- clusterR(mi, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  sl_clean <- clusterR(sl, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
   endCluster()
   print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   
-  stuff2save <- c(stuff2save, "mi_clean")
+  stuff2save <- c(stuff2save, "sl_clean")
   
 }else{
   stuff2save <- stuff2save
 }
 
-
+writeRaster(sl_clean, paste0(path2tempResults, "/sl_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
 save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
 
-#summary(getValues(mi_clean[[1]]))
 
 
+
+## Cleaning SBD variable ####
+
+if(clean_vrbls == "y"){
+  #sbd_clean <- sbd
+  #summary(getValues(sbd_clean$X1999))
+  #quantile(getValues(sbd_clean$X1999), seq(0, 1, 0.1))
+  #quantile(getValues(sbd_clean), seq(0, 1, 0.1), na.rm = TRUE)
+  #sum(getValues(sbd_clean$sbd_crop.1) < -356, na.rm = TRUE)
+  
+  sbd_clean <- mask(sbd, mask = mi_clean)
+  #writeRaster(sbd_clean, paste0(path2tempResults, "/sbd_crop.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+  
+  #valsM <- max(maxValue(sbd_clean))
+  #valsm <- min(minValue(sbd_clean))
+  #
+  #rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
+  ##sbd_clean <- reclassify(sbd_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  #
+  #t0 <- Sys.time()
+  #beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
+  #sbd_clean <- clusterR(sbd_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  #endCluster()
+  #print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
+  
+  stuff2save <- c(stuff2save, "sbd_clean")
+  
+}else{
+  stuff2save <- stuff2save
+}
+
+writeRaster(sbd_clean, paste0(path2tempResults, "/sbd_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+#load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+
+
+
+## Cleaning SED variable ####
+
+if(clean_vrbls == "y"){
+  #sed_clean <- sed
+  #quantile(getValues(sed_clean$X1999), seq(0, 1, 0.1))
+  #sum(getValues(sed_clean$X1999) < -356, na.rm = TRUE)
+  
+
+  sed_clean <- mask(sed, mask = mi_clean)
+  #writeRaster(sed_clean, paste0(path2tempResults, "/sed_crop.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+  
+  #valsM <- max(maxValue(sed))
+  #valsm <- min(minValue(sed))
+  #
+  #rclsf <- t(data.frame(c((valsm - 1), 0, NA), c(7000, (valsM + 1), NA)))
+  ##sed_clean <- reclassify(sed_clean, rcl = rclsf, include.lowest = TRUE, right = TRUE)
+  #
+  #t0 <- Sys.time()
+  #beginCluster(cors2use)   # beginCluster() uses n - 1 clusters
+  #sed_clean <- clusterR(sed, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
+  #endCluster()
+  #print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
+  #
+  stuff2save <- c(stuff2save, "sed_clean")
+  
+}else{
+  stuff2save <- stuff2save
+}
+
+writeRaster(sed_clean, paste0(path2tempResults, "/sed_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
+#load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
 
 
 

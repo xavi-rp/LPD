@@ -1,5 +1,5 @@
 
-#### Steadiness Index I: Tendency of the change ####
+#### Steadiness Index ####
 
 #rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
 if(Sys.info()[4] == "D01RI1700371"){
@@ -10,25 +10,27 @@ if(Sys.info()[4] == "D01RI1700371"){
   stop("Define your machine before to run LPD")
 }
 
+cat("Calculating Steadiness Index (Step 02)... ", "\n")
 
 
 ## Reading in data (Standing Biomass) ####
 
 if(grepl("OldData", var2process_name)){
-  load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+  #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+  mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
   assign(var2process_name, mi_clean)
   var2process <- mi_clean  
-  print("processing 'mi_clean")
+  cat("processing 'mi_clean'... ", "\n")
 }else{
   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
-  load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
+  load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE) ## It should be Standing Biomass (MI)!!!
   var2process <- SeasonIntegral   # It should use Standing Biomass!!
         
   ## Array to raster brick 
   var2process <- brick(var2process)
   var2process <- t(var2process)
   extent(var2process) <- c(range(lon),  range(lat))
-  print("processing 'SeasonIntegral'")
+  cat("processing 'SeasonIntegral'...", "\n")
 } 
 
 #summary(getValues(var2process$X1999))
@@ -76,7 +78,7 @@ cat("Slope calculated in: ",(Sys.time() - t0), " ", attr((Sys.time() - t0), "uni
 
 stuff2save <- c(var2process_name, "slope_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
-writeRaster(slope_rstr, paste0(path2saveTests, "/slope_raster.tif"), overwrite = TRUE)
+writeRaster(slope_rstr, paste0(path2tempResults, "/slope_raster.tif"), overwrite = TRUE)
 
 
 # some tests...
@@ -157,13 +159,13 @@ t0 <- Sys.time()
 beginCluster(cors2use)   
 mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
 endCluster()
-print(paste0("MTID calculated in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
+cat("MTID calculated in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units"), "\n")
 
 #summary(getValues(mtid_rstr))
 
 stuff2save <- c(stuff2save, "mtid_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
-writeRaster(mtid_rstr, paste0(path2saveTests, "/mtid_raster.tif"), overwrite = TRUE)
+writeRaster(mtid_rstr, paste0(path2tempResults, "/mtid_raster.tif"), overwrite = TRUE)
 
 
 # plotting for report
@@ -205,7 +207,7 @@ Sys.time() - t0
 #crs(SteadInd_rstr) <- CRS("+init=EPSG:4326")
 stuff2save <- c(stuff2save, "SteadInd_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
-writeRaster(SteadInd_rstr, paste0(path2saveTests, "/SteadInd_raster.tif"), overwrite = TRUE)
+writeRaster(SteadInd_rstr, paste0(path2tempResults, "/SteadInd_raster.tif"), overwrite = TRUE)
 
 
 # plotting for report

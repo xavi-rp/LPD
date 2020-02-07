@@ -10,18 +10,23 @@ if(Sys.info()[4] == "D01RI1700371"){
   stop("Define your machine before to run LPD")
 }
 
+cat("Calculating base line levels (Step 03)... ", "\n")
 
-## Reading in data (Season_Integral) ####
+## Reading in data (Standing Biomass) ####
 
 
 if(grepl("OldData", var2process_name)){
-  load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-  assign(var2process_name, si)
-  var2process <- SeasonIntegral_OldData 
+  #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
+  mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
+  assign(var2process_name, mi_clean)
+  var2process <- mi_clean  
+  cat("processing 'mi_clean'... ", "\n")
   
 }else{
   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
   load(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), verbose = TRUE)
+  cat("processing 'SeasonIntegral'... ", "\n")
+  
 
   ## Normalising data set (0-1) 
   do_normalize <- "no"
@@ -29,7 +34,7 @@ if(grepl("OldData", var2process_name)){
   if(grepl("^[Yy]", do_normalize)){
     #range01 <- function(x, ...){(x - min(x, ...)) / (max(x, ...) - min(x, ...))}
     
-    SeasonIntegral_01 <- range01(SeasonIntegral, na.rm = TRUE)
+    SeasonIntegral_01 <- range01(SeasonIntegral, na.rm = TRUE)   # This has to be Standing Biomass!!!
     dim(SeasonIntegral_01)
     summary(as.vector(SeasonIntegral_01[, , 1]))
     
@@ -61,6 +66,8 @@ if(grepl("OldData", var2process_name)){
 #plot(SeasonIntegral_01[[1]])
 #dev.off()
 
+#summary(getValues(mi_clean$layer.1))
+
 
 ## Averaging ####
 
@@ -70,7 +77,8 @@ beginCluster(cors2use)
 yrs <- 1:3
 var2process_avg13 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
 endCluster()
-Sys.time() - t0
+cat("Average calculated in: ",(Sys.time() - t0), " ", attr((Sys.time() - t0), "units"), "\n")
+
 
 assign(paste0(var2process_name, "_avg13"), var2process_avg13)
 stuff2save <- c(var2process_name, paste0(var2process_name, "_avg13"))
@@ -78,12 +86,23 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 
 #some checks...
-jpeg(paste0(path2saveTests, "\\SeasonIntegral_avg13.jpg"))
-plot(var2process_avg13)
-dev.off()
+rning_tsts <- "n"
+rning_tsts <- "y"
+if(rning_tsts == "y"){
+  chk_avg <- round(mean(as.vector(var2process[7336, 20159][1:3])), 0) == round(as.vector(var2process_avg13[7336, 20159]), 0) # has to be TRUE
+  if(chk_avg != TRUE) stop("Something wrong in the averaging process")
+}
 
-chk_avg <- round(mean(var2process[2900, 1900][1:3]), 4) == round(var2process_avg13[2900, 1900], 4) # has to be TRUE
-if(chk_avg != TRUE) stop("Something wrong in the averaging process")
+
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  jpeg(paste0(path2saveTests, "\\StandingBiomass_avg13.jpg"))
+  plot(var2process_avg13)
+  dev.off()
+}
+  
+
 
 
 ## Classification of averaged pixels ####
@@ -120,7 +139,7 @@ pix_categs1
 
 var2process_10class <- reclassify(var2process_avg13, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
 var2process_10class
-writeRaster(var2process_10class, paste0(path2saveTests, "/SeasonIntegral_10class_begin.tif"), overwrite = TRUE)
+writeRaster(var2process_10class, paste0(path2saveTests, "/StandingBiomass_10class_begin.tif"), overwrite = TRUE)
 
 #jpeg(paste0(path2saveTests, "\\SeasonIntegral_10class.jpg"))
 #plot(SeasonIntegral_10class)
@@ -168,108 +187,115 @@ stuff2save <- c(stuff2save, "pix_categs1", paste0(var2process_name, "_10class"),
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 
-jpeg(paste0(path2saveTests, "\\SeasonIntegral_3class.jpg"))
-#plot(SeasonIntegral_3class)
-par(mar = c(3, 4, 4, 6))
-pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
-par(xpd = FALSE)
-plot(var2process_3class, col = pal(4), legend = FALSE) 
-par(xpd = TRUE)
-legend("right",
-       title = "Ecosystem Dynamics",
-       legend = c("Strong Negative", "Moderate Negative",
-                  "Moderate Positive", "Strong Positive"),
-       fill = pal(4), inset = - 0.4)
-title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
-dev.off()
-
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  jpeg(paste0(path2saveTests, "\\StandingBiomass_3class.jpg"))
+  #plot(SeasonIntegral_3class)
+  par(mar = c(3, 4, 4, 6))
+  pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
+  par(xpd = FALSE)
+  plot(var2process_3class, col = pal(4), legend = FALSE) 
+  par(xpd = TRUE)
+  legend("right",
+         title = "Ecosystem Dynamics",
+         legend = c("Strong Negative", "Moderate Negative",
+                    "Moderate Positive", "Strong Positive"),
+         fill = pal(4), inset = - 0.4)
+  title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
+  dev.off()
+}
 
 
 
 
 ## Combining Steadiness Index with baseline levels for Standing Biomass ####
 
-load(file = paste0(path2tempResults, "/results_Step2.RData"), verbose = TRUE)
-rm(slope_rstr, mtid_rstr)
+#load(file = paste0(path2tempResults, "/results_Step2.RData"), verbose = TRUE)
+#rm(slope_rstr, mtid_rstr)
+SteadInd_rstr <- raster(paste0(path2tempResults, "/SteadInd_raster.tif"))
 
-SteadInd_SeasInt <- raster(var2process_3class)
+SteadInd_Baseline <- raster(var2process_3class)
 
-SteadInd_SeasInt[SteadInd_rstr == 1 & var2process_3class == 1] <- 1   # Steadiness Index 1 (Strong Negative) - Standing Biomass 1 (low)      -> St1-low
-SteadInd_SeasInt[SteadInd_rstr == 1 & var2process_3class == 2] <- 2   # Steadiness Index 1 (Strong Negative) - Standing Biomass 2 (medium)   -> St1-medium
-SteadInd_SeasInt[SteadInd_rstr == 1 & var2process_3class == 3] <- 3   # Steadiness Index 1 (Strong Negative) - Standing Biomass 3 (high)     -> St1-high
-SteadInd_SeasInt[SteadInd_rstr == 2 & var2process_3class == 1] <- 4   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 1 (low)    -> St2-low
-SteadInd_SeasInt[SteadInd_rstr == 2 & var2process_3class == 2] <- 5   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 2 (medium) -> St2-medium
-SteadInd_SeasInt[SteadInd_rstr == 2 & var2process_3class == 3] <- 6   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 3 (high)   -> St2-high
-SteadInd_SeasInt[SteadInd_rstr == 3 & var2process_3class == 1] <- 7   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 1 (low)    -> St3-low
-SteadInd_SeasInt[SteadInd_rstr == 3 & var2process_3class == 2] <- 8   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 2 (medium) -> St3-medium
-SteadInd_SeasInt[SteadInd_rstr == 3 & var2process_3class == 3] <- 9   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 3 (high)   -> St3-high
-SteadInd_SeasInt[SteadInd_rstr == 4 & var2process_3class == 1] <- 10   # Steadiness Index 4 (Strong Positive) - Standing Biomass 1 (low)     -> St4-low
-SteadInd_SeasInt[SteadInd_rstr == 4 & var2process_3class == 2] <- 11   # Steadiness Index 4 (Strong Positive) - Standing Biomass 2 (medium)  -> St4-medium
-SteadInd_SeasInt[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadiness Index 4 (Strong Positive) - Standing Biomass 3 (high)    -> St4-high
-SteadInd_SeasInt
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 1] <- 1   # Steadiness Index 1 (Strong Negative) - Standing Biomass 1 (low)      -> St1-low
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 2] <- 2   # Steadiness Index 1 (Strong Negative) - Standing Biomass 2 (medium)   -> St1-medium
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 3] <- 3   # Steadiness Index 1 (Strong Negative) - Standing Biomass 3 (high)     -> St1-high
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 1] <- 4   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 1 (low)    -> St2-low
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 2] <- 5   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 2 (medium) -> St2-medium
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 3] <- 6   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 3 (high)   -> St2-high
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 1] <- 7   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 1 (low)    -> St3-low
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 2] <- 8   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 2 (medium) -> St3-medium
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 3] <- 9   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 3 (high)   -> St3-high
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 1] <- 10   # Steadiness Index 4 (Strong Positive) - Standing Biomass 1 (low)     -> St4-low
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 2] <- 11   # Steadiness Index 4 (Strong Positive) - Standing Biomass 2 (medium)  -> St4-medium
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadiness Index 4 (Strong Positive) - Standing Biomass 3 (high)    -> St4-high
+SteadInd_Baseline
 
-stuff2save <- c(stuff2save, "SteadInd_SeasInt")
+stuff2save <- c(stuff2save, "SteadInd_Baseline")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
-writeRaster(SteadInd_SeasInt, paste0(path2saveTests, "/SteadInd_SeasInt.tif"), overwrite = TRUE)
+writeRaster(SteadInd_Baseline, paste0(path2saveTests, "/SteadInd_Baseline.tif"), overwrite = TRUE)
 
 
 
-#jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"))
-#plot(SteadInd_SeasInt)
+#jpeg(paste0(path2saveTests, "\\SteadInd_Baseline.jpg"))
+#plot(SteadInd_Baseline)
 #dev.off()
 
 
 # plotting for report
-jpeg(paste0(path2saveTests, "\\SteadInd_SeasInt.jpg"), width = 28, height = 20, units = "cm", res = 300)
-par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
-pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "palegreen2", "palegreen3", "palegreen4", "skyblue2", "skyblue3", "skyblue4"))
-categs <- c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high")
-par(xpd = FALSE)
-plot(SteadInd_SeasInt, col = pal(12), legend = FALSE) 
-par(xpd = TRUE)
-title(main = "Steadiness Index combined with baseline levels of Standing Biomass", 
-      outer = TRUE,
-      #adj = 0,
-      line = - 1.5,
-      cex.main = 1.3)
-legend("bottom",
-       ncol = 4,
-       legend = categs,
-       fill = pal(12), inset = - 0.25)
-mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos", 
-      side = 1, line = 7, 
-      #at = 5,
-      adj = 0,
-      cex = 0.8)
-if((length(time) - 2) == dim(var2process)[3]){
-  y2plot <- time[-c(1,length(time))]
-  y2plot <- y2plot[yrs][c(1,length(yrs))]
-}else if((length(time)) == dim(var2process)[3]){
-  y2plot <- time[yrs][c(1,length(yrs))]
-}else{
-  y2plot <- ""
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  jpeg(paste0(path2saveTests, "\\SteadInd_Baseline.jpg"), width = 28, height = 20, units = "cm", res = 300)
+  par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
+  pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "palegreen2", "palegreen3", "palegreen4", "skyblue2", "skyblue3", "skyblue4"))
+  categs <- c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high")
+  par(xpd = FALSE)
+  plot(SteadInd_Baseline, col = pal(12), legend = FALSE) 
+  par(xpd = TRUE)
+  title(main = "Steadiness Index combined with baseline levels of Standing Biomass", 
+        outer = TRUE,
+        #adj = 0,
+        line = - 1.5,
+        cex.main = 1.3)
+  legend("bottom",
+         ncol = 4,
+         legend = categs,
+         fill = pal(12), inset = - 0.25)
+  mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos", 
+        side = 1, line = 7, 
+        #at = 5,
+        adj = 0,
+        cex = 0.8)
+  if((length(time) - 2) == dim(var2process)[3]){
+    y2plot <- time[-c(1,length(time))]
+    y2plot <- y2plot[yrs][c(1,length(yrs))]
+  }else if((length(time)) == dim(var2process)[3]){
+    y2plot <- time[yrs][c(1,length(yrs))]
+  }else{
+    y2plot <- ""
+  }
+  
+  y2plot <- paste0("Baseline years: average of ", paste(y2plot, collapse = "-"))
+  mtext(y2plot, 
+        side = 1, line = 8, 
+        #at = 5,
+        adj = 0,
+        cex = 0.8)
+  
+  #dev.off()
+  
+  ## Some statistics to include in the plot
+  cont_table <- as.data.frame(table(getValues(SteadInd_Baseline)))
+  cont_table$Var1 <- categs
+  names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
+  barplot(cont_table$Freq, names.arg = cont_table$SteadInd_StandBiomass_categs, las = 3, axis.lty = 1,
+          ylab = "Number of pixels per category", 
+          #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",
+          col = pal(12))
+  #abline(0, 0)
+  dev.off()
+
+
 }
-
-y2plot <- paste0("Baseline years: average of ", paste(y2plot, collapse = "-"))
-mtext(y2plot, 
-      side = 1, line = 8, 
-      #at = 5,
-      adj = 0,
-      cex = 0.8)
-
-#dev.off()
-
-
-## Some statistics
-cont_table <- as.data.frame(table(getValues(SteadInd_SeasInt)))
-cont_table$Var1 <- categs
-names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
-barplot(cont_table$Freq, names.arg = cont_table$SteadInd_StandBiomass_categs, las = 3, axis.lty = 1,
-        ylab = "Number of pixels per category", 
-        #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",
-        col = pal(12))
-#abline(0, 0)
-dev.off()
-
-
 
