@@ -14,40 +14,64 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 ## Reading in data (Phenolo variables) ####
 
-ls_ini <- list()
+if(grepl("OldData", var2process_name)){
+  mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
+  si_clean <- stack(paste0(path2tempResults, "/si_clean.tif"))
+  sl_clean <- stack(paste0(path2tempResults, "/sl_clean.tif"))
+  sbd_clean <- stack(paste0(path2tempResults, "/sbd_clean.tif"))
+  sed_clean <- stack(paste0(path2tempResults, "/sed_clean.tif"))
+  ls_vr <- length(vrbls_lst)
 
-ls_ini[[1]] <- lapply(paste0(path2tempResults, "/season_length_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-ls_ini[[2]] <- lapply(paste0(path2tempResults, "/StartWeek_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-ls_ini[[3]] <- lapply(paste0(path2tempResults, "/Endweek_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-ls_ini[[4]] <- lapply(paste0(path2tempResults, "/SeasonIntegral_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-ls_ini[[5]] <- lapply(paste0(path2tempResults, "/SeasonPermanentIntegral_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-ls_ini[[6]] <- lapply(paste0(path2tempResults, "/CycleFraction_EndStep01.RData"), function(x) mget(load(x)))[[1]]
-
-lon <- ls_ini[[1]][[2]]
-lat <- ls_ini[[1]][[3]]
-
-#length(ls_ini)
-#str(ls_ini)
-#names(ls_ini[[1]])[1]
+}else{
+  
+  ls_ini <- list()
+  
+  ls_ini[[1]] <- lapply(paste0(path2tempResults, "/test01/season_length_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  ls_ini[[2]] <- lapply(paste0(path2tempResults, "/test01/StartWeek_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  ls_ini[[3]] <- lapply(paste0(path2tempResults, "/test01/Endweek_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  ls_ini[[4]] <- lapply(paste0(path2tempResults, "/test01/SeasonIntegral_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  ls_ini[[5]] <- lapply(paste0(path2tempResults, "/test01/SeasonPermanentIntegral_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  ls_ini[[6]] <- lapply(paste0(path2tempResults, "/test01/CycleFraction_EndStep01.RData"), function(x) mget(load(x)))[[1]]
+  
+  lon <- ls_ini[[1]][[2]]
+  lat <- ls_ini[[1]][[3]]
+  
+  ls_vr <- length(ls_ini)
+  #length(ls_ini)
+  #str(ls_ini)
+  #names(ls_ini[[1]])[1]
+  
+}
 
 
 
 ## Calculating averages ####
-## For now, average it is calculated over ALL the available years, but this might be included as an argument
+## For now, average is calculated over ALL the available years, but this might be included as an argument
 
 vrbles <- c()
 stack_rstrs_avg <- stack() 
 stuff2save <- c()
 
 t0 <- Sys.time()
-for (i in 1:length(ls_ini)){
+for (i in 1:ls_vr){
   
-  ## To raster bricks
-  var2process <- brick(ls_ini[[i]][[1]])
-  var2process <- t(var2process)
-  extent(var2process) <- c(range(lon),  range(lat))
-  #assign(paste0(names(ls_ini[[i]])[1], "_rstr"), var2process)
-  #print(paste0(paste0(names(ls_ini[[i]])[1], "_rstr"), " ... generated"))
+  if(grepl("OldData", var2process_name)){
+    nms <- vrbls_lst[i]
+    var2process <- stack(paste0(path2tempResults, "/", nms, "_clean.tif"))
+    print(nms)
+    print(var2process)
+
+  }else{
+    ## To raster bricks
+    var2process <- brick(ls_ini[[i]][[1]])
+    var2process <- t(var2process)
+    extent(var2process) <- c(range(lon),  range(lat))
+    #assign(paste0(names(ls_ini[[i]])[1], "_rstr"), var2process)
+    #print(paste0(paste0(names(ls_ini[[i]])[1], "_rstr"), " ... generated"))
+    
+    nms <- names(ls_ini[[i]])[1]
+           
+  }
   
   ## Averaging
   beginCluster()   # it uses n - 1 clusters
@@ -55,15 +79,15 @@ for (i in 1:length(ls_ini)){
   rstr_average <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
   endCluster()
   
-  names(rstr_average) <- names(ls_ini[[i]])[1]
-  vrbles <- c(vrbles, names(ls_ini[[i]])[1])
-  assign(paste0(names(ls_ini[[i]])[1], "_avrge"), rstr_average)
-  writeRaster(get(paste0(names(ls_ini[[i]])[1], "_avrge")), filename = paste0(path2tempResults, "/", names(ls_ini[[i]])[1], "_avrge.tif"))
-  assign(paste0(names(ls_ini[[i]])[1], "_avrge"), raster(paste0(path2tempResults, "/", names(ls_ini[[i]])[1], "_avrge.tif")))
+  #names(rstr_average) <- nms
+  vrbles <- c(vrbles, nms)
+  assign(paste0(nms, "_avrge"), rstr_average)
+  writeRaster(get(paste0(nms, "_avrge")), filename = paste0(path2tempResults, "/", nms, "_avrge.tif"))
+  #assign(paste0(nms, "_avrge"), raster(paste0(path2tempResults, "/", nms, "_avrge.tif")))
 
-  stack_rstrs_avg <- stack(stack_rstrs_avg, get(paste0(names(ls_ini[[i]])[1], "_avrge")))
-  print(paste0(names(ls_ini[[i]])[1], " ... average calculated"))
-  stuff2save <- c(stuff2save, paste0(names(ls_ini[[i]])[1], "_avrge"))
+  stack_rstrs_avg <- stack(stack_rstrs_avg, get(paste0(nms, "_avrge")))
+  print(paste0(nms, " ... average calculated"))
+  stuff2save <- c(stuff2save, paste0(nms, "_avrge"))
 }
 
 Sys.time() - t0
