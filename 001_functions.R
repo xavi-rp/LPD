@@ -229,3 +229,8 @@ isodata_clustering <- function(data_ini,
   
 }
 
+
+
+#isod_clust_GitHub <- "https://github.com/xavi-rp/ISODATA_clustering/blob/master/isodata_clust.R"
+#source_url(isod_clust_GitHub)
+#

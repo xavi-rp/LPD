@@ -79,7 +79,7 @@ for (i in 1:ls_vr){
   rstr_average <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
   endCluster()
   
-  #names(rstr_average) <- nms
+  names(rstr_average) <- nms
   vrbles <- c(vrbles, nms)
   assign(paste0(nms, "_avrge"), rstr_average)
   writeRaster(get(paste0(nms, "_avrge")), filename = paste0(path2tempResults, "/", nms, "_avrge.tif"))
@@ -90,6 +90,7 @@ for (i in 1:ls_vr){
   stuff2save <- c(stuff2save, paste0(nms, "_avrge"))
 }
 
+writeRaster(stack_rstrs_avg, paste0(path2tempResults, "/stack_rstrs_avg.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
 Sys.time() - t0
 
 
@@ -119,11 +120,13 @@ Sys.time() - t0
 ## Multicollinearity ####
 #graphics.off()
 t0 <- Sys.time()
-multicol_df <- cor(getValues(stack_rstrs_avg), use = "complete.obs", method = "pearson")  #method = c("pearson", "kendall", "spearman")
+#multicol_df <- cor(getValues(stack_rstrs_avg), use = "complete.obs", method = "pearson")  #method = c("pearson", "kendall", "spearman")
 vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg,
                                                  multicollinearity.cutoff = 0.70,  # it uses Pearson's R
                                                  select.variables = TRUE,  # if TRUE, randomly select one variable of the group. If FALSE, returns a list with the groups
-                                                 sample.points = FALSE,  # using all pixels
+                                                 #sample.points = FALSE,  # using all pixels
+                                                 sample.points = TRUE,  # using nb.points to calculate multicollinearity
+                                                 nb.points = 100000,
                                                  plot = TRUE)
 vrbles_NoC
 
@@ -134,14 +137,17 @@ dev.off()
 Sys.time() - t0
 
 
-stack_rstrs_avg
-stack_rstrs_avg@layers[[1]]@file@name
+#stack_rstrs_avg
+#stack_rstrs_avg@layers[[1]]@file@name
 
 # removing correlated variables
-stack_rstrs_avg_noC <- stack(stack_rstrs_avg@layers[names(stack_rstrs_avg) %in% vrbles_NoC])
+stack_rstrs_avg_noC <- brick(stack_rstrs_avg@layers[names(stack_rstrs_avg) %in% vrbles_NoC])
 
 
 # saving results
-stuff2save <- c(stuff2save, "vrbles", "stack_rstrs_avg", "multicol_df", "vrbles_NoC", "stack_rstrs_avg_noC")
+writeRaster(stack_rstrs_avg_noC, paste0(path2tempResults, "/stack_rstrs_avg_noC.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+stuff2save <- c(stuff2save, "vrbles", "stack_rstrs_avg", 
+                #"multicol_df", 
+                "vrbles_NoC", "stack_rstrs_avg_noC")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step6.RData"))
 

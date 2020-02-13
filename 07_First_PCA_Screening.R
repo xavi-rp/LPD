@@ -10,11 +10,14 @@ if(Sys.info()[4] == "D01RI1700371"){
   stop("Define your machine before to run LPD")
 }
 
+cat("Calculating First PCA - screening (Step 07)... ", "\n")
+
 
 ## Reading in data (not correlated Phenolo variables) ####
 
 load(file = paste0(path2tempResults, "/results_Step6.RData"), verbose = TRUE)
-stack_rstrs_avg_noC
+stack_rstrs_avg_noC <- brick(paste0(path2tempResults, "/stack_rstrs_avg_noC.tif"))
+#stack_rstrs_avg_noC
 
 
 ## Performing the 'screening' PCA ####
@@ -30,39 +33,49 @@ pca <- prcomp(na.omit(stack_rstrs_avg_noC_df),
 
 #save(pca, file = paste0(path2tempResults, "/results_Step7.RData")) 
 #load(paste0(path2tempResults, "/results_Step7.RData"), verbose = TRUE)
-pca
-summary(pca)     
-str(pca)   
-pca$rotation #The relationship (correlation or anticorrelation, etc) between the initial variables and the principal components.
-             #the matrix of variable loadings (i.e., a matrix whose columns contain the eigenvectors)
-head(pca$x) #The values of each sample in terms of the principal components
-            #the value of the rotated data (the centred (and scaled if requested) data multiplied by the rotation matrix). 
-            #Hence, cov(x) is the diagonal matrix diag(sdev^2)
-unclass(pca)
-predict(pca) #rotated variables
+#pca
+#summary(pca)     
+#str(pca)   
+#pca$rotation #The relationship (correlation or anticorrelation, etc) between the initial variables and the principal components.
+#             #the matrix of variable loadings (i.e., a matrix whose columns contain the eigenvectors)
+#head(pca$x) #The values of each sample in terms of the principal components
+#            #the value of the rotated data (the centred (and scaled if requested) data multiplied by the rotation matrix). 
+#            #Hence, cov(x) is the diagonal matrix diag(sdev^2)
+#unclass(pca)
+#predict(pca) #rotated variables
 
 
 ### Making plots
-pdf(paste0(path2tempResults, "/pca_results.pdf"))
-(as.vector(unclass(pca)[[1]]))^2         # variances (SD^2)
-layout(matrix(1:2, ncol=2))
-screeplot(pca)
-screeplot(pca, type = "lines")
-dev.off()
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  pdf(paste0(path2tempResults, "/pca_results.pdf"))
+  #(as.vector(unclass(pca)[[1]]))^2         # variances (SD^2)
+  layout(matrix(1:2, ncol=2))
+  screeplot(pca)
+  screeplot(pca, type = "lines")
+  dev.off()
+}
 
-#pdf(paste0(path2tempResults, "/pca_biplot.pdf"))
-jpeg(paste0(path2tempResults, "/pca_biplot.jpg"))
-#biplot(pca, choices = 1:2, pc.biplot = FALSE, xlim = c(-0.0003, 0.0003), ylim = c(-0.0003, 0.0003))
-biplot(pca)
-dev.off()
+
+
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  #pdf(paste0(path2tempResults, "/pca_biplot.pdf"))
+  jpeg(paste0(path2tempResults, "/pca_biplot.jpg"))
+  #biplot(pca, choices = 1:2, pc.biplot = FALSE, xlim = c(-0.0003, 0.0003), ylim = c(-0.0003, 0.0003))
+  biplot(pca)
+  dev.off()
+}
 
 
 ### Rotating 
 pca.rotated <- varimax(pca$rotation, normalize = TRUE) # normalize = TRUE; Should Kaiser normalization be performed? If so the rows of x are re-scaled to unit length before rotation, and scaled back afterwards.
-pca.rotated
-head(pca.rotated$loadings, 25) #??
-pca.rotated$rotmat
-pca.rotated$loadings
+#pca.rotated
+#head(pca.rotated$loadings, 25) #??
+#pca.rotated$rotmat
+#pca.rotated$loadings
 
 
 #The whole same thing, with another package (results already rotated)
@@ -87,13 +100,14 @@ pca.rotated$loadings
 
 ### Saving results 
 
-pca
-summary(pca)  
-pca.rotated
+#pca
+#summary(pca)  
+#pca.rotated
 
 pca_importance <- summary(pca)
 pca_importance <- as.data.frame(pca_importance$importance)
-screeningPCA_cumul_variance <- round(pca_importance[3, nPCs], 4)
+if(nPCs > ncol(pca_importance)) nPCs <- ncol(pca_importance)
+#screeningPCA_cumul_variance <- round(pca_importance[3, nPCs], 4)
 
 screeningPCA_variables_df <- pca.rotated$loadings
 screeningPCA_variables_df <- as.data.frame(unclass(screeningPCA_variables_df))
@@ -104,6 +118,8 @@ screeningPCA_variables <- names(which(apply(screeningPCA_variables_df, 1, sum) !
 if(length(screeningPCA_variables) != nPCs) stop("inconsistency among number of variables selected for the next step ('final PCA') and number of PCs")
 
 
-stuff2save <- c("stack_rstrs_avg_noC", "stack_rstrs_avg_noC_df", "pca", "pca_importance", "pca.rotated", "screeningPCA_cumul_variance", "screeningPCA_variables")
+stuff2save <- c("stack_rstrs_avg_noC", "stack_rstrs_avg_noC_df", "pca", "pca_importance", "pca.rotated", 
+                #"screeningPCA_cumul_variance", 
+                "screeningPCA_variables")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step7.RData"))
 
