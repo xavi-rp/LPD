@@ -16,6 +16,7 @@ library(lattice)
 library(latticeExtra)
 library(devtools)
 library(tidyr)
+library(tidyverse)
 
 
 ## Defining machine ####

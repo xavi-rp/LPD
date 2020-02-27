@@ -19,31 +19,14 @@ cat("Clustering: ISODATA (Step 09)... ", "\n")
 ## Reading in data from 'final PCA' (Step 08) ####
 
 load(file = paste0(path2tempResults, "/results_Step8.RData"), verbose = TRUE)
-#pca_final_raster1[, rn := rownames(pca_final_raster1)]
+rm(pca_final_brick)
 #pca_final_raster <- brick(paste0(path2tempResults, "/pca_final_raster.tif"))
 
 
-
-#pca_final_raster
-#summary(pca_final)
-#
-#head(as.data.frame(pca_final_raster))
-#nrow(as.data.frame(pca_final_raster))
-#as.data.table(as.data.frame(pca_final_raster))
-#
-#apply(as.data.table(as.data.frame(pca_final_raster)), 2, sd, na.rm = TRUE)
-#apply(as.data.table(as.data.frame(pca_final_raster)), 2, mean, na.rm = TRUE)
-#
-
 #initial data set to get clustered
-#pca_data_ini <- as.data.table(as.data.frame(pca_final_raster))
-pca_data_ini <- pca_final_raster1
-#head(pca_data_ini)
-#tail(pca_data_ini)
-#range(as.numeric(rownames(pca_data_ini)))
-#apply(pca_data_ini, 2, function(x) sum(is.na(x)))
-#sum(!complete.cases(pca_data_ini))
-
+pca_data_ini <- as.data.frame(pca_final_raster1)
+#pca_data_ini <- pca_final_raster1
+rm(pca_final_raster1)
 
 
 sampling2test <- "Yes"
@@ -57,108 +40,23 @@ if(sampling2test == "Yes"){
 }
 
 
-#pca_data_ini_NA <- pca_data_ini[!complete.cases(pca_data_ini), ]   #to be used at the end to fill raster stack
-#pca_data_ini <- pca_data_ini[complete.cases(pca_data_ini), ] 
-pca_data_ini <- na.omit(pca_data_ini, cols = names(pca_data_ini))  
-pca_data_ini
+#pca_data_ini$rn <- as.numeric(rownames(pca_data_ini))
+#pca_data_ini[, rn := rownames(pca_data_ini)]
+
+pca_data_ini_NA <- pca_data_ini[!complete.cases(pca_data_ini), ]   #to be used at the end to fill raster stack
+pca_data_ini_NA$clstr <- NA
+pca_data_ini_NA$clstr <- as.integer(pca_data_ini_NA$clstr)
+pca_data_ini_NA$rn <- as.numeric(rownames(pca_data_ini_NA))
+pca_data_ini_NA <- pca_data_ini_NA[, names(pca_data_ini_NA) %in% c("clstr", "rn")]
 
 
-## K-means ####
-
-pca_data_ini <- as.data.frame(pca_data_ini)
-
-#t0 <- Sys.time()
-#fit <- kmeans(pca_data_ini, 15)
-#Sys.time() - t0
-
-#Warning message:
-#  Quick-TRANSfer stage steps exceeded maximum (= 2147483647)     #see: https://stackoverflow.com/questions/21382681/kmeans-quick-transfer-stage-steps-exceeded-maximum
+pca_data_ini <- pca_data_ini[complete.cases(pca_data_ini), ] 
+#pca_data_ini <- na.omit(pca_data_ini, cols = names(pca_data_ini))  
 
 
-## Determining number of clusters  #https://www.statmethods.net/advstats/cluster.html
-
-## 1) Scree plot (elbow) method
-
-wss <- (nrow(pca_data_ini) - 1) * sum(apply(pca_data_ini, 2, var))
-num_clstrs <- 2:15
-num_clstrs <- c(5, 10, 15, 20, 25, 30, 40, 50, 60)
-for (i in 2:(length(num_clstrs) + 1)) wss[i] <- kmeans(pca_data_ini,
-                                                       centers = num_clstrs[i - 1],
-                                                       nstart = 1,
-                                                       #iter.max = 25, # did not converge (any)
-                                                       iter.max = 10,
-                                                       algorithm = "MacQueen")$tot.withinss
-
-plot(c(1, num_clstrs), wss, type = "b", 
-     xlab = "Number of Clusters",
-     ylab = "Within groups sum of squares")
-
-dev.copy(pdf, paste0(path2tempResults, "/optim_num_clusters.pdf"))    
-dev.off() 
-
-
-
-
-## 2) Statistics method (calculating one or more metrics: GAP, etc)
-
-#library(NbClust)
-#opt_clust <- NbClust(data = pca_data_ini, 
-#                     distance = "euclidean",  #Error in dist(jeu, method = "euclidean") : vector is too large
-#                     #distance = "ward.D2", #Error in NbClust(data = pca_data_ini, distance = "ward.D2", min.nc = 5,  :invalid distance
-#                     min.nc = 5, max.nc = 40, 
-#                     method = "kmeans",
-#                     #index = "alllong"
-#                     index = "gap"
-#                     )
-#opt_clust
-
-#library(factoextra)
-#opt_clust <- fviz_nbclust(pca_data_ini, FUNcluster = kmeans, method = "gap_stat",     #Error in dist(xs) : vector is too large
-#                          diss = NULL, 
-#                          k.max = 10, 
-#                          #nboot = 100,
-#                          nboot = 10
-#                          )
-
-
-
-
-
-
-## Clustering using optimal number of clusters
-
-t0 <- Sys.time()
-kmeans_clustring <- kmeans(pca_data_ini, 
-                           centers = 20, 
-                           #iter.max = 10,  # Warning: did not converge in 10 iterations 
-                           #iter.max = 50,   # Warning: did not converge in 50 iterations 
-                           iter.max = 100,  # 
-                           nstart = 1,
-                           algorithm = "MacQueen"
-                           )
-t1 <- Sys.time() - t0
-save(list = c("kmeans_clustring", "t1"), file = paste0(path2tempResults, "/results_Step9_kmeans.RData"))
-
-
-
-
-kmeans_clustring
-length(fit$cluster)
-nrow(pca_data_ini)
-
-
-
-
-
-
-
-
-
-
-
-avoid_isodata <- "yes"
-
-if(avoid_isodata == "yes"){
+## ISODATA ####
+run_isodata <- "no"
+if(run_isodata == "yes"){
   ## ISODATA ####
   
   #nrow(pca_data_ini)
@@ -486,8 +384,126 @@ if(avoid_isodata == "yes"){
   data_centroids <- data_centroids[, !names(data_centroids) %in% c("closest", "row_nms")]
   
   
-
+  
 }
+
+
+
+
+
+
+
+## K-means ####
+
+#Warning message:
+#  Quick-TRANSfer stage steps exceeded maximum (= 2147483647)     #see: https://stackoverflow.com/questions/21382681/kmeans-quick-transfer-stage-steps-exceeded-maximum
+
+
+## Determining number of clusters  #https://www.statmethods.net/advstats/cluster.html
+
+## 1) Scree plot (elbow) method
+
+wss <- (nrow(pca_data_ini) - 1) * sum(apply(pca_data_ini, 2, var))
+num_clstrs <- 2:15
+num_clstrs <- c(5, 10, 15, 20, 25, 30, 40, 50, 60)
+for (i in 2:(length(num_clstrs) + 1)) wss[i] <- kmeans(pca_data_ini,
+                                                       centers = num_clstrs[i - 1],
+                                                       nstart = 1,
+                                                       #iter.max = 25, # did not converge (any)
+                                                       iter.max = 10,
+                                                       algorithm = "MacQueen")$tot.withinss
+
+pdf(paste0(path2tempResults, "/optim_num_clusters.pdf"))
+plot(c(1, num_clstrs), wss, type = "b", 
+     xlab = "Number of Clusters",
+     ylab = "Within groups sum of squares")
+
+dev.off() 
+
+
+
+
+## 2) Statistics method (calculating one or more metrics: GAP, etc)
+
+#library(NbClust)
+#opt_clust <- NbClust(data = pca_data_ini, 
+#                     distance = "euclidean",  #Error in dist(jeu, method = "euclidean") : vector is too large
+#                     #distance = "ward.D2", #Error in NbClust(data = pca_data_ini, distance = "ward.D2", min.nc = 5,  :invalid distance
+#                     min.nc = 5, max.nc = 40, 
+#                     method = "kmeans",
+#                     #index = "alllong"
+#                     index = "gap"
+#                     )
+#opt_clust
+
+#library(factoextra)
+#opt_clust <- fviz_nbclust(pca_data_ini, FUNcluster = kmeans, method = "gap_stat",     #Error in dist(xs) : vector is too large
+#                          diss = NULL, 
+#                          k.max = 10, 
+#                          #nboot = 100,
+#                          nboot = 10
+#                          )
+
+
+
+
+
+
+## Clustering using optimal number of clusters
+
+t0 <- Sys.time()
+kmeans_clustring <- kmeans(pca_data_ini, 
+                           centers = 20, 
+                           #iter.max = 10,  # Warning: did not converge in 10 iterations 
+                           #iter.max = 50,   # Warning: did not converge in 50 iterations 
+                           iter.max = 100,  # Warning: did not converge in 100 iterations (~ 15 minutes)
+                           nstart = 1,
+                           algorithm = "MacQueen"
+                           )
+t1 <- Sys.time() - t0
+save(list = c("kmeans_clustring", "t1"), file = paste0(path2tempResults, "/results_Step9_kmeans.RData"))
+#load(paste0(path2tempResults, "/results_Step9_kmeans.RData"), verbose = TRUE)
+
+
+
+
+## Binding NA data and adding back spatial information ####
+
+#pca_final_raster1 <- pca_final_raster
+
+pca_data_ini$clstr <- kmeans_clustring$cluster
+pca_data_ini$rn <- as.numeric(rownames(pca_data_ini))
+pca_data_ini <- pca_data_ini[, names(pca_data_ini) %in% c("clstr", "rn")]
+
+
+
+all_data <- bind_rows(pca_data_ini, pca_data_ini_NA)#, data_ini_4later)
+rm(pca_data_ini, pca_data_ini_NA)
+#gc()
+
+
+#all_data <- all_data %>% 
+#             as_tibble() %>%
+#             arrange(rn) %>%
+#             column_to_rownames(var = "rn")
+
+all_data <- all_data[order(all_data$rn), ]
+
+head(all_data)
+
+
+
+
+pca_final_raster <- raster(paste0(path2tempResults, "/pca_final_raster.tif"))
+
+xtnt <- extent(pca_final_raster)
+pca_final_clstrs_raster <- raster(nrows = pca_final_raster@nrows, ncols = pca_final_raster@ncols,
+                                  crs = crs(pca_final_raster), 
+                                  ext = xtnt, 
+                                  #resolution, 
+                                  vals = all_data$clstr)
+ 
+names(pca_final_clstrs_raster) <- "clusterNum"
 
 
 
@@ -496,42 +512,24 @@ if(avoid_isodata == "yes"){
 
 ## Plotting clusters  ####
 
-pdf(paste0(path2saveTests, "\\clusters.pdf"), width = 9, height = 9)
-par(mfcol = c(4, 3), mar = c(2.5, 1.5, 2, 1.5))
-
-load(paste0(path2tempResults, "/results_isodata_", i, ".RData"), verbose = FALSE)
-
-frmla <- as.formula(paste0("closest ~ ", paste0(colnames(data_ini_noCentr)[1:nvars], collapse = " + ")))
-wilks_formula <- Wilks.test(frmla, data = data_ini_noCentr)
-
-conon_corr <- cancor(data_ini_noCentr[, 1], data_ini_noCentr[, 2:nvars])
-
-pca_final_raster1 <- pca_final_raster
-
-#nrow(data_ini) == (nrow(data_ini_noCentr[, 1:5]) + nrow(clust_centr_ini))
-#(dim(pca_final_raster)[1] * dim(pca_final_raster)[2]) == (nrow(data_ini_4later) + nrow(pca_data_ini_NA) + nrow(data_ini_noCentr[, 1:4]) + nrow(clust_centr_ini))
-
-
-all_data <- rbind(clust_centr_ini, pca_data_ini_NA)#, data_ini_4later)
-all_data$closest <- NA
-head(all_data)
-
-all_data <- rbind(data_ini_noCentr[, 1:5], all_data)
-all_data <- all_data[order(as.numeric(rownames(all_data))), ]
-
-pca_final_raster1 <- setValues(pca_final_raster1, as.matrix(as.numeric(all_data$closest)))
-names(pca_final_raster1) <- "centroid"
-pca_final_raster1
-
-pal <- colorRampPalette(c("red", "wheat2", "skyblue2", "blue", "yellow"))
-par(xpd = FALSE)
-plot(pca_final_raster1, col = pal(length(unique(all_data$closest))), legend = FALSE, main = paste0(i, ": ", length(unique(all_data$closest)), " clusters")) 
-#text(-25, 55, paste0("Wilks'\n lambda: \n", round(as.vector(wilks_formula$statistic), 5)))
-#text(40, 55, paste0("Canon.\n Correl.: \n", signif(as.vector(conon_corr$cor), 3)))
-text(-20, 55, paste0("Wilks'\n lambda: \n", round(as.vector(wilks_formula$statistic), 5)), cex = 0.5)
-text(35, 55, paste0("Canon.\n Correl.: \n", signif(as.vector(conon_corr$cor), 3)), cex = 0.5)
-
-dev.off()
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+  pdf(paste0(path2saveTests, "\\clusters.pdf"), width = 9, height = 9)
+  par(mfcol = c(1, 1), mar = c(2.5, 1.5, 2, 1.5))
+  
+  
+  pal <- colorRampPalette(c("red", "orange", "yellow", "green", "skyblue2", "blue", "violet"))
+  par(xpd = FALSE)
+  plot(pca_final_clstrs_raster, 
+       col = pal(length(unique(all_data$clstr)) - 1), 
+       legend = TRUE, 
+       main = paste0((length(unique(all_data$clstr)) - 1), " clusters")
+  ) 
+  
+  dev.off()
+  
+}
 
 
 
@@ -540,22 +538,18 @@ dev.off()
 
 ## Saving results ####
 
-pca_data_ini_NA$new_clst <- 0
-
-pca_data_ini_clusters <- rbind(data_centroids, pca_data_ini_NA)
-pca_data_ini_clusters <- pca_data_ini_clusters[order(as.numeric(rownames(pca_data_ini_clusters))), ]
-
-pca_final_clstrs_raster <- setValues(pca_final_raster, as.matrix(pca_data_ini_clusters))
 
 #quick plot to check
-jpeg(paste0(path2saveTests, "\\SpatialPatternsPCs_clstrs.jpg"))
-plot(pca_final_clstrs_raster[["new_clst"]])
-dev.off()
+#jpeg(paste0(path2saveTests, "\\SpatialPatternsPCs_clstrs.jpg"))
+#plot(pca_final_clstrs_raster[["new_clst"]])
+#dev.off()
 
 
-stuff2save <- c("data_centroids", "pca_data_ini_clusters", "pca_final_clstrs_raster")
+#stuff2save <- c("data_centroids", "pca_data_ini_clusters", "pca_final_clstrs_raster")
+pca_final_clstrs <- all_data
+stuff2save <- c("pca_final_clstrs", "pca_final_clstrs_raster")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9.RData"))
-writeRaster(pca_final_clstrs_raster[["new_clst"]], paste0(path2saveTests, "/SpatialPatternsPCs_clstrs.tif"), overwrite = TRUE)
+writeRaster(pca_final_clstrs_raster, paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"), overwrite = TRUE)
 
 
 

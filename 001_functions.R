@@ -25,7 +25,7 @@ mean_years_function <- function(x, na.rm = TRUE){ mean(x[yrs]) }  #where x is th
 
 
 
-## ISODATA Clustering ####
+## ISODATA Clustering ####    No longer needed!!!
 
 isodata_clustering <- function(data_ini,
                                nclust_ini = 15,
@@ -102,7 +102,7 @@ isodata_clustering <- function(data_ini,
       clsts <- parRapply(cl = cl, 
                          x = data_ini_noCentr, 
                          FUN = function(y) {
-                           y1 <- clust_centr_ini[clust_centr_ini$rn == y[nvars + 2], 1:nvars]           checkejar a veure si aixo funciona be !!!
+                           y1 <- clust_centr_ini[clust_centr_ini$rn == y[nvars + 2], 1:nvars]           #checkejar a veure si aixo funciona be !!!
                            y2 <- dist(rbind(y1, y[1:nvars]))
                            return(y2)
                          }
