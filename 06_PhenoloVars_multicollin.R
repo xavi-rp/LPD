@@ -19,6 +19,7 @@ if(grepl("OldData", var2process_name)){
   si_clean <- stack(paste0(path2tempResults, "/si_clean.tif"))
   sl_clean <- stack(paste0(path2tempResults, "/sl_clean.tif"))
   sbd_clean <- stack(paste0(path2tempResults, "/sbd_clean.tif"))
+  #sbd_clean <- stack(paste0(path2tempResults, "/sbd_crop.tif"))
   sed_clean <- stack(paste0(path2tempResults, "/sed_clean.tif"))
   ls_vr <- length(vrbls_lst)
 

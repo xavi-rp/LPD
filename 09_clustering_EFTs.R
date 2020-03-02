@@ -43,7 +43,7 @@ if(sampling2test == "Yes"){
 #pca_data_ini$rn <- as.numeric(rownames(pca_data_ini))
 #pca_data_ini[, rn := rownames(pca_data_ini)]
 
-pca_data_ini_NA <- pca_data_ini[!complete.cases(pca_data_ini), ]   #to be used at the end to fill raster stack
+pca_data_ini_NA <- pca_data_ini[!complete.cases(pca_data_ini), ]   #to be used at the end to fill the raster
 pca_data_ini_NA$clstr <- NA
 pca_data_ini_NA$clstr <- as.integer(pca_data_ini_NA$clstr)
 pca_data_ini_NA$rn <- as.numeric(rownames(pca_data_ini_NA))
@@ -472,7 +472,7 @@ save(list = c("kmeans_clustring", "t1"), file = paste0(path2tempResults, "/resul
 #pca_final_raster1 <- pca_final_raster
 
 pca_data_ini$clstr <- kmeans_clustring$cluster
-pca_data_ini$rn <- as.numeric(rownames(pca_data_ini))
+pca_data_ini$rn <- as.numeric(rownames(pca_data_ini)) 
 pca_data_ini <- pca_data_ini[, names(pca_data_ini) %in% c("clstr", "rn")]
 
 
@@ -488,6 +488,7 @@ rm(pca_data_ini, pca_data_ini_NA)
 #             column_to_rownames(var = "rn")
 
 all_data <- all_data[order(all_data$rn), ]
+#rownames(all_data) <- all_data$rn
 
 head(all_data)
 
