@@ -14,20 +14,28 @@ if(Sys.info()[4] == "D01RI1700371"){
 ## Reading in EFTs data (Step 09) ####
 
 load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
+rm(pca_final_clstrs_raster)
+#gc()
 
-pca_final_clstrs_raster[["new_clst"]]
-head(pca_data_ini_clusters)
-nrow(pca_data_ini_clusters)
 
 ## Reading in Phenolo data (Cyclic Fraction) and averaging ####
 
-load(paste0(path2tempResults, "/CycleFraction_EndStep01.RData"), verbose = TRUE)
+if(grepl("OldData", var2process_name)){
+  #si_clean <- stack(paste0(path2tempResults, "/si_clean.tif"))
+  #CycleFraction_rstr <- si_clean
+  CycleFraction_rstr <- stack(paste0(path2tempResults, "/si_clean.tif"))
 
-## To raster bricks
-CycleFraction_rstr <- brick(CycleFraction)
-CycleFraction_rstr <- t(CycleFraction_rstr)
-extent(CycleFraction_rstr) <- c(range(lon),  range(lat))
-CycleFraction_rstr
+}else{
+  load(paste0(path2tempResults, "/CycleFraction_EndStep01.RData"), verbose = TRUE)
+  
+  ## To raster bricks
+  CycleFraction_rstr <- brick(CycleFraction)
+  CycleFraction_rstr <- t(CycleFraction_rstr)
+  extent(CycleFraction_rstr) <- c(range(lon),  range(lat))
+  CycleFraction_rstr
+  
+}
+
 
 ## Averaging
 beginCluster()   # it uses n - 1 clusters
@@ -39,32 +47,42 @@ CycleFraction_rstr_average
 stuff2save <- c("CycleFraction_rstr_average")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step10.RData"))
 #load(file = paste0(path2tempResults, "/results_Step10.RData"), verbose = TRUE)
-
+rm(CycleFraction_rstr)   # Removing here with the aim of freeing memory, although it needs to be loaded again later
 
 ## Merging Cyclic Fraction data with new clusters ####
 CycleFraction_average_df <- as.data.frame(CycleFraction_rstr_average)
 
-CycleFraction_average_df <- as.data.frame(cbind(CycleFraction_average_df, pca_data_ini_clusters[, "new_clst", drop=FALSE]))
-names(CycleFraction_average_df) <- c("CyclicFraction", "EFT")
-CycleFraction_average_df$rwnms <- as.numeric(rownames(CycleFraction_average_df))
+#CycleFraction_average_df <- as.data.frame(cbind(CycleFraction_average_df, pca_final_clstrs[, "clstr", drop = FALSE]))
+#names(CycleFraction_average_df) <- c("CyclicFraction", "EFT")
+#CycleFraction_average_df$rwnms <- as.numeric(rownames(CycleFraction_average_df))
+
+CycleFraction_average_df$EFT <- pca_final_clstrs$clstr
+CycleFraction_average_df$rwnms <- pca_final_clstrs$rn
+names(CycleFraction_average_df)[1] <- "CyclicFraction"
+if(exists("pca_final_clstrs")) rm(pca_final_clstrs)
+#gc()
 
 
 ## Calculating 90-percentile by EFT ####
 ## EFT = 0 is NoData in the raster
-CycleFraction_90perc <- as.data.frame(CycleFraction_average_df %>% group_by(EFT) %>% summarise_at(.vars = "CyclicFraction", .funs = c("CyclicFraction_90perc" = quantile), prob = 0.9, na.rm = TRUE))
+CycleFraction_90perc <- as.data.table(CycleFraction_average_df %>% group_by(EFT) %>% summarise_at(.vars = "CyclicFraction", .funs = c("CyclicFraction_90perc" = quantile), prob = 0.9, na.rm = TRUE))
 
 
 ## Assigning maximum (potential) productivity to outliers ####
 ## outliers:  value > percentile 90 intra-cluster
 
-CycleFraction_average_df <- merge(CycleFraction_average_df, CycleFraction_90perc, by = "EFT", all.x = TRUE) 
-CycleFraction_average_df <- CycleFraction_average_df[order(CycleFraction_average_df$rwnms), ]
+CycleFraction_average_df <- merge(as.data.table(CycleFraction_average_df), CycleFraction_90perc, by = "EFT", all.x = TRUE) 
+#CycleFraction_average_df <- CycleFraction_average_df[order(CycleFraction_average_df$rwnms), ]
+#CycleFraction_average_df <- CycleFraction_average_df[order(rwnms)]
+setkeyv(CycleFraction_average_df, "rwnms")
 
 cond <- CycleFraction_average_df$CyclicFraction > CycleFraction_average_df$CyclicFraction_90perc & !is.na(CycleFraction_average_df$CyclicFraction)
 CycleFraction_average_df$CyclicFraction[cond] <- CycleFraction_average_df$CyclicFraction_90perc[cond]
-CycleFraction_average_df <- CycleFraction_average_df[, !names(CycleFraction_average_df) %in% "rwnms"]
-
+rm(cond)
 CycleFraction_average_df$CyclicFraction_90perc[is.na(CycleFraction_average_df$CyclicFraction)] <- NA
+
+CycleFraction_average_df <- as.data.frame(CycleFraction_average_df)
+CycleFraction_average_df <- CycleFraction_average_df[, !names(CycleFraction_average_df) %in% "rwnms"]
 
 
 
@@ -78,12 +96,31 @@ names(CycleFraction_average_df)[3] <- "PotentialProduction"
 
 
 ## Saving results ####
+gc()
 
-LocalNetProductivity_rstr <- setValues(CycleFraction_rstr[[1:4]], as.matrix(CycleFraction_average_df))
+if(grepl("OldData", var2process_name)){
+  #si_clean <- stack(paste0(path2tempResults, "/si_clean.tif"))
+  #CycleFraction_rstr <- si_clean
+  CycleFraction_rstr <- stack(paste0(path2tempResults, "/si_clean.tif"))
+  
+}else{
+  load(paste0(path2tempResults, "/CycleFraction_EndStep01.RData"), verbose = TRUE)
+  ## To raster bricks
+  CycleFraction_rstr <- brick(CycleFraction)
+  CycleFraction_rstr <- t(CycleFraction_rstr)
+  extent(CycleFraction_rstr) <- c(range(lon),  range(lat))
+  CycleFraction_rstr
+}
+
+CycleFraction_rstr <- CycleFraction_rstr[[1]]
+
+#LocalNetProductivity_rstr <- setValues(CycleFraction_rstr, as.matrix(CycleFraction_average_df))
+LocalNetProductivity_rstr <- setValues(CycleFraction_rstr, CycleFraction_average_df$LSP)
 
 stuff2save <- c(stuff2save, "CycleFraction_average_df", "LocalNetProductivity_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step10.RData"))
-writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity.tif"), bylayer = TRUE, suffix = c(names(LocalNetProductivity_rstr)), overwrite = TRUE)
+#writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity.tif"), bylayer = TRUE, suffix = c(names(LocalNetProductivity_rstr)), overwrite = TRUE)
+writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity_LSP.tif"), overwrite = TRUE)
 
 
 #cellStats(LocalNetProductivity_rstr, max)
