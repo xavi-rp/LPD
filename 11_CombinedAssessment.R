@@ -55,7 +55,7 @@ writeRaster(LPD_CombAssess, paste0(path2tempResults, "/LPD_CombinedAssessment.ti
 rning_plts <- "y"
 rning_plts <- "n"
 if(rning_plts == "y"){
-   jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 30, height = 21, units = "cm", res = 600)
+   jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 30, height = 21, units = "cm", res = 900)#, pointsize = 8, quality = 75)
    par(mar = c(11, 4, 6, 0), mfrow = c(1, 1))
    pal <- colorRampPalette(c("red", "orange", "yellow", "greenyellow", "lightskyblue", "royalblue3"))
    categs <- c("1(d): Declining land productivity",

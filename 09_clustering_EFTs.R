@@ -12,7 +12,7 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 
 
-cat("Clustering: ISODATA (Step 09)... ", "\n")
+cat("Clustering (Step 09)... ", "\n")
 
 
 
@@ -490,9 +490,6 @@ rm(pca_data_ini, pca_data_ini_NA)
 all_data <- all_data[order(all_data$rn), ]
 #rownames(all_data) <- all_data$rn
 
-head(all_data)
-
-
 
 
 pca_final_raster <- raster(paste0(path2tempResults, "/pca_final_raster.tif"))
@@ -516,18 +513,26 @@ names(pca_final_clstrs_raster) <- "clusterNum"
 rning_plts <- "y"
 rning_plts <- "n"
 if(rning_plts == "y"){
-  pdf(paste0(path2saveTests, "\\clusters.pdf"), width = 9, height = 9)
-  par(mfcol = c(1, 1), mar = c(2.5, 1.5, 2, 1.5))
+  jpeg(paste0(path2saveTests, "\\clusters_EFTs.jpg"), width = 31, height = 21, units = "cm", res = 600, pointsize = 8)
+
+  par(mfcol = c(1, 1), mar = c(2.5, 2, 2, 1.5))
   
   
-  pal <- colorRampPalette(c("red", "orange", "yellow", "green", "skyblue2", "blue", "violet"))
+  pal <- colorRampPalette(c("mistyrose1", "pink1", "violet", "blue", "skyblue2", "green", "darkolivegreen2", "yellow", "orange", "tomato3", "brown4", "coral4"))
   par(xpd = FALSE)
   plot(pca_final_clstrs_raster, 
        col = pal(length(unique(all_data$clstr)) - 1), 
        legend = TRUE, 
        main = paste0((length(unique(all_data$clstr)) - 1), " clusters")
-  ) 
-  
+       )
+  #legend("bottom",
+  #       #x = - 30, y = 30,
+  #       ncol = 1,
+  #       legend = unique(all_data$clstr),
+  #       fill = pal(length(unique(all_data$clstr)) - 1), 
+  #       inset = - 0.43
+  #       )
+         
   dev.off()
   
 }
@@ -551,7 +556,9 @@ pca_final_clstrs <- all_data
 stuff2save <- c("pca_final_clstrs", "pca_final_clstrs_raster")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step9.RData"))
 writeRaster(pca_final_clstrs_raster, paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"), overwrite = TRUE)
-
+#load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
+#all_data <- pca_final_clstrs
+#pca_final_clstrs_raster <- raster(paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"))
 
 
 
