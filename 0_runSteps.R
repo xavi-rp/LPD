@@ -13,7 +13,11 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 cat("Starting time: ", as.character(Sys.time()), "\n")
 
-steps2run <- c("step 01", "step 011", "step 02", "step 03", "step 04", "step 05", "step 06")
+steps2run <- c("step 01", "step 011", "step 02", 
+               "step 03", "step 04", "step 05", 
+               "step 06", "step 07", "step 08",
+               "step 09", "step 10", "step 11")
+
 steps2run <- c("step 06", "step 07")
 steps2run <- c("step 07", "step 08")
 steps2run <- c("step 08")
@@ -63,8 +67,6 @@ if("step 05" %in% steps2run){
 }
 
 
-
-
 ## Averaging Phenolo Variables and Multicollinearity (step 06)
 if("step 06" %in% steps2run){
   source(paste0(path2project, "/LPD/06_PhenoloVars_multicollin.R"))
@@ -83,6 +85,26 @@ if("step 07" %in% steps2run){
 if("step 08" %in% steps2run){
   source(paste0(path2project, "/LPD/08_Final_PCA.R"))
   cat("Step 08 finished at: ", as.character(Sys.time()), "\n")
+}
+
+
+## Clustering EFTs (step 09)
+if("step 09" %in% steps2run){
+  source(paste0(path2project, "/LPD/09_clustering_EFTs.R"))
+  cat("Step 09 finished at: ", as.character(Sys.time()), "\n")
+}
+
+
+## Local Net Productivity Scaling (step 10)
+if("step 10" %in% steps2run){
+  source(paste0(path2project, "/LPD/10_LocalNetProductivityScaling.R"))
+  cat("Step 10 finished at: ", as.character(Sys.time()), "\n")
+}
+
+## Combined Assessment (step 11)
+if("step 11" %in% steps2run){
+  source(paste0(path2project, "/LPD/11_CombinedAssessment.R"))
+  cat("Step 11 finished at: ", as.character(Sys.time()), "\n")
 }
 
 

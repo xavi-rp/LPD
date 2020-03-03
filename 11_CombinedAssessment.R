@@ -48,14 +48,14 @@ Sys.time()
 stuff2save <- c("LPD_CombAssess")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step11.RData"))
 writeRaster(LPD_CombAssess, paste0(path2tempResults, "/LPD_CombinedAssessment.tif"), overwrite = TRUE)
-
+#LPD_CombAssess <- raster(paste0(path2tempResults, "/LPD_CombinedAssessment.tif"))
 
 
 ## Plotting a map ####
 rning_plts <- "y"
 rning_plts <- "n"
 if(rning_plts == "y"){
-   jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 21, height = 30, units = "cm", res = 300)
+   jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 30, height = 21, units = "cm", res = 600)
    par(mar = c(11, 4, 6, 0), mfrow = c(1, 1))
    pal <- colorRampPalette(c("red", "orange", "yellow", "greenyellow", "lightskyblue", "royalblue3"))
    categs <- c("1(d): Declining land productivity",
@@ -81,7 +81,7 @@ if(rning_plts == "y"){
           #x = - 30, y = 30,
           ncol = 1,
           legend = categs,
-          fill = pal(6), inset = - 0.23
+          fill = pal(6), inset = - 0.43
    )
    
    dev.off()

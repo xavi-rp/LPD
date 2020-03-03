@@ -41,7 +41,7 @@ vrbls_lst
 
 # status9913.bil -> Status.9813spotvgt30 (???); This has one year more (1998)
 
-#vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
 
 for (vbl in vrbls_lst){
   varbl <- brick(paste0(path2old_data, vbl, "9913.bil"))
