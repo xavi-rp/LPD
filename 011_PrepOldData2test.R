@@ -46,6 +46,7 @@ vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
 for (vbl in vrbls_lst){
   varbl <- brick(paste0(path2old_data, vbl, "9913.bil"))
   names(varbl) <- 1999:2013
+  varbl <- varbl[[-dim(varbl)[3]]]   # removing last year as it is incomplete
   assign(vbl, varbl)
 }
 

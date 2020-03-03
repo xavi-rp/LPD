@@ -1,5 +1,6 @@
 ## This is a script to sequentially run the steps ####
 #source("/home/rotllxa/LPD/LPD/0_runSteps.R")
+#source("E:/rotllxa/LPD/LPD/0_runSteps.R")
 
 ## Settings (step 00)
 
@@ -13,14 +14,15 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 cat("Starting time: ", as.character(Sys.time()), "\n")
 
-steps2run <- c("step 01", "step 011", "step 02", 
-               "step 03", "step 04", "step 05", 
-               "step 06", "step 07", "step 08",
-               "step 09", "step 10", "step 11")
+steps2run <- c(#"step 01", 
+               "step 011", 
+               "step 02", "step 03", "step 04", "step 05", 
+               "step 06", "step 07", "step 08", "step 09", "step 10", "step 11")
 
 steps2run <- c("step 06", "step 07")
 steps2run <- c("step 07", "step 08")
 steps2run <- c("step 08")
+steps2run <- c("step 011")
 
 
 ## Reading nc files (step 01)
