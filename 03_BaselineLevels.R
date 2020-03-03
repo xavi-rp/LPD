@@ -17,9 +17,9 @@ cat("Calculating base line levels (Step 03)... ", "\n")
 
 if(grepl("OldData", var2process_name)){
   #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-  mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
-  assign(var2process_name, mi_clean)
-  var2process <- mi_clean  
+  var2process <- stack(paste0(path2tempResults, "/mi_clean.tif"))
+  #assign(var2process_name, mi_clean)
+  #var2process <- mi_clean  
   cat("processing 'mi_clean'... ", "\n")
   
 }else{
@@ -233,7 +233,7 @@ SteadInd_Baseline
 
 stuff2save <- c(stuff2save, "SteadInd_Baseline")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
-writeRaster(SteadInd_Baseline, paste0(path2saveTests, "/SteadInd_Baseline.tif"), overwrite = TRUE)
+writeRaster(SteadInd_Baseline, paste0(path2tempResults, "/SteadInd_Baseline.tif"), overwrite = TRUE)
 
 
 

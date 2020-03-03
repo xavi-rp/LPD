@@ -17,9 +17,9 @@ cat("Calculating Steadiness Index (Step 02)... ", "\n")
 
 if(grepl("OldData", var2process_name)){
   #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-  mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
-  assign(var2process_name, mi_clean)
-  var2process <- mi_clean  
+  var2process <- stack(paste0(path2tempResults, "/mi_clean.tif"))
+  #assign(var2process_name, mi_clean)
+  #var2process <- mi_clean  
   cat("processing 'mi_clean'... ", "\n")
 }else{
   #load(paste0(path2tempResults, "/season_length_EndStep01.RData"), verbose = TRUE)
@@ -51,7 +51,7 @@ if(grepl("OldData", var2process_name)){
 #plot(var2process)
 #dev.off()
 
-years <- nlayers(var2process)   #1999 - 2013
+years <- nlayers(var2process)   #1999 - 2013(2012)
 
 
 

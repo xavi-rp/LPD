@@ -17,9 +17,9 @@ cat("Calculating Standing Biomass State Change (Step 04)... ", "\n")
 
 if(grepl("OldData", var2process_name)){
    #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
-   mi_clean <- stack(paste0(path2tempResults, "/mi_clean.tif"))
-   assign(var2process_name, mi_clean)
-   var2process <- mi_clean  
+   var2process <- stack(paste0(path2tempResults, "/mi_clean.tif"))
+   #assign(var2process_name, mi_clean)
+   #var2process <- mi_clean  
    cat("processing 'mi_clean'... ", "\n")
    
 }else{
