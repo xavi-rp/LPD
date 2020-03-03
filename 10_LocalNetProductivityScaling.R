@@ -120,14 +120,10 @@ LocalNetProductivity_rstr <- setValues(CycleFraction_rstr, CycleFraction_average
 stuff2save <- c(stuff2save, "CycleFraction_average_df", "LocalNetProductivity_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step10.RData"))
 #writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity.tif"), bylayer = TRUE, suffix = c(names(LocalNetProductivity_rstr)), overwrite = TRUE)
-writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity_LSP.tif"), overwrite = TRUE)
+writeRaster(LocalNetProductivity_rstr, paste0(path2tempResults, "/LocalNetProductivity_LSP.tif"), overwrite = TRUE)
 
 
 #cellStats(LocalNetProductivity_rstr, max)
-
-
-
-
 
 
 

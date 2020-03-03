@@ -14,10 +14,10 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 ## Reading in data sets (Step 05 and Step10) ####
 
-LandProd_change <- raster(paste0(path2saveTests, "/LandProd_change.tif"))
+LandProd_change <- raster(paste0(path2tempResults, "/LandProd_change.tif"))
 LandProd_change
 
-LocalNetProductivity <- raster(paste0(path2saveTests, "/LocalNetProductivity_LSP.tif"))
+LocalNetProductivity <- raster(paste0(path2tempResults, "/LocalNetProductivity_LSP.tif"))
 LocalNetProductivity
 
 
@@ -40,50 +40,53 @@ LPD_CombAssess[LandProd_change %in% c(16:17, 19:20)  & LocalNetProductivity >= 5
 LPD_CombAssess[LandProd_change %in% c(18, 21:22)     & LocalNetProductivity >= 50] <- 6      # 6(si): Strongly increasing land productivity
 LPD_CombAssess[is.na(LandProd_change)] <- NA
 LPD_CombAssess
-
+Sys.time()
 
 
 ## Saving results ####
 
 stuff2save <- c("LPD_CombAssess")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step11.RData"))
-writeRaster(LPD_CombAssess, paste0(path2saveTests, "/LPD_CombinedAssessment.tif"), overwrite = TRUE)
+writeRaster(LPD_CombAssess, paste0(path2tempResults, "/LPD_CombinedAssessment.tif"), overwrite = TRUE)
 
 
 
 ## Plotting a map ####
-
-jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 21, height = 30, units = "cm", res = 300)
-par(mar = c(11, 4, 6, 0), mfrow = c(1, 1))
-pal <- colorRampPalette(c("red", "orange", "yellow", "greenyellow", "lightskyblue", "royalblue3"))
-categs <- c("1(d): Declining land productivity",
-            "2(ew): Early signs of decline of land productivity",
-            "3(nf): Negative fluctuation (stable, but stressed land prod.)",
-            "4(pf): Positive fluctuation (stable, not stressed land prod.)",
-            "5(i): Increasing land productivity",
-            "6(si): Strongly increasing land productivity"
-            )
-
-par(xpd = FALSE)
-plot(LPD_CombAssess, col = pal(6), legend = FALSE) 
-par(xpd = TRUE)
-title(main = "Land Productivity Dynamics:\nCombined Assessment", 
-      outer = TRUE,
-      #adj = 0,
-      line = - 4.5,
-      cex.main = 2)
-
-#plot(0,type='n', axes=FALSE, ann=FALSE)
-
-legend("bottom",
-       #x = - 30, y = 30,
-       ncol = 1,
-       legend = categs,
-       fill = pal(6), inset = - 0.23
-       )
-
-dev.off()
-
+rning_plts <- "y"
+rning_plts <- "n"
+if(rning_plts == "y"){
+   jpeg(paste0(path2saveTests, "\\LPD_CombinedAssessment.jpg"), width = 21, height = 30, units = "cm", res = 300)
+   par(mar = c(11, 4, 6, 0), mfrow = c(1, 1))
+   pal <- colorRampPalette(c("red", "orange", "yellow", "greenyellow", "lightskyblue", "royalblue3"))
+   categs <- c("1(d): Declining land productivity",
+               "2(ew): Early signs of decline of land productivity",
+               "3(nf): Negative fluctuation (stable, but stressed land prod.)",
+               "4(pf): Positive fluctuation (stable, not stressed land prod.)",
+               "5(i): Increasing land productivity",
+               "6(si): Strongly increasing land productivity"
+   )
+   
+   par(xpd = FALSE)
+   plot(LPD_CombAssess, col = pal(6), legend = FALSE) 
+   par(xpd = TRUE)
+   title(main = "Land Productivity Dynamics:\nCombined Assessment", 
+         outer = TRUE,
+         #adj = 0,
+         line = - 4.5,
+         cex.main = 2)
+   
+   #plot(0,type='n', axes=FALSE, ann=FALSE)
+   
+   legend("bottom",
+          #x = - 30, y = 30,
+          ncol = 1,
+          legend = categs,
+          fill = pal(6), inset = - 0.23
+   )
+   
+   dev.off()
+   
+}
 
 
 
