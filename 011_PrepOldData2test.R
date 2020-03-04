@@ -163,7 +163,7 @@ if(clean_vrbls == "y"){
 }else{
   stuff2save <- stuff2save
 }
-
+#if(file.exists(paste0(path2tempResults, "/mi_clean.tif"))) file.remove(paste0(path2tempResults, "/mi_clean.tif"))
 writeRaster(mi_clean, paste0(path2tempResults, "/mi_clean.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
 save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011.RData"))
 #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
@@ -183,7 +183,7 @@ if(clean_vrbls == "y"){
   #si_clean <- crop(si_clean, extent(-11.16071, 27.05357, 33.66964, 71.13393))
   
   if(any(dim(si) != dim(mi))){
-    crop(si, mi, filename = paste0(path2tempResults, "/si_crop.tif"))
+    crop(si, mi, filename = paste0(path2tempResults, "/si_crop.tif"), overwrite = TRUE)
     si <- stack(paste0(path2tempResults, "/si_crop.tif"))
   } 
 

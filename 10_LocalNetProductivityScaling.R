@@ -38,7 +38,7 @@ if(grepl("OldData", var2process_name)){
 
 
 ## Averaging
-beginCluster()   # it uses n - 1 clusters
+beginCluster(cors2use)   # it uses n - 1 clusters
 yrs <- (nlayers(CycleFraction_rstr) - 4):nlayers(CycleFraction_rstr)
 CycleFraction_rstr_average <- clusterR(CycleFraction_rstr, calc, args = list(fun = mean_years_function), export = "yrs")
 endCluster()

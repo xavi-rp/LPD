@@ -456,7 +456,8 @@ kmeans_clustring <- kmeans(pca_data_ini,
                            centers = 20, 
                            #iter.max = 10,  # Warning: did not converge in 10 iterations 
                            #iter.max = 50,   # Warning: did not converge in 50 iterations 
-                           iter.max = 100,  # Warning: did not converge in 100 iterations (~ 15 minutes)
+                           #iter.max = 100,  # Warning: did not converge in 100 iterations (~ 15 minutes)
+                           iter.max = 500,  
                            nstart = 1,
                            algorithm = "MacQueen"
                            )

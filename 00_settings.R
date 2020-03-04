@@ -73,8 +73,8 @@ source(paste0(path2project, "/LPD/001_functions.R"))
 
 ## PCA settings ####
 nPCs <- 4
-nPCs <- 4
 nPCs <- 3
+nPCs <- 4
 #A threshhold on a certain minimum variance achieved coud be set here instead of the number of PCs to check
 
 

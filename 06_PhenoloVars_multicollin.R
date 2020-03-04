@@ -59,8 +59,8 @@ for (i in 1:ls_vr){
   if(grepl("OldData", var2process_name)){
     nms <- vrbls_lst[i]
     var2process <- stack(paste0(path2tempResults, "/", nms, "_clean.tif"))
-    print(nms)
-    print(var2process)
+    #print(nms)
+    #print(var2process)
 
   }else{
     ## To raster bricks
@@ -83,7 +83,7 @@ for (i in 1:ls_vr){
   names(rstr_average) <- nms
   vrbles <- c(vrbles, nms)
   assign(paste0(nms, "_avrge"), rstr_average)
-  writeRaster(get(paste0(nms, "_avrge")), filename = paste0(path2tempResults, "/", nms, "_avrge.tif"))
+  writeRaster(get(paste0(nms, "_avrge")), filename = paste0(path2tempResults, "/", nms, "_avrge.tif"), overwrite = TRUE)
   #assign(paste0(nms, "_avrge"), raster(paste0(path2tempResults, "/", nms, "_avrge.tif")))
 
   stack_rstrs_avg <- stack(stack_rstrs_avg, get(paste0(nms, "_avrge")))
@@ -127,7 +127,8 @@ vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg,
                                                  select.variables = TRUE,  # if TRUE, randomly select one variable of the group. If FALSE, returns a list with the groups
                                                  #sample.points = FALSE,  # using all pixels
                                                  sample.points = TRUE,  # using nb.points to calculate multicollinearity
-                                                 nb.points = 100000,
+                                                 #nb.points = 100000,
+                                                 nb.points = 1000000,
                                                  plot = TRUE)
 vrbles_NoC
 

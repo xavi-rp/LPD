@@ -99,11 +99,13 @@ if(avoid_this != "Y") {
 
 
 ## Spatial Patterns of PCs ####
-rm(pca, stack_rstrs_avg_noC_df_final, stack_rstrs_avg_noC_df)
+if(exists("pca")) rm(pca)
+if(exists("stack_rstrs_avg_noC_df_final")) rm(stack_rstrs_avg_noC_df_final)
+if(exists("stack_rstrs_avg_noC_df")) rm(stack_rstrs_avg_noC_df)
 gc()
 
 pca_final_rottd_varbles <- as.data.frame(pca_final$x)
-rm(pca_final)
+if(exists("pca_final")) rm(pca_final)
 gc()
 
 
@@ -113,14 +115,16 @@ num_pix <- stack_rstrs_avg_noC@ncols * stack_rstrs_avg_noC@nrows
 num_pix1 <- c(1:num_pix)
 num_pix1 <- num_pix1[!num_pix1 %in% as.integer(rownames(pca_final_rottd_varbles))]
 
-df2fill <- as.data.frame(matrix(NA, nrow = length(num_pix1), ncol = 4))
-names(df2fill) <- c("PC1", "PC2", "PC3", "rn")
+#df2fill <- as.data.frame(matrix(NA, nrow = length(num_pix1), ncol = 4))
+#names(df2fill) <- c("PC1", "PC2", "PC3", "rn")
+df2fill <- as.data.frame(matrix(NA, nrow = length(num_pix1), ncol = ncol(pca_final_rottd_varbles)))
+names(df2fill) <- c(paste0("PC", seq(1:(ncol(pca_final_rottd_varbles) - 1))), "rn")
 df2fill$rn <- num_pix1
 rownames(df2fill) <- num_pix1
 rm(num_pix1)
 
 pca_final_raster1 <- rbindlist(list(pca_final_rottd_varbles, df2fill))
-rm(df2fill, pca_final_rottd_varbles)
+rm(df2fill)
 
 setorderv(pca_final_raster1, "rn")
 pca_final_raster1 <- pca_final_raster1[, rn := NULL]
@@ -131,9 +135,9 @@ xtnt <- extent(stack_rstrs_avg_noC)
 pca_final_brick <- brick(nrows = stack_rstrs_avg_noC@nrows, ncols = stack_rstrs_avg_noC@ncols, 
                          xmn = xtnt[1], xmx = xtnt[2], ymn = xtnt[3], ymx = xtnt[4], 
                          crs = crs(stack_rstrs_avg_noC),
-                         nl = 3
+                         nl = (ncol(pca_final_rottd_varbles) - 1)
                          )
-
+rm(pca_final_rottd_varbles)
 
 for(i in 1:ncol(pca_final_raster1)){
   rastr_tmp <- raster(nrows = stack_rstrs_avg_noC@nrows, ncols = stack_rstrs_avg_noC@ncols,
