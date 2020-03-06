@@ -24,8 +24,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r include = FALSE}
-#load("/Users/xavi_rp/Google Drive/MinBA/minba_env.RData", verbose = TRUE)
-source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+if(Sys.info()[4] == "D01RI1700371"){
+  source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
+}else if(Sys.info()[4] == "h05-wad.ies.jrc.it"){
+  source("/home/rotllxa/LPD/LPD/00_settings.R")
+}else if(Sys.info()[4] == "MacBook-MacBook-Pro-de-Xavier.local"){
+  source("/Users/xavi_rp/Documents/D6_LPD/LPD/00_settings.R")
+}
 
 table_num <- captioner::captioner(prefix = "Table")
 fig_num <- captioner::captioner(prefix = "Figure")
@@ -49,14 +54,31 @@ tb1 <- table_num(name = "t1", caption = "bla bla bla")
  
 `r table_num("t1", display = "cite")`
 
+a) general introduction
+UNCCD, SDG 15.3, Indicator
+
+
+b) Land Productivity Dynamics Map: 
+
+Include here a diagram of the whole process
+Phenological variables (Phenolo or others), Net Primary Productivity, etc (include here Eva's graph: Figure 3: Schematic representation of the main phenological and productivity variables calculated by Phenolo (reprint from Ivits et al., 2013a).)
+
+Land Productivity Dynamics Map = Long Term Change Map + Current Status Map of Land-Productivity
+
+Qualitative indicator...
+
+
+
+
 
 
 # Phenolo
-
+Should this part be removed?? I think so...
 
 
 
 # Long-Term Change Map of Land-Productivity
+
 
 
 ## Steadiness Index for Standing Biomass
