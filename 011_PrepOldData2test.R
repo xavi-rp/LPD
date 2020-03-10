@@ -275,6 +275,7 @@ if(clean_vrbls == "y"){
   #quantile(getValues(sbd_clean), seq(0, 1, 0.1), na.rm = TRUE)
   #sum(getValues(sbd_clean$sbd_crop.1) < -356, na.rm = TRUE)
   
+  t0 <- Sys.time()
   sbd_clean <- mask(sbd, mask = mi_clean)
   #writeRaster(sbd_clean, paste0(path2tempResults, "/sbd_crop.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
   
@@ -289,7 +290,7 @@ if(clean_vrbls == "y"){
   #sbd_clean <- clusterR(sbd_clean, reclassify, args = list(rcl = rclsf, include.lowest = TRUE, right = TRUE))
   #endCluster()
   #print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
-  
+  print(paste0("Masked in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   stuff2save <- c(stuff2save, "sbd_clean")
   
 }else{
@@ -309,7 +310,7 @@ if(clean_vrbls == "y"){
   #quantile(getValues(sed_clean$X1999), seq(0, 1, 0.1))
   #sum(getValues(sed_clean$X1999) < -356, na.rm = TRUE)
   
-
+  t0 <- Sys.time()
   sed_clean <- mask(sed, mask = mi_clean)
   #writeRaster(sed_clean, paste0(path2tempResults, "/sed_crop.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
   
@@ -325,6 +326,7 @@ if(clean_vrbls == "y"){
   #endCluster()
   #print(paste0("Reclassification made in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   #
+  print(paste0("Masked in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "units")))
   stuff2save <- c(stuff2save, "sed_clean")
   
 }else{

@@ -18,7 +18,7 @@ cat("Calculating Steadiness Index (Step 02)... ", "\n")
 if(grepl("OldData", var2process_name)){
   #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
   var2process <- stack(paste0(path2tempResults, "/mi_clean.tif"))
-  #assign(var2process_name, mi_clean)
+  assign(var2process_name, var2process)
   #var2process <- mi_clean  
   cat("processing 'mi_clean'... ", "\n")
 }else{
