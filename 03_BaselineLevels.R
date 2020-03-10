@@ -20,7 +20,7 @@ cat("Calculating base line levels (Step 03)... ", "\n")
 if(grepl("OldData", var2process_name)){
   #load(paste0(path2tempResults, "/OldDataSets_EndStep011.RData"), verbose = TRUE)
   var2process <- stack(paste0(path2tempResults, "/mi_clean.tif"))
-  #assign(var2process_name, mi_clean)
+  assign(var2process_name, var2process)
   #var2process <- mi_clean  
   cat("processing 'mi_clean'... ", "\n")
   
@@ -141,7 +141,7 @@ pix_categs1
 
 var2process_10class <- reclassify(var2process_avg13, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
 var2process_10class
-writeRaster(var2process_10class, paste0(path2saveTests, "/StandingBiomass_10class_begin.tif"), overwrite = TRUE)
+writeRaster(var2process_10class, paste0(path2tempResults, "/StandingBiomass_10class_begin.tif"), overwrite = TRUE)
 
 #jpeg(paste0(path2saveTests, "\\SeasonIntegral_10class.jpg"))
 #plot(SeasonIntegral_10class)
@@ -178,7 +178,7 @@ pix_categs2$becomes <- c(rep(1, 4), rep(2, 5), 3)
 
 var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename='', include.lowest = TRUE, right = TRUE)
 var2process_3class
-writeRaster(var2process_3class, paste0(path2saveTests, "/SeasonIntegral_3class_begin.tif"), overwrite = TRUE)
+writeRaster(var2process_3class, paste0(path2tempResults, "/SeasonIntegral_3class_begin.tif"), overwrite = TRUE)
 
 assign(paste0(var2process_name, "_10class"), var2process_10class)
 assign(paste0(var2process_name, "_class10_stats"), var2process_class10_stats)
