@@ -2,6 +2,7 @@
 
 library(DiagrammeR)
 library(DiagrammeRsvg)  # to save the graph
+library(rsvg)
 
 
 graph01 <- grViz("
@@ -14,18 +15,33 @@ node [shape = box
       fontsize = 15
       fontname = 'times-bold']
 'Land Productivity Dynamics'
+'EO Imagery'
 
+node [shape = box
+      fontsize = 12
+      fontname = '']
+'Phenological\nVariables'
+
+edge[minlen = 3]
+
+{rank = same 
+'EO Imagery' -> 'Phenological\nVariables' 
+[label = 'Phenolo, etc.']
+
+'Phenological\nVariables' -> 'Land Productivity Dynamics'}
+
+edge[minlen = '']
 
 node [shape = oval
       fontsize = 12
       fontname = '' 
       fixedsize = true
       width = 1.6]
-'Combined\nAssessment'
+'Combined\nAssessment of:'
 
 edge[color = black] 
 'Land Productivity Dynamics' ->
-'Combined\nAssessment'
+'Combined\nAssessment of:'
 
 
 node [shape = box
@@ -36,7 +52,7 @@ node [shape = box
 
 edge[color = black] 
       
-'Combined\nAssessment'->
+'Combined\nAssessment of:'->
 'Long-Term Change Map of Land-Productivity'
     
   
@@ -47,7 +63,7 @@ node [shape = box
 
 edge[color = black] 
 
-'Combined\nAssessment' ->
+'Combined\nAssessment of:' ->
 'Current Status Map of Land-Productivity'
       
 
@@ -90,6 +106,8 @@ edge[color = orange]
       }
 
       ")
+
+graph01
 
 export_svg(graph01) %>%
   charToRaw() %>%
