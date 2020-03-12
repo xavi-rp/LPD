@@ -17,7 +17,7 @@ cat("Calculating First PCA - screening (Step 07)... ", "\n")
 
 ## Reading in data (not correlated Phenolo variables) ####
 
-load(file = paste0(path2tempResults, "/results_Step6.RData"), verbose = TRUE)
+load(file = paste0(path2tempResults, "/results_Step6.RData"), verbose = FALSE)
 stack_rstrs_avg_noC <- brick(paste0(path2tempResults, "/stack_rstrs_avg_noC.tif"))
 #stack_rstrs_avg_noC
 

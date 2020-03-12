@@ -13,6 +13,7 @@ if(Sys.info()[4] == "D01RI1700371"){
   stop("Define your machine before to run LPD")
 }
 
+cat("Calculating multicollinearity among phenological variables (Step 06)... ", "\n")
 
 ## Reading in data (Phenolo variables) ####
 
@@ -22,7 +23,8 @@ if(grepl("OldData", var2process_name)){
   sl_clean <- stack(paste0(path2tempResults, "/sl_clean.tif"))
   sbd_clean <- stack(paste0(path2tempResults, "/sbd_clean.tif"))
   #sbd_clean <- stack(paste0(path2tempResults, "/sbd_crop.tif"))
-  sed_clean <- stack(paste0(path2tempResults, "/sed_clean.tif"))
+  #sed_clean <- stack(paste0(path2tempResults, "/sed_clean.tif"))
+  sed_clean <- stack(paste0(path2tempResults, "/sed_cleanGood.tif"))
   ls_vr <- length(vrbls_lst)
 
 }else{
@@ -77,7 +79,8 @@ for (i in 1:ls_vr){
   }
   
   ## Averaging
-  beginCluster()   # it uses n - 1 clusters
+  library(parallel)
+  beginCluster(cors2use)   # it uses n - 1 clusters
   yrs <- 1:nlayers(var2process)
   rstr_average <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
   endCluster()
@@ -89,7 +92,7 @@ for (i in 1:ls_vr){
   #assign(paste0(nms, "_avrge"), raster(paste0(path2tempResults, "/", nms, "_avrge.tif")))
 
   stack_rstrs_avg <- stack(stack_rstrs_avg, get(paste0(nms, "_avrge")))
-  print(paste0(nms, " ... average calculated"))
+  print(paste0(nms, " ... average calculated at ", Sys.time()))
   stuff2save <- c(stuff2save, paste0(nms, "_avrge"))
 }
 

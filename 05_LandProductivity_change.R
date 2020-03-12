@@ -17,8 +17,8 @@ cat("Calculating Land-Productivity Long Term Change Map (Step 05)... ", "\n")
 
 ## Reading in data (Season_Integral) ####
 
-load(paste0(path2tempResults, "/results_Step3.RData"), verbose = TRUE)
-load(paste0(path2tempResults, "/results_Step4.RData"), verbose = TRUE)
+load(paste0(path2tempResults, "/results_Step3.RData"), verbose = FALSE)
+load(paste0(path2tempResults, "/results_Step4.RData"), verbose = FALSE)
 
 #rm(SeasonIntegral_01_avg13, SeasonIntegral_class10_stats, pix_categs2, SeasonIntegral_3class)
 #rm(SeasonIntegral_01, SeasonIntegral_10class_begin, SeasonIntegral_01_avgLast3, SeasonIntegral_10class_end, SeasonIntegral_10class_dif)

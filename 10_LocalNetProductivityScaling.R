@@ -15,7 +15,7 @@ if(Sys.info()[4] == "D01RI1700371"){
 
 ## Reading in EFTs data (Step 09) ####
 
-load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
+load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = FALSE)
 rm(pca_final_clstrs_raster)
 #gc()
 

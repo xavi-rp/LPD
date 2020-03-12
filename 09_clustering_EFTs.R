@@ -20,7 +20,7 @@ cat("Clustering (Step 09)... ", "\n")
 
 ## Reading in data from 'final PCA' (Step 08) ####
 
-load(file = paste0(path2tempResults, "/results_Step8.RData"), verbose = TRUE)
+load(file = paste0(path2tempResults, "/results_Step8.RData"), verbose = FALSE)
 rm(pca_final_brick)
 #pca_final_raster <- brick(paste0(path2tempResults, "/pca_final_raster.tif"))
 
@@ -512,6 +512,9 @@ names(pca_final_clstrs_raster) <- "clusterNum"
 
 
 ## Plotting clusters  ####
+#load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
+#all_data <- pca_final_clstrs
+#pca_final_clstrs_raster <- raster(paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"))
 
 rning_plts <- "y"
 rning_plts <- "n"
