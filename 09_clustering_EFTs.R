@@ -27,6 +27,7 @@ rm(pca_final_brick)
 
 #initial data set to get clustered
 pca_data_ini <- as.data.frame(pca_final_raster1)
+#pca_data_ini <- (pca_final_raster1)
 #pca_data_ini <- pca_final_raster1
 rm(pca_final_raster1)
 
@@ -44,11 +45,12 @@ if(sampling2test == "Yes"){
 
 #pca_data_ini$rn <- as.numeric(rownames(pca_data_ini))
 #pca_data_ini[, rn := rownames(pca_data_ini)]
+pca_data_ini$rn <- 1:nrow(pca_data_ini)
 
 pca_data_ini_NA <- pca_data_ini[!complete.cases(pca_data_ini), ]   #to be used at the end to fill the raster
 pca_data_ini_NA$clstr <- NA
 pca_data_ini_NA$clstr <- as.integer(pca_data_ini_NA$clstr)
-pca_data_ini_NA$rn <- as.numeric(rownames(pca_data_ini_NA))
+#pca_data_ini_NA$rn <- as.numeric(rownames(pca_data_ini_NA))
 pca_data_ini_NA <- pca_data_ini_NA[, names(pca_data_ini_NA) %in% c("clstr", "rn")]
 
 
@@ -405,10 +407,10 @@ if(run_isodata == "yes"){
 
 ## 1) Scree plot (elbow) method
 
-wss <- (nrow(pca_data_ini) - 1) * sum(apply(pca_data_ini, 2, var))
+wss <- (nrow(pca_data_ini) - 1) * sum(apply(pca_data_ini[, - c(length(pca_data_ini))], 2, var))
 num_clstrs <- 2:15
 num_clstrs <- c(5, 10, 15, 20, 25, 30, 40, 50, 60)
-for (i in 2:(length(num_clstrs) + 1)) wss[i] <- kmeans(pca_data_ini,
+for (i in 2:(length(num_clstrs) + 1)) wss[i] <- kmeans(pca_data_ini[, - c(length(pca_data_ini))],
                                                        centers = num_clstrs[i - 1],
                                                        nstart = 1,
                                                        #iter.max = 25, # did not converge (any)
@@ -428,7 +430,7 @@ dev.off()
 ## 2) Statistics method (calculating one or more metrics: GAP, etc)
 
 #library(NbClust)
-#opt_clust <- NbClust(data = pca_data_ini, 
+#opt_clust <- NbClust(data = pca_data_ini[, - c(length(pca_data_ini))], 
 #                     distance = "euclidean",  #Error in dist(jeu, method = "euclidean") : vector is too large
 #                     #distance = "ward.D2", #Error in NbClust(data = pca_data_ini, distance = "ward.D2", min.nc = 5,  :invalid distance
 #                     min.nc = 5, max.nc = 40, 
@@ -439,7 +441,7 @@ dev.off()
 #opt_clust
 
 #library(factoextra)
-#opt_clust <- fviz_nbclust(pca_data_ini, FUNcluster = kmeans, method = "gap_stat",     #Error in dist(xs) : vector is too large
+#opt_clust <- fviz_nbclust(pca_data_ini[, - c(length(pca_data_ini))], FUNcluster = kmeans, method = "gap_stat",     #Error in dist(xs) : vector is too large
 #                          diss = NULL, 
 #                          k.max = 10, 
 #                          #nboot = 100,
@@ -454,7 +456,7 @@ dev.off()
 ## Clustering using optimal number of clusters
 
 t0 <- Sys.time()
-kmeans_clustring <- kmeans(pca_data_ini, 
+kmeans_clustring <- kmeans(pca_data_ini[, - c(length(pca_data_ini))], 
                            centers = 20, 
                            #iter.max = 10,  # Warning: did not converge in 10 iterations 
                            #iter.max = 50,   # Warning: did not converge in 50 iterations 
@@ -475,7 +477,7 @@ save(list = c("kmeans_clustring", "t1"), file = paste0(path2tempResults, "/resul
 #pca_final_raster1 <- pca_final_raster
 
 pca_data_ini$clstr <- kmeans_clustring$cluster
-pca_data_ini$rn <- as.numeric(rownames(pca_data_ini)) 
+#pca_data_ini$rn <- as.numeric(rownames(pca_data_ini)) 
 pca_data_ini <- pca_data_ini[, names(pca_data_ini) %in% c("clstr", "rn")]
 
 
