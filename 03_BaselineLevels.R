@@ -96,8 +96,8 @@ if(rning_tsts == "y"){
 }
 
 
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
   jpeg(paste0(path2saveTests, "\\StandingBiomass_avg13.jpg"))
   plot(var2process_avg13)
@@ -189,10 +189,10 @@ stuff2save <- c(stuff2save, "pix_categs1", paste0(var2process_name, "_10class"),
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 
 
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\StandingBiomass_3class.jpg"))
+  jpeg(paste0(path2saveTests, "/StandingBiomass_3class.jpg"))
   #plot(SeasonIntegral_3class)
   par(mar = c(3, 4, 4, 6))
   pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
@@ -236,8 +236,8 @@ SteadInd_Baseline
 stuff2save <- c(stuff2save, "SteadInd_Baseline")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 writeRaster(SteadInd_Baseline, paste0(path2tempResults, "/SteadInd_Baseline.tif"), overwrite = TRUE)
-
-
+#SteadInd_Baseline <- raster(paste0(path2tempResults, "/SteadInd_Baseline.tif"))
+#load(paste0(path2tempResults, "/results_Step3.RData"))
 
 #jpeg(paste0(path2saveTests, "\\SteadInd_Baseline.jpg"))
 #plot(SteadInd_Baseline)
@@ -245,11 +245,14 @@ writeRaster(SteadInd_Baseline, paste0(path2tempResults, "/SteadInd_Baseline.tif"
 
 
 # plotting for report
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\SteadInd_Baseline.jpg"), width = 28, height = 20, units = "cm", res = 300)
-  par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
+  jpeg(paste0(path2saveTests, "/SteadInd_Baseline.jpg"), width = 28, height = 20, units = "cm", res = 300)
+  layout(matrix(c(1, 2), nrow = 2, ncol = 1, byrow = TRUE),
+         heights = c(2, 1))# ,widths = c(2, 1))
+  par(bty = 'n')
+  par(mar = c(2, 2, 2, 0), bty = 'n')#, mfrow = c(1, 2))
   pal <- colorRampPalette(c("brown2", "brown3", "brown4", "wheat2", "wheat3", "wheat4", "palegreen2", "palegreen3", "palegreen4", "skyblue2", "skyblue3", "skyblue4"))
   categs <- c("St1-low", "St1-medium", "St1-high", "St2-low", "St2-medium", "St2-high", "St3-low", "St3-medium", "St3-high", "St4-low", "St4-medium", "St4-high")
   par(xpd = FALSE)
@@ -258,14 +261,30 @@ if(rning_plts == "y"){
   title(main = "Steadiness Index combined with baseline levels of Standing Biomass", 
         outer = TRUE,
         #adj = 0,
-        line = - 1.5,
-        cex.main = 1.3)
-  legend("bottom",
-         ncol = 4,
+        line = - 2.5,
+        cex.main = 1.7)
+  legend(#"bottom",
+         -175, 40,
+         ncol = 1,
          legend = categs,
-         fill = pal(12), inset = - 0.25)
+         fill = pal(12)#, 
+         #inset = 0.1
+         )
+  #dev.off()
+  
+  ## Some statistics to include in the plot
+  cont_table <- as.data.frame(table(getValues(SteadInd_Baseline)))
+  cont_table$Var1 <- categs
+  names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
+  par(mar = c(5, 6, 8, 2), bty = 'n')
+  barplot(rev(cont_table$Freq), names.arg = rev(cont_table$SteadInd_StandBiomass_categs), las = 3, #axis.lty = 1,
+          xlab = "Number of pixels per category", 
+          #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",
+          col = rev(pal(12)), horiz = TRUE, las = 1, cex.names = 0.5, cex.axis = 0.8)
+  #abline(0, 0)
+  
   mtext("St1: Strong Neg; St2: Medium Neg; St3: Medium Pos; St4: Strong Pos", 
-        side = 1, line = 7, 
+        side = 3, line = 2, 
         #at = 5,
         adj = 0,
         cex = 0.8)
@@ -280,22 +299,11 @@ if(rning_plts == "y"){
   
   y2plot <- paste0("Baseline years: average of ", paste(y2plot, collapse = "-"))
   mtext(y2plot, 
-        side = 1, line = 8, 
+        side = 3, line = 1, 
         #at = 5,
         adj = 0,
         cex = 0.8)
   
-  #dev.off()
-  
-  ## Some statistics to include in the plot
-  cont_table <- as.data.frame(table(getValues(SteadInd_Baseline)))
-  cont_table$Var1 <- categs
-  names(cont_table)[1] <- "SteadInd_StandBiomass_categs"
-  barplot(cont_table$Freq, names.arg = cont_table$SteadInd_StandBiomass_categs, las = 3, axis.lty = 1,
-          ylab = "Number of pixels per category", 
-          #main = "Steadiness Index combined with baseline levels \nof Standing Biomass",
-          col = pal(12))
-  #abline(0, 0)
   dev.off()
 
 
