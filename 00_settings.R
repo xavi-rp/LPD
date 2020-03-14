@@ -47,9 +47,9 @@ if(Iam == "PCxavi"){
 }else if(Iam == "MacXavi"){
   path2project <- "/Users/xavi_rp/Documents/D6_LPD/"
   path2data <- ""
-  path2old_data <- paste0(path2project, "/old_data_sets")
-  path2saveTests <- paste0(path2project, "/kk")
-  path2tempResults <- paste0(path2project, "/temp_results")
+  path2old_data <- paste0(path2project, "old_data_sets")
+  path2saveTests <- paste0(path2project, "kk")
+  path2tempResults <- paste0(path2project, "temp_results")
 }
 
 

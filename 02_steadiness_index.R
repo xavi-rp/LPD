@@ -123,26 +123,29 @@ if(rning_tsts == "y"){
 
 
 # plotting for report
+#slope_rstr <- raster(paste0(path2tempResults, "/slope_raster.tif"))
 rning_plts <- "y"
 rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\slope_rstr.jpg"))
-  #plot(slope_rstr)
-  slope_rstr_vls <- getValues(slope_rstr)
-  slope_rstr2plot <- slope_rstr
-  slope_rstr2plot[slope_rstr2plot < 0 ] <- -1
-  slope_rstr2plot[slope_rstr2plot > 0 ] <- 1
-  slope_rstr2plot[slope_rstr2plot == 0 ] <- 0
+  pix_categs3 <- as.data.frame(matrix(nrow = 2, ncol = 0))
+  pix_categs3$from    <- c(minValue(slope_rstr), 0.0000001)
+  pix_categs3$to      <- c(-0.0000001,   maxValue(slope_rstr))
+  pix_categs3$becomes <- c(-1,    1)
+  slope_rstr2plot <- reclassify(slope_rstr, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
   
-  par(mar = c(3, 4, 4, 4.5))
+  jpeg(paste0(path2saveTests, "/slope_rstr.jpg"),
+       units = "cm", width = 20, height = 12,
+       pointsize = 12, quality = 75, res = 300)
+  
+  par(mar = c(3, 4, 4, 0))
   pal <- colorRampPalette(c("coral1", "yellow", "palegreen3"))
   par(xpd = FALSE)
   plot(slope_rstr2plot, col = pal(3), legend = FALSE) 
   par(xpd = TRUE)
-  legend("right",
+  legend("bottom",
          legend = c("Negative", "Zero",
                     "Positive"),
-         fill = pal(3), inset = - 0.3)
+         fill = pal(3), inset = 0.01)
   title(main = "Tendency of Change (Slope)", cex.main = 1.3)
   
   dev.off()
@@ -168,26 +171,29 @@ cat("MTID calculated in: ", (Sys.time() - t0), " ", attr((Sys.time() - t0), "uni
 stuff2save <- c(stuff2save, "mtid_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(mtid_rstr, paste0(path2tempResults, "/mtid_raster.tif"), overwrite = TRUE)
-
+#mtid_rstr <- raster(paste0(path2tempResults, "/mtid_raster.tif"))
 
 # plotting for report
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\mtid_rstr.jpg"))
-  #plot(slope_rstr)
-  mtid_rstr_rstr2plot <- mtid_rstr
-  mtid_rstr_rstr2plot[mtid_rstr_rstr2plot < 0 ] <- -1
-  mtid_rstr_rstr2plot[mtid_rstr_rstr2plot > 0 ] <- 1
-  mtid_rstr_rstr2plot[mtid_rstr_rstr2plot == 0 ] <- 0
+  pix_categs3 <- as.data.frame(matrix(nrow = 2, ncol = 0))
+  pix_categs3$from    <- c(minValue(mtid_rstr), 0.0000001)
+  pix_categs3$to      <- c(-0.0000001,   maxValue(mtid_rstr))
+  pix_categs3$becomes <- c(-1,    1)
+  mtid_rstr_rstr2plot <- reclassify(mtid_rstr, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
   
-  par(mar = c(3, 4, 4, 4.5))
+  jpeg(paste0(path2saveTests, "/mtid_rstr.jpg"),
+       units = "cm", width = 20, height = 12,
+       pointsize = 12, quality = 75, res = 300)
+
+  par(mar = c(3, 4, 4, 0))
   pal <- colorRampPalette(c("tomato3", "yellow", "seagreen4"))
   par(xpd = FALSE)
   plot(mtid_rstr_rstr2plot, col = pal(3), legend = FALSE) 
   par(xpd = TRUE)
-  legend("right",
+  legend("bottom",
          legend = c("Negative", "Zero",
                     "Positive"),
-         fill = pal(3), inset = - 0.3)
+         fill = pal(3), inset = 0.01)
   title(main = "Net Change (MTID)", cex.main = 1.3)
   
   dev.off()
@@ -211,21 +217,24 @@ stuff2save <- c(stuff2save, "SteadInd_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(SteadInd_rstr, paste0(path2tempResults, "/SteadInd_raster.tif"), overwrite = TRUE)
 #load(file = paste0(path2tempResults, "/results_Step2.RData"))
+#SteadInd_rstr <- raster(paste0(path2tempResults, "/SteadInd_raster.tif"))
 
 # plotting for report
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\SteadInd_rstr.jpg"))#, width = 15, height = 15, units = "cm", res = 300)
-  #plot(SteadInd_rstr)
-  par(mar = c(3, 4, 4, 6))
+  jpeg(paste0(path2saveTests, "/SteadInd_rstr.jpg"),
+       units = "cm", width = 20, height = 13.9,
+       pointsize = 12, quality = 75, res = 300)
+
+  par(mar = c(3, 4, 4, 0))
   pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
   par(xpd = FALSE)
   plot(SteadInd_rstr, col = pal(4), legend = FALSE) 
   par(xpd = TRUE)
-  legend("right",
+  legend("bottom",
          title = "Ecosystem Dynamics",
          legend = c("Strong Negative", "Moderate Negative",
                     "Moderate Positive", "Strong Positive"),
-         fill = pal(4), inset = - 0.4)
+         fill = pal(4), inset = 0.01)
   title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
   
   dev.off()
