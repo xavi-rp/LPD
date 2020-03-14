@@ -86,5 +86,8 @@ nPCs <- 4
 #A threshhold on a certain minimum variance achieved coud be set here instead of the number of PCs to check
 
 
+# plotting for report
+rning_plts <- "n"
+rning_plts <- "y"
 
 

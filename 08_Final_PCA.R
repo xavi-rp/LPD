@@ -167,6 +167,6 @@ if(rning_plts == "y"){
 writeRaster(pca_final_brick, paste0(path2tempResults, "/pca_final_raster.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
 stuff2save <- c("pca_final_raster1", "pca_final_brick")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step8.RData"))
-
+#load(file = paste0(path2tempResults, "/results_Step8.RData"))
 
 

@@ -23,7 +23,9 @@ steps2run <- c(#"step 01",
   #"step 02", 
   #"step 03", 
   #"step 04", "step 05", 
-  "step 06", "step 07", "step 08", "step 09", "step 10", "step 11")
+  #"step 06", "step 07", "step 08", 
+  #"step 09", 
+  "step 10", "step 11")
 
 
 

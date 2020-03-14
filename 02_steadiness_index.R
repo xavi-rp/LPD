@@ -210,7 +210,7 @@ Sys.time() - t0
 stuff2save <- c(stuff2save, "SteadInd_rstr")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step2.RData"))
 writeRaster(SteadInd_rstr, paste0(path2tempResults, "/SteadInd_raster.tif"), overwrite = TRUE)
-
+#load(file = paste0(path2tempResults, "/results_Step2.RData"))
 
 # plotting for report
 if(rning_plts == "y"){
