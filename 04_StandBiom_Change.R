@@ -112,7 +112,7 @@ pix_categs3$becomes <- c(  3,    2,    1,   2,   3)
 var2process_3classChange <- reclassify(var2process_10class_dif, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
 var2process_3classChange
 writeRaster(var2process_3classChange, paste0(path2tempResults, "/StandingBiomass_3classChange.tif"), overwrite = TRUE)
-
+#var2process_3classChange <- raster(paste0(path2tempResults, "/StandingBiomass_3classChange.tif"))
 
 assign(paste0(var2process_name, "_3classChange"), var2process_3classChange)
 assign(paste0(var2process_name, "_10class_end"), var2process_10class_end)
@@ -124,62 +124,69 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step4.RData"))
 
 ## Some plots and statistics
 # plotting
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
-   jpeg(paste0(path2saveTests, "\\SeasInt_Change.jpg"), width = 28, height = 20, units = "cm", res = 300)
-   par(mar = c(9.2, 4, 4, 4), mfrow = c(1, 2))
-   pal <- colorRampPalette(c("wheat2", "skyblue2", "blue"))
-   categs <- c("No Change", "Changed 1 categ", expression("Changed" >= "2 categs"))
-   par(xpd = FALSE)
-   plot(var2process_3classChange, col = pal(3), legend = FALSE) 
-   par(xpd = TRUE)
-   title(main = "Class Change for the Standing Biomass", 
-         outer = TRUE,
-         #adj = 0,
-         line = - 1.5,
-         cex.main = 1.3)
-   legend("bottom",
-          ncol = 1,
-          legend = categs,
-          fill = pal(3), inset = - 0.25)
-   
-   if((length(time) - 2) == dim(var2process)[3]){
-      y2plot <- time[-c(1,length(time))]
-      y2plot_beg <- y2plot[1:3][c(1,length(yrs))]
-      y2plot_end <- y2plot[yrs][c(1,length(yrs))]
-   }else if((length(time)) == dim(var2process)[3]){
-      y2plot_beg <- time[c(1, 3)]
-      y2plot_end <- time[c((length(time) - 2), length(time))]
-   }else{
-      y2plot <- ""
-   }
-   
-   y2plot_beg <- paste0("Beginning years: average of ", paste(y2plot_beg, collapse = "-"))
-   mtext(y2plot_beg, 
-         side = 1, line = 7, 
-         #at = 5,
-         adj = 0,
-         cex = 0.8)
-   y2plot_end <- paste0("End years: average of ", paste(y2plot_end, collapse = "-"))
-   mtext(y2plot_end, 
-         side = 1, line = 8, 
-         #at = 5,
-         adj = 0,
-         cex = 0.8)
+  jpeg(paste0(path2saveTests, "/SeasInt_Change.jpg"), width = 28, height = 20, units = "cm", res = 300)
+  layout(matrix(c(1, 2), nrow = 2, ncol = 1, byrow = TRUE),
+         heights = c(2, 1))# ,widths = c(2, 1))
+  par(bty = 'n')
+  par(mar = c(2, 2, 2, 0), bty = 'n')#, mfrow = c(1, 2))
+  pal <- colorRampPalette(c("wheat2", "skyblue2", "blue"))
+  categs <- c("No Change", "Changed 1 categ", expression("Changed" >= "2 categs"))
+  par(xpd = FALSE)
+  plot(var2process_3classChange, col = pal(3), legend = TRUE) 
+  par(xpd = TRUE)
+  title(main = "Class Change for Standing Biomass", 
+       outer = TRUE,
+       #adj = 0,
+       line = - 2.5,
+       cex.main = 1.7)
+  legend(#"bottom",
+       -175, -40,
+        ncol = 1,
+        legend = categs,
+        fill = pal(3), inset = - 0.25)
+  
    #dev.off()
    
    cont_table <- as.data.frame(table(getValues(var2process_3classChange)))
    cont_table$Var1 <- categs
    names(cont_table)[1] <- "StandBiomass_change"
    #cont_table
+   par(mar = c(5, 8, 8, 8), bty = 'n')
    brplt <- barplot((cont_table$Freq / 1000), names.arg = cont_table$StandBiomass_change, las = 3, axis.lty = 1,
-                    ylab = "Number of pixels per category (x1000)", 
-                    #main = "Class Change for the Standing Biomass")#,
-                    col = pal(3))
+                    ylab = "Number of pixels\nper category (x1000)", 
+                    #main = "Class Change for Standing Biomass")#,
+                    col = pal(3), horiz = FALSE, las = 1, cex.names = 0.8, cex.axis = 0.7)
    text(x = brplt, y = ((cont_table$Freq) /1000), 
         label = paste0(round(((cont_table$Freq) * 100)/sum(cont_table$Freq), 1), " %"), 
         cex = 0.9, pos = 3, col = "black", xpd = TRUE)
+   
+   if((length(time) - 2) == dim(var2process)[3]){
+     y2plot <- time[-c(1,length(time))]
+     y2plot_beg <- y2plot[1:3][c(1,length(yrs))]
+     y2plot_end <- y2plot[yrs][c(1,length(yrs))]
+   }else if((length(time)) == dim(var2process)[3]){
+     y2plot_beg <- time[c(1, 3)]
+     y2plot_end <- time[c((length(time) - 2), length(time))]
+   }else{
+     y2plot_beg <- ""
+     y2plot_end <- ""
+   }
+   
+   y2plot_beg <- paste0("Beginning years: average of ", paste(y2plot_beg, collapse = "-"))
+   mtext(y2plot_beg, 
+         side = 1, line = 2.5, 
+         #at = 5,
+         adj = 0,
+         cex = 0.8)
+   y2plot_end <- paste0("End years: average of ", paste(y2plot_end, collapse = "-"))
+   mtext(y2plot_end, 
+         side = 1, line = 3.5, 
+         #at = 5,
+         adj = 0,
+         cex = 0.8)
    
    #abline(0, 0)
    dev.off()
