@@ -518,8 +518,8 @@ names(pca_final_clstrs_raster) <- "clusterNum"
 #all_data <- pca_final_clstrs
 #pca_final_clstrs_raster <- raster(paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"))
 
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
   jpeg(paste0(path2saveTests, "\\clusters_EFTs.jpg"), width = 31, height = 21, units = "cm", res = 600, pointsize = 8)
 
@@ -530,8 +530,10 @@ if(rning_plts == "y"){
   par(xpd = FALSE)
   plot(pca_final_clstrs_raster, 
        col = pal(length(unique(all_data$clstr)) - 1), 
+       #col = pal(20), 
        legend = TRUE, 
        main = paste0((length(unique(all_data$clstr)) - 1), " clusters")
+       #main = paste0(20, " clusters")
        )
   #legend("bottom",
   #       #x = - 30, y = 30,
