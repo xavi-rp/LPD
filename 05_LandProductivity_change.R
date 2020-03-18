@@ -78,17 +78,18 @@ LandProd_change
 stuff2save <- c("LandProd_change")
 save(list = stuff2save, file = paste0(path2tempResults, "/results_Step5.RData"))
 writeRaster(LandProd_change, paste0(path2tempResults, "/LandProd_change.tif"), overwrite = TRUE)
-
+#LandProd_change <- raster(paste0(path2tempResults, "/LandProd_change.tif"))
 
 
 
 ## Some plots and statistics for report
 # plotting
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\LandProd_change.jpg"), width = 29, height = 21, units = "cm", res = 300)
-  par(mar = c(5, 4, 7, 4), mfrow = c(1, 3))
+  jpeg(paste0(path2saveTests, "/LandProd_change.jpg"), width = 29, height = 21, units = "cm", res = 300)
+  layout(matrix(c(1, 2), nrow = 2, byrow = TRUE), heights = c(2, 1))
+  par(mar = c(2, 3, 3, 0), bty = "n")#, mfrow = c(1, 2))
   pal <- colorRampPalette(c("brown", "darkkhaki", "darkgreen"))
   categs <- c("St1-low-No Change", "St1-low-Change 1 categ", "St1-low-Change 2 or more categs", 
               "St1-medium-No Change", "St1-medium-Change 1 categ", "St1-medium-Change 2 or more categ", 
@@ -103,9 +104,9 @@ if(rning_plts == "y"){
               "St4-medium-No Change", "St4-medium-Change 1 categ", "St4-medium-Change 2 or more categ", 
               "St4-high-No Change/Change 1 categ/Change 2 or more categs")
   
-  par(xpd = FALSE)
+  #par(xpd = TRUE)
   plot(LandProd_change, col = pal(22), legend = FALSE) 
-  par(xpd = TRUE)
+  #par(xpd = TRUE)
   title(main = "Land-Productivity Long Term Change Map", 
         outer = TRUE,
         #adj = 0,
@@ -113,38 +114,28 @@ if(rning_plts == "y"){
         cex.main = 2)
   
   
-  
-  cont_table <- as.data.frame(table(getValues(LandProd_change)))
-  #cont_table$Var1 <- categs
-  names(cont_table)[1] <- "Land-Productivity_change"
-  #cont_table
-  brplt <- barplot((cont_table$Freq / 1000), names.arg = as.character(c(1:22)), #names.arg = cont_table$Productivity_change,
-                   las = 1, axis.lty = 1,
-                   ylab = "Number of pixels per category (x1000)", 
-                   #main = "")#,
-                   col = pal(22))
-  text(x = (brplt + 0.25), y = (((cont_table$Freq) / 1000) + 20), 
-       label = paste0(round(((cont_table$Freq) * 100)/sum(cont_table$Freq), 1), " %"), 
-       cex = 0.9, pos = 3, col = "black", xpd = TRUE, srt = 90)
-  
-  
-  
-  plot(0,type='n',axes=FALSE,ann=FALSE)
-  
+  par(mar = c(0, 2, 3, 2), bty = 'n')
+  plot(0, type = 'n', axes = FALSE, ann = FALSE)
   legend("center",
-         #x = - 30, y = 30,
-         ncol = 1,
+         #x = - 160, y = - 20,
+         ncol = 2,
          legend = categs,
-         fill = pal(22), inset = - 0.25)
-  #mtext("", 
-  #      side = 1, line = 7, 
-  #      #at = 5,
-  #      adj = 1,
-  #      cex = 0.8)
-  #dev.off()
+         cex = 0.9,
+         fill = pal(22), inset =  1)
+
   
-  
-  #abline(0, 0)
+  #cont_table <- as.data.frame(table(getValues(LandProd_change)))
+  #cont_table$Var1 <- categs
+  #names(cont_table)[1] <- "Land-Productivity_change"
+  #par(mar = c(6, 4, 4, 8), bty = 'n')
+  #brplt <- barplot((cont_table$Freq / 1000), names.arg = as.character(c(1:22)), #names.arg = cont_table$Productivity_change,
+  #                 las = 1, axis.lty = 1,
+  #                 xlab = "Number of pixels per category (x1000)", 
+  #                 #main = "")#,
+  #                 col = pal(22), horiz = TRUE, cex.names = 1.2, cex.axis = 1.2, cex.lab = 1.2)
+  #text(x = (brplt + 0.25), y = (((cont_table$Freq) / 1000) + 20), 
+  #     label = paste0(round(((cont_table$Freq) * 100)/sum(cont_table$Freq), 1), " %"), 
+  #     cex = 0.4, pos = 3, col = "black", xpd = TRUE, srt = 90)
+
   dev.off()
-  
 }
