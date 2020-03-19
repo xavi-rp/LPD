@@ -47,7 +47,7 @@ edge[color = black]
 node [shape = box
       fixedsize = false
       style = filled
-      color = lightblue]
+      color = DeepSkyBlue]
 'Long-Term Change Map of Land-Productivity'
 
 edge[color = black] 
@@ -69,7 +69,7 @@ edge[color = black]
 
 node [shape = box
       style = ''
-      color = lightblue]
+      color = DeepSkyBlue]
 
 'Steadiness Index (Standing Biomass)'
 'Baseline Levels of Standing Biomass'
@@ -78,7 +78,7 @@ node [shape = box
 'Net Change (MTID)'
 
 
-edge[color = lightblue] 
+edge[color = DeepSkyBlue] 
 
 'Long-Term Change Map of Land-Productivity' -> 
 {'Steadiness Index (Standing Biomass)' 
