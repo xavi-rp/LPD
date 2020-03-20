@@ -44,6 +44,8 @@ fig_num <- captioner::captioner(prefix = "Figure")
 [@ivits_assessing_2016]
 
 
+
+
 # Introduction (Background)
 
 ```{r echo=FALSE}
@@ -61,6 +63,18 @@ UNCCD, SDG 15.3, Indicator
 b) Land Productivity Dynamics Map: 
 
 Include here a diagram of the whole process
+
+```{r echo=FALSE}
+fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land-Productivity Dynamics indicator")
+grph02 <- paste0(path2tempResults, "/graph02.png")
+```
+
+
+`r fig_num("f0", display = "cite")`
+
+![`r fig0`](`r grph02`)
+
+
 Phenological variables (Phenolo or others), Net Primary Productivity, etc (include here Eva's graph: Figure 3: Schematic representation of the main phenological and productivity variables calculated by Phenolo (reprint from Ivits et al., 2013a).)
 
 Land Productivity Dynamics Map = Long Term Change Map + Current Status Map of Land-Productivity
@@ -68,6 +82,7 @@ Land Productivity Dynamics Map = Long Term Change Map + Current Status Map of La
 Qualitative indicator...
 
 
+In order to illustrate the methodology presented in this document, we use a data set of `r length(vrbls_lst)` phenological and productivity variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC - Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used are `r paste0(vrbls_lst_names, collapse = ", ")` and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
 
 
 
@@ -116,6 +131,14 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
 # Current Status Map of Land-Productivity
+
+
+## Ecosystem Functional Types (EFTs)
+
+
+
+
+## Local Net Scaling
 
 
 # Long Term Change Map + Current Status Map of Land-Productivity

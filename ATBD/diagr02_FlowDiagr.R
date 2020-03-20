@@ -180,5 +180,5 @@ graph02
 export_svg(graph02) %>%
   charToRaw() %>%
   rsvg() %>%
-  png::writePNG("/Users/xavi_rp/Documents/D6_LPD/temp_results/graph02.png")
+  png::writePNG("/Users/xavi_rp/Documents/D6_LPD/temp_results/graph02.png", dpi = 96)
 

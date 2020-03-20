@@ -62,7 +62,12 @@ nc_file <- "europe.nc"
 var2process_name <- "SeasonIntegral"
 var2process_name <- "StandingBiomass_OldData" # This is an old data set which might be the one used by Ivits in 2013 (SB = MI)
 
-if(grepl("OldData", var2process_name)) vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+if(grepl("OldData", var2process_name)){
+  vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+  vrbls_lst_names <- c("Standing Biomass", "Season Integral",     
+                       "Season Beginning Day", "Season End Day",      
+                       "Season Length")
+} 
 
 
 
