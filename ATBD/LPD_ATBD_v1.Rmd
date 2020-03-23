@@ -141,10 +141,39 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 ## Local Net Scaling
 
 
-# Long Term Change Map + Current Status Map of Land-Productivity
+# Combined Assessment of Land-Productivity
+`r # # Long Term Change Map + Current Status Map of Land-Productivity`
+```{r echo=FALSE}
+figCombAss <- fig_num(name = "figCombAss", caption = "blu blu blu")
+tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = "Lookup table for the combination of the two branches assessment (i.e. Long-Term Channge Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories")
+LPD_CombinedAssessment <- paste0(path2saveTests, "/LPD_CombinedAssessment.jpg")
+
+LookUpCombAss <- 
+```
+
+
+![`r figCombAss`](`r LPD_CombinedAssessment`)
+
+
+The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Channge Map (`r fig_num("f0", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("f0", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
+
+As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values after the reclassification of each pixel as shown in the lookup table `r table_num("tabLookUpCombAss", display = "cite")`
+
+
+`r table_num("tabLookUpCombAss", display = "full")`
+```{r echo=FALSE}
+#pander(splittable(LookUpCombAss, 2))
+pander(LookUpCombAss)
+```
+`&nbsp;
+
+![`r figCombAss`](`r LPD_CombinedAssessment`)
 
 
 
+# Conclusions
+
+According to the flowchart presented at the beginning of this document (`r fig_num("f0", display = "cite")`), the Land-Productivity Dynamics indicator (LPD) is derived from several phenological and productivity variables, in turn, obtained from time series of earth observation imagery.
 
 
 # References
