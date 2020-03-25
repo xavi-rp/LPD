@@ -23,6 +23,7 @@ library(knitr)
 library(pander)
 library(captioner)
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ```{r include = FALSE}
@@ -72,14 +73,16 @@ grph02 <- paste0(path2tempResults, "/graph02.png")
 ```
 
 
-`r fig_num("f0", display = "cite")`
 
-![`r fig0`](`r grph02`)
 
 
 Phenological variables (Phenolo or others), Net Primary Productivity, etc (include here Eva's graph: Figure 3: Schematic representation of the main phenological and productivity variables calculated by Phenolo (reprint from Ivits et al., 2013a).)
 
-Land Productivity Dynamics Map = Long Term Change Map + Current Status Map of Land-Productivity
+Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term Change Map + Current Status Map of Land-Productivity
+
+
+![`r fig0`](`r grph02`)
+
 
 Qualitative indicator...
 
@@ -124,7 +127,7 @@ slp_rstr <- paste0(path2saveTests, "/slope_rstr.jpg")
 ## Land-Productivity Long Term Change Map
 
 ```{r echo=FALSE}
-fig5 <- fig_num(name = "f5", caption = "blu blu blu")
+figLandProd_change <- fig_num(name = "figLandProd_change", caption = "blu blu blu")
 LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 ```
 
@@ -135,6 +138,8 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 # Current Status Map of Land-Productivity
 
 
+
+
 ## Ecosystem Functional Types (EFTs)
 
 
@@ -142,13 +147,23 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 ## Local Net Scaling
 
+```{r echo=FALSE}
+figLandProd_change <- fig_num(name = "figLandProd_change", caption = "blu blu blu")
+LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
+
+
+
+
 
 # Combined Assessment of Land-Productivity
 `r # # Long Term Change Map + Current Status Map of Land-Productivity`
 ```{r echo=FALSE}
 figCombAss <- fig_num(name = "figCombAss", caption = "Land-Productivity Dynamics indicator final map. Combined assessment of the Long-Term Channge Map of standing biomass and the Current Status Map of Land-Productivity based on the cyclic fraction")
-tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = "Lookup table for the combination of the two branches assessment (i.e. Long-Term Channge Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories (i.e. 'd', Declining L-P; 'ew', Early signs of decline L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increase L-P; 'si', Strong increase of L-P)")
 LPD_CombinedAssessment <- paste0(path2saveTests, "/LPD_CombinedAssessment.jpg")
+
+LookUpCombAss_categs <- "'d', Declining L-P; 'ew', Early signs of decline L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increase L-P; 'si', Strong increase of L-P"
+
+tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = paste0("Lookup table for the combination of the two branches assessment (i.e. Long-Term Channge Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories (i.e. ", LookUpCombAss_categs, ")"))
 
 LookUpCombAss <- as.data.frame(matrix(nrow = 22, ncol = 5,
                                       c(rep("st1", 9), rep("st2", 3), rep("st3", 3), rep("st4", 7),
@@ -157,18 +172,15 @@ LookUpCombAss <- as.data.frame(matrix(nrow = 22, ncol = 5,
                                         rep("d", 6), "ew", rep("d", 2), rep("nf", 3), rep("pf", 5), "i", "pf", rep("i", 3),
                                         "ew", "ew", "d", "ew", "ew", "d", "nf", "ew", "ew", rep("nf", 3), rep("pf", 3), "i", "i", "si", "i", "i", "si", "si")))
 LookUpCombAss <- rbind(as.data.frame(matrix(c(rep("", 3), "< 50%", ">= 50%"), nrow = 1, ncol = 5)), LookUpCombAss)
+LookUpCombAss <- rbind(as.data.frame(matrix(c("Steadiness I.", "Baseline L.", "State Change", "", "Local Sc."), nrow = 1, ncol = 5)), LookUpCombAss)
 #names(LookUpCombAss) <- c("Steadiness I.", "Baseline L.", "State Change < 50%", "Local Sc.  >= 50%", "Local Sc.")
 names(LookUpCombAss) <- c("Steadiness I.", "Baseline L.", "State Change", "Local Sc.", "Local Sc.")
-
 ```
 
 
-![`r figCombAss`](`r LPD_CombinedAssessment`)
+The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Change Map (`r fig_num("figLandProd_change", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("f0", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
 
-
-The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Channge Map (`r fig_num("f0", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("f0", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
-
-As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values after the reclassification of each pixel as shown in the lookup table `r table_num("tabLookUpCombAss", display = "cite")`
+As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values or categories after the reclassification of each pixel as shown in the lookup table `r table_num("tabLookUpCombAss", display = "cite")`. Such categories are `r LookUpCombAss_categs`.
 
 
 `r table_num("tabLookUpCombAss", display = "full")`
@@ -181,6 +193,7 @@ emphasize.strong.cells(which(LookUpCombAss == "d" |
                              LookUpCombAss == "pf" |
                              LookUpCombAss == "i" |
                              LookUpCombAss == "si", arr.ind = TRUE))
+names(LookUpCombAss) <- NULL
 pander(LookUpCombAss)
 
 
