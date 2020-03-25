@@ -124,8 +124,8 @@ if(rning_tsts == "y"){
 
 # plotting for report
 #slope_rstr <- raster(paste0(path2tempResults, "/slope_raster.tif"))
-rning_plts <- "y"
-rning_plts <- "n"
+#rning_plts <- "y"
+#rning_plts <- "n"
 if(rning_plts == "y"){
   pix_categs3 <- as.data.frame(matrix(nrow = 2, ncol = 0))
   pix_categs3$from    <- c(minValue(slope_rstr), 0.0000001)

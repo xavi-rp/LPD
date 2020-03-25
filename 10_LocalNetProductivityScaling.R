@@ -124,8 +124,35 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step10.RData")
 #writeRaster(LocalNetProductivity_rstr, paste0(path2saveTests, "/LocalNetProductivity.tif"), bylayer = TRUE, suffix = c(names(LocalNetProductivity_rstr)), overwrite = TRUE)
 writeRaster(LocalNetProductivity_rstr, paste0(path2tempResults, "/LocalNetProductivity_LSP.tif"), overwrite = TRUE)
 
-
 #cellStats(LocalNetProductivity_rstr, max)
 
 
+## Plotting results  ####
+LocalNetProductivity_rstr <- raster(paste0(path2tempResults, "/LocalNetProductivity_LSP.tif"))
+
+
+if(rning_plts == "y"){
+
+  jpeg(paste0(path2saveTests, "/LocalNetProductivity_LSP.jpg"),
+       units = "cm", width = 20, height = 12,
+       pointsize = 12, quality = 75, res = 300)
+  
+  par(mar = c(3, 4, 4, 0))
+  pal <- colorRampPalette(c("coral1", "yellow", "palegreen3"))
+  par(xpd = FALSE)
+  plot(LocalNetProductivity_rstr, col = pal(100), legend = FALSE) 
+  par(xpd = TRUE)
+  #legend("bottom",
+  #       legend = c(LocalNetProductivity_rstr@data@min,  LocalNetProductivity_rstr@data@max),
+  #       fill = pal(100), inset = 0.01)
+  library(plotrix)
+  color.legend(-140, -70, 140, -63, 
+               paste0(c(LocalNetProductivity_rstr@data@min, 20, 40, 60, 80, LocalNetProductivity_rstr@data@max), "%"),
+               pal(100),
+               gradient = "x", align = "rb",
+               cex = .8)
+  title(main = "Local Scaled Productivity of Cyclic Fraction", cex.main = 1.3)
+  
+  dev.off()
+}
 
