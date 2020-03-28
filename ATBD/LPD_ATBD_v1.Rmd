@@ -62,6 +62,8 @@ tb1 <- table_num(name = "t1", caption = "bla bla bla")
 a) general introduction
 UNCCD, SDG 15.3, Indicator
 
+[@Prince_2009]: Techniques for measurement of Net Primary Production (NPP) using Earth-observing satellite data were first developed in the mid 1980s
+
 
 b) Land Productivity Dynamics Map: 
 
@@ -87,13 +89,14 @@ Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term 
 Qualitative indicator...
 
 
-In order to illustrate the methodology presented in this document, we use a data set of `r length(vrbls_lst)` phenological and productivity variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC - Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used are `r paste0(vrbls_lst_names, collapse = ", ")` and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
+A case study is presented in this document in order to illustrate the methodology to calculate the LPD indicator. It is used a data set of `r length(vrbls_lst)` phenological and productivity variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used are `r paste0(vrbls_lst_names, collapse = ", ")` and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
 
 
 
 
 # Phenolo
 Should this part be removed?? I think so...
+If not, I keep it for Lorenzo to fill it.
 
 
 
@@ -132,7 +135,7 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 ```
 
 
-![`r fig5`](`r LandProd_change`)
+![`r figLandProd_change`](`r LandProd_change`)
 
 
 # Current Status Map of Land-Productivity
@@ -145,14 +148,32 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
 
-## Local Net Scaling
+## Local Net Production Scaling
 
 ```{r echo=FALSE}
-figLandProd_change <- fig_num(name = "figLandProd_change", caption = "blu blu blu")
-LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
+figLocNetProd <- fig_num(name = "LocNetProd", caption = "blu blu blu")
+LocNetProd <- paste0(path2saveTests, "/LocalNetProductivity_LSP.jpg")
+```
 
+The Local Net Primary Production Scaling (LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel. It will be considered potential productivity the productivity that would have been were it not for human factors and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein].
 
+Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of productivity. Therefore, it represents that part of the Standing Biomass which is potentially appropiated to be used by humans and the environment [@Ivits_report_2013].  
 
+In the case study
+However, the maximum land productivity within each EFT has been established to its 90 percentile, as values per pixel higher than this threshold have been considered outliers and, thus, adjusted to it.
+
+&nbsp;
+```{r include = TRUE, eval = FALSE, size = 'normalsize'}
+beginCluster(cors2use)   # it uses 'cors2use' cores for parallelizing
+yrs <- (nlayers(CycleFraction_rstr) - 4):nlayers(CycleFraction_rstr)
+CycleFraction_rstr_average <- clusterR(CycleFraction_rstr, calc, args = list(fun = mean_years_function), export = "yrs")
+endCluster()
+```
+&nbsp;
+
+For the calculation of the final LPD indicator, these levels of local productivity have been aggregated into two categories, i.e, pixels with less than 50% of the highest annual local production (within the EFT) and pixels with more or equal to 50% of annual local production.
+
+![`r figLocNetProd`](`r LocNetProd`)
 
 
 # Combined Assessment of Land-Productivity
@@ -178,9 +199,9 @@ names(LookUpCombAss) <- c("Steadiness I.", "Baseline L.", "State Change", "Local
 ```
 
 
-The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Change Map (`r fig_num("figLandProd_change", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("f0", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
+The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Change Map (`r fig_num("figLandProd_change", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("LocNetProd", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
 
-As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values or categories after the reclassification of each pixel as shown in the lookup table `r table_num("tabLookUpCombAss", display = "cite")`. Such categories are `r LookUpCombAss_categs`.
+As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values or categories after the reclassification of each pixel as shown in the lookup table (`r table_num("tabLookUpCombAss", display = "cite")`). Such categories are `r LookUpCombAss_categs`.
 
 
 `r table_num("tabLookUpCombAss", display = "full")`
