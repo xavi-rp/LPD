@@ -151,17 +151,15 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 ## Local Net Production Scaling
 
 ```{r echo=FALSE}
-figLocNetProd <- fig_num(name = "LocNetProd", caption = "blu blu blu")
+figLocNetProd <- fig_num(name = "LocNetProd", caption = "Local Net Primary Production Scaling (LNS): proportion of annual production (i.e. average of 5 years of Cyclic Fraction) over the local potential production (i.e. the 90-percentile within the Ecosystem Functional Type)")
 LocNetProd <- paste0(path2saveTests, "/LocalNetProductivity_LSP.jpg")
 ```
 
-The Local Net Primary Production Scaling (LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel. It will be considered potential productivity the productivity that would have been were it not for human factors and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein].
+The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel in homogeneous land areas. It will be considered potential productivity that productivity which would have been were it not for human factors, and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein]. The current land production related to the local potential reflects the current level of productivity efficiency and, therefore, it is useful for the delineation of a productivity status map [@Ivits_report_2013]. 
 
-Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of productivity. Therefore, it represents that part of the Standing Biomass which is potentially appropiated to be used by humans and the environment [@Ivits_report_2013].  
+Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the Standing Biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
 
-In the case study
-However, the maximum land productivity within each EFT has been established to its 90 percentile, as values per pixel higher than this threshold have been considered outliers and, thus, adjusted to it.
-
+In the case study, the Cyclic Fraction was derived from *Phenolo* for the period between 2008 and 2012, and each pixel subsequently averaged. That period coincides with the last five years of the time series used for the generation of the Long Term Change Map. The computation process for averaging was done again using parallelization, as seen in the following code:
 &nbsp;
 ```{r include = TRUE, eval = FALSE, size = 'normalsize'}
 beginCluster(cors2use)   # it uses 'cors2use' cores for parallelizing
@@ -171,9 +169,20 @@ endCluster()
 ```
 &nbsp;
 
-For the calculation of the final LPD indicator, these levels of local productivity have been aggregated into two categories, i.e, pixels with less than 50% of the highest annual local production (within the EFT) and pixels with more or equal to 50% of annual local production.
+Then, the potential productivity within each EFT was calculated. However, instead of the maximum value, its 90 percentile was established as the final potential, given that values higher than this threshold were considered as outliers. 
+
+Finally, the Local Net Scaling per pixel was calculated as the proportion of its annual production (i.e. the average of 5 years Cyclic Fraction) over the potential production within its EFT (i.e. the 90 percentile). The result, shown in `r fig_num("LocNetProd", display = "cite")`, was expressed in percentage and was computed as follows: 
+&nbsp;
+```{r include = TRUE, eval = FALSE, size = 'normalsize'}
+CycleFraction_average_df$LSP <- round(((CycleFraction_average_df$CyclicFraction / CycleFraction_average_df$CyclicFraction_90perc) * 100), 1)
+```
+&nbsp;
 
 ![`r figLocNetProd`](`r LocNetProd`)
+
+
+For the calculation of the final LPD indicator, these levels of local productivity were aggregated into two categories, i.e, pixels with less than 50% of the highest annual local production (within the EFT) and pixels with more or equal to 50% of annual local production.
+
 
 
 # Combined Assessment of Land-Productivity
