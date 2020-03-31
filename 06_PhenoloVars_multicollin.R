@@ -97,6 +97,7 @@ for (i in 1:ls_vr){
 }
 
 writeRaster(stack_rstrs_avg, paste0(path2tempResults, "/stack_rstrs_avg.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+#stack_rstrs_avg <- brick(paste0(path2tempResults, "/stack_rstrs_avg.tif"))
 Sys.time() - t0
 
 
@@ -138,7 +139,8 @@ vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg,
 vrbles_NoC
 
 # saving plot
-dev.copy(pdf, paste0(path2tempResults, "/vars_collinearity.pdf"))    
+#dev.copy(pdf, paste0(path2tempResults, "/vars_collinearity.pdf"))    
+dev.copy(jpeg, paste0(path2tempResults, "/vars_collinearity.jpg"))    
 dev.off() 
 
 Sys.time() - t0

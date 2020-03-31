@@ -144,6 +144,31 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
 ## Ecosystem Functional Types (EFTs)
+```{r echo=FALSE}
+figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|")
+Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.jpg")
+
+figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) derived from phenological and productivity variables using the k-means clustering method")
+EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
+```
+
+What is EFTs and Why are they needed?
+
+The methodology to prepare the data to be clustered is a three steps process: (1) the `r length(vrbls_lst)` phenological and productivity-relatied variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first PCA ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables (PC axes) to be used in a subsequent PCA, as well as the phenological variable most associated to that PC; and (3) a final PCA is run with the results of the step 2. After that, the clustering process is made using the rotated components of the final PCA instead of with the phenological variables because the former are normalized with zero mean and 1 SD, which is statistically meaningful for iterative clustering of pixels using minimum distance techniques [@Ivits_report_2013].
+
+In order to check for multicollinearity among the variables, their average is calculated taking adventadge of the parallelization tools (i.e. ```library(parallel)```). Then, the process is run using the function ```removeCollinearity()``` from the package ```virtualspecies```. This function allows the user to set the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 1000000 to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group o correlation. The main part of the code is as follows:
+&nbsp;
+```{r include = TRUE, eval = FALSE, size = 'normalsize'}
+vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg, multicollinearity.cutoff = 0.70, select.variables = TRUE, sample.points = TRUE, nb.points = 1000000, plot = TRUE)
+dev.copy(jpeg, paste0(path2tempResults, "/vars_collinearity.jpg"))    
+dev.off() 
+```
+&nbsp;
+
+`r fig_num("Multicoll", display = "cite")` shows a dendrogram to visualize the groups of intercorrelated variables in the present case study.
+
+![`r figMulticoll`](`r Multicoll_plot`)
+
 
 
 
