@@ -514,34 +514,44 @@ names(pca_final_clstrs_raster) <- "clusterNum"
 
 
 ## Plotting clusters  ####
-#load(file = paste0(path2tempResults, "/results_Step9.RData"), verbose = TRUE)
-#all_data <- pca_final_clstrs
 #pca_final_clstrs_raster <- raster(paste0(path2tempResults, "/SpatialPatternsPCs_clstrs.tif"))
 
 #rning_plts <- "y"
 #rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "\\clusters_EFTs.jpg"), width = 31, height = 21, units = "cm", res = 600, pointsize = 8)
+  jpeg(paste0(path2saveTests, "/clusters_EFTs.jpg"), width = 28, height = 20, units = "cm", 
+       #res = 600, pointsize = 8)
+       res = 300)
 
-  par(mfcol = c(1, 1), mar = c(2.5, 2, 2, 1.5))
-  
+  par(mar = c(3, 3, 0, 0), bty = "n")
   
   pal <- colorRampPalette(c("mistyrose1", "pink1", "violet", "blue", "skyblue2", "green", "darkolivegreen2", "yellow", "orange", "tomato3", "brown4", "coral4"))
   par(xpd = FALSE)
   plot(pca_final_clstrs_raster, 
-       col = pal(length(unique(all_data$clstr)) - 1), 
-       #col = pal(20), 
-       legend = TRUE, 
-       main = paste0((length(unique(all_data$clstr)) - 1), " clusters")
-       #main = paste0(20, " clusters")
+       col = pal(pca_final_clstrs_raster@data@max), 
+       legend = FALSE#, 
+       #main = paste0((length(unique(all_data$clstr)) - 1), " clusters")
        )
-  #legend("bottom",
-  #       #x = - 30, y = 30,
-  #       ncol = 1,
-  #       legend = unique(all_data$clstr),
-  #       fill = pal(length(unique(all_data$clstr)) - 1), 
-  #       inset = - 0.43
-  #       )
+  legend("bottom",
+         #x = - 30, y = 30,
+         title = paste0( "Number of clusters = ", pca_final_clstrs_raster@data@max),
+         ncol = ceiling(pca_final_clstrs_raster@data@max / 2),
+         legend = c(1:pca_final_clstrs_raster@data@max),
+         fill = pal(pca_final_clstrs_raster@data@max), 
+         inset = 0.02
+         )
+  
+  title(main = "Ecosystem Functional Types (EFTs)", 
+        outer = TRUE,
+        #adj = 0,
+        line = - 4,
+        cex.main = 2)
+  
+  #mtext(paste0( "Number of clusters = ", pca_final_clstrs_raster@data@max), 
+  #      side = 1, line = - , 
+  #      #at = 5,
+  #      adj = 0,
+  #      cex = 0.8)
          
   dev.off()
   

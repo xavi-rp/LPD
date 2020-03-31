@@ -17,6 +17,8 @@ library(latticeExtra)
 library(devtools)
 library(tidyr)
 library(tidyverse)
+library(plotrix)
+
 
 
 ## Defining machine ####

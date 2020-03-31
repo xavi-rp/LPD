@@ -145,7 +145,6 @@ if(rning_plts == "y"){
   #legend("bottom",
   #       legend = c(LocalNetProductivity_rstr@data@min,  LocalNetProductivity_rstr@data@max),
   #       fill = pal(100), inset = 0.01)
-  library(plotrix)
   color.legend(-140, -70, 140, -63, 
                paste0(c(LocalNetProductivity_rstr@data@min, 20, 40, 60, 80, LocalNetProductivity_rstr@data@max), "%"),
                pal(100),
