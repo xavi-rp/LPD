@@ -107,7 +107,11 @@ pca.rotated <- varimax(pca$rotation, normalize = TRUE) # normalize = TRUE; Shoul
 #pca.rotated
 
 pca_importance <- summary(pca)
-pca_importance <- as.data.frame(pca_importance$importance)
+pca_importance <- as.data.frame
+cumul_varnce_threshold <- 0.9  # Threshold of cumulative variance used to select the number of useful PCs
+usefulPCs <- which(pca_importance[3 ,] >= cumul_varnce_threshold)[1]
+pca_importance <- pca_importance[, 1:usefulPCs]
+
 if(nPCs > ncol(pca_importance)) nPCs <- ncol(pca_importance)
 #screeningPCA_cumul_variance <- round(pca_importance[3, nPCs], 4)
 

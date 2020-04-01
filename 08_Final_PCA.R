@@ -18,7 +18,8 @@ cat("Calculating Final PCA (Step 08)... ", "\n")
 
 load(file = paste0(path2tempResults, "/results_Step7.RData"), verbose = FALSE)
 stack_rstrs_avg_noC <- stack(paste0(path2tempResults, "/stack_rstrs_avg_noC.tif"))
-
+stack_rstrs_avg_noC <- stack_rstrs_avg_noC[[screeningPCA_variables]]
+  
 #stack_rstrs_avg_noC
 #stack_rstrs_avg_noC_df
 #pca
