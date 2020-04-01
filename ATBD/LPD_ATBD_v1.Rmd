@@ -140,7 +140,7 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 # Current Status Map of Land-Productivity
 
-The Land Productivity Dynamics indicator is composed by two base layers (`r fig_num("f0", display = "cite")`). After the long term productivity dynamics descrived above, the socond source of information needed is the current level of land productivity. For this purpose a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, using Earth Observation imaginery and remote sensing tools, the level of land productivity of each pixel relative to their similar neighbours. Therefore, a first step is to derive homogeneous environmental units (i.e. Ecosystem Functional Types), which allow to estimate the potential level of productivity, or efficiency, of each pixel. 
+The Land Productivity Dynamics indicator is composed by two base layers, as shown in `r fig_num("f0", display = "cite")`. After the long term productivity dynamics described above, the second source of information needed is the current level of land productivity. For this purpose, a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, by means of Earth Observation imagery and remote sensing tools, the level of land productivity of each pixel relative to those neighbours with similar characteristics. Therefore, a first step has to be the derivation of homogeneous environmental units (i.e. Ecosystem Functional Types), which allow to estimate the potential level of productivity, or efficiency, of each pixel. 
 
 
 ## Ecosystem Functional Types (EFTs)
@@ -155,9 +155,9 @@ figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) d
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
 ```
 
-The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process. Among the different unsepervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it’s recommended to standardize the data. Therefore, a three-spteps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first PCA ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables (PC axes) to be used in a subsequent PCA, as well as the phenological variable most associated to that PC; and (3) a "final PCA" is run with the results of the step 2. After that, the k-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
+The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process. Among the different unsepervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it’s recommended to standardize the data. Therefore, a three-spteps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first PCA ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables to be used in a subsequent PCA, as well as the phenological variable most associated to that PC; and (3) a "final PCA" is run over the variables and with the results of the step 2 (i.e. number of PC axes and their most associated variables). After that, the k-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
 
-In order to check for multicollinearity among the variables, their average is calculated taking adventadge of the parallelization tools (i.e. ```library(parallel)```). Then, the process is run using the function ```removeCollinearity()``` from the package ```virtualspecies```. This function allows the user to set the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 1000000 to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group of correlation. The main part of the code is as follows:
+In order to check for multicollinearity among the variables, their average is calculated taking adventadge of the parallelization tools (i.e. ```library(parallel)```). Then, the process is run using the function ```removeCollinearity()```, from the package ```virtualspecies```. This function allows the user to set the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 1000000 to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group of correlation. The main part of the code is as follows:
 &nbsp;
 ```{r include = TRUE, eval = FALSE, size = 'normalsize'}
 vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg, multicollinearity.cutoff = 0.70, select.variables = TRUE, sample.points = TRUE, nb.points = 1000000, plot = TRUE)
@@ -170,7 +170,18 @@ dev.off()
 
 ![`r figMulticoll`](`r Multicoll_plot`)
 
-The first "screening PCA" is done over the uncorrelated variables. 
+The next step is to run the first "screening PCA", which is automatically done over the uncorrelated variables. In order to know the optimal number of variables to be used in the subsequent PCA, a threshold of cumulative variance of the PCs is implemented. This threshold is established to be 0.9.
+
+
+&nbsp;
+```{r include = TRUE, eval = FALSE, size = 'normalsize'}
+pca <- prcomp(na.omit(stack_rstrs_avg_noC_df), 
+              retx = TRUE,   # to return rotated variables 
+              center = TRUE, # variables are zero centered 
+              scale. = TRUE  # scaling variables to have unit variance
+              )
+```
+&nbsp;
 
 
 
