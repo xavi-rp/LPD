@@ -375,7 +375,7 @@ if(run_isodata == "yes"){
   rect.hclust(hc, 
               h = height2cut, #height where to cut
               #k = NULL, #exact number of clusters to produce
-              border = 2, #colours for the rectangles
+              border = 2#, #colours for the rectangles
               #cluster = NULL
   )
   #assigning new clusters
@@ -417,7 +417,7 @@ for (i in 2:(length(num_clstrs) + 1)) wss[i] <- kmeans(pca_data_ini[, - c(length
                                                        iter.max = 10,
                                                        algorithm = "MacQueen")$tot.withinss
 
-pdf(paste0(path2tempResults, "/optim_num_clusters.pdf"))
+jpeg(paste0(path2tempResults, "/optim_num_clusters.jpg"))
 plot(c(1, num_clstrs), wss, type = "b", 
      xlab = "Number of Clusters",
      ylab = "Within groups sum of squares")

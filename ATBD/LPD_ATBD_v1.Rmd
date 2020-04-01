@@ -140,7 +140,7 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 # Current Status Map of Land-Productivity
 
-
+The Land Productivity Dynamics indicator is composed by two base layers (`r fig_num("f0", display = "cite")`). After the long term productivity dynamics descrived above, the socond source of information needed is the current level of land productivity. For this purpose a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, using Earth Observation imaginery and remote sensing tools, the level of land productivity of each pixel relative to their similar neighbours. Therefore, a first step is to derive homogeneous environmental units (i.e. Ecosystem Functional Types), which allow to estimate the potential level of productivity, or efficiency, of each pixel. 
 
 
 ## Ecosystem Functional Types (EFTs)
@@ -148,15 +148,16 @@ LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|")
 Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.jpg")
 
+figScreePlot <- fig_num(name = "ScreePlot", caption = "“Scree plot” method used to calculate the optimal number of clusters. The “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (i.e. model complexity) increases")
+ScreePlot_plot <- paste0(path2tempResults, "/optim_num_clusters.jpg")
+
 figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) derived from phenological and productivity variables using the k-means clustering method")
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
 ```
 
-What is EFTs and Why are they needed?
+The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process. Among the different unsepervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it’s recommended to standardize the data. Therefore, a three-spteps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first PCA ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables (PC axes) to be used in a subsequent PCA, as well as the phenological variable most associated to that PC; and (3) a "final PCA" is run with the results of the step 2. After that, the k-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
 
-The methodology to prepare the data to be clustered is a three steps process: (1) the `r length(vrbls_lst)` phenological and productivity-relatied variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first PCA ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables (PC axes) to be used in a subsequent PCA, as well as the phenological variable most associated to that PC; and (3) a final PCA is run with the results of the step 2. After that, the clustering process is made using the rotated components of the final PCA instead of with the phenological variables because the former are normalized with zero mean and 1 SD, which is statistically meaningful for iterative clustering of pixels using minimum distance techniques [@Ivits_report_2013].
-
-In order to check for multicollinearity among the variables, their average is calculated taking adventadge of the parallelization tools (i.e. ```library(parallel)```). Then, the process is run using the function ```removeCollinearity()``` from the package ```virtualspecies```. This function allows the user to set the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 1000000 to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group o correlation. The main part of the code is as follows:
+In order to check for multicollinearity among the variables, their average is calculated taking adventadge of the parallelization tools (i.e. ```library(parallel)```). Then, the process is run using the function ```removeCollinearity()``` from the package ```virtualspecies```. This function allows the user to set the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 1000000 to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group of correlation. The main part of the code is as follows:
 &nbsp;
 ```{r include = TRUE, eval = FALSE, size = 'normalsize'}
 vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg, multicollinearity.cutoff = 0.70, select.variables = TRUE, sample.points = TRUE, nb.points = 1000000, plot = TRUE)
@@ -169,8 +170,20 @@ dev.off()
 
 ![`r figMulticoll`](`r Multicoll_plot`)
 
+The first "screening PCA" is done over the uncorrelated variables. 
 
 
+
+
+
+K-means is an iterative, unsupervised, method for clustering data
+
+the K-means method is not able to optimize the number of clusters, it needs to be done externally. In this case, the optimal number of clusters was calculated to be around 20, using the “scree plot” method. Such method is based on running several K-means clustering with different number of clusters each in order to assess how the quality of the models change with the number of clusters. Then, a plot is made with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (i.e. model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of this assessment. 
+The “scree plot” method implemented in this study, undoubtedly has some level of subjectivity. There exists several numerical methods to calculate the optimal number of clusters that remove such subjectivity, but which take also some statistical assumptions. They could be explored if a higher level of accuracy is believed as necessary. 
+
+![`r figScreePlot`](`r ScreePlot_plot`)
+
+As previous tests of K-means with up to 100 iterations were not converging, the maximum number of iterations was set to 500. Within this limit, the process achieved convergence in all the tests made.
 
 
 ## Local Net Production Scaling
