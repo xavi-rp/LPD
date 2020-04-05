@@ -1,19 +1,50 @@
 ---
-title: "LAND PRODUCTIVITY DYNAMICS"
-author: ""
+title: "Land Productivity Dynamics Indicator: LPDynR package"
+subtitle: "The name of the R package can/should be discussed!!!"
+
+author:
+  - Xavier Rotllan-Puig:
+      email: xavi.rotllan.puig@gmail.com
+      institute: [jrc, aster]
+      correspondence: true
+#  - Lorenzo:
+#      institute: [jrc]
+#  - Federico:
+#      institute: [jrc]
+  - Michael Cherlet:
+      institute: [jrc]
+ 
+institute:
+  - jrc: Joint Research Centre
+  - aster: ASTER-Projects
+
+
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
+
 output: 
   word_document:
     reference_docx: LPD_MS_styles.docx
-    toc: true #table of content true
+    #toc: true #table of content true
     toc_depth: 3  #up to three depths of headings (specified by #, ## and ###)
     #number_sections: true  #number sections at each table header
     #theme: united  #options for theme
     #highlight: tango  #syntax highlighting style
     #css: style.css   #custom css, should be in same folder. Only for HTML
+    pandoc_args:
+      - --lua-filter=scholar-metadata.lua
+      - --lua-filter=author-info-blocks.lua
+      
 bibliography: lpd_biblio.bib
 #csl: methods-in-ecology-and-evolution.csl
 always_allow_html: yes
+
+#abstract: |
+#  **Introduction**: bla bla
+#  **Material & Methods**: ble ble
+#  **Results**: bli bli
+#  **Discussion**: blo blo
+#  **Conclusion**: blu blu
+  
 
 ---
 
@@ -39,6 +70,8 @@ table_num <- captioner::captioner(prefix = "Table")
 fig_num <- captioner::captioner(prefix = "Figure")
 #ts <- 0
 ```
+
+
 
 
 
@@ -89,14 +122,22 @@ Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term 
 Qualitative indicator...
 
 
-A case study is presented in this document in order to illustrate the methodology to calculate the LPD indicator. It is used a data set of `r length(vrbls_lst)` phenological and productivity variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used are `r paste0(vrbls_lst_names, collapse = ", ")` and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
-
-
 
 
 # Phenolo
 Should this part be removed?? I think so...
 If not, I keep it for Lorenzo to fill it.
+
+
+
+
+
+# Data set preparation for the case study
+
+A case study is presented in this document in order to illustrate the methodology to calculate the LPD indicator. It is used a data set of `r length(vrbls_lst)` phenological and productivity-related variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used are `r paste0(vrbls_lst_names, collapse = ", ")` and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
+
+In the first version of this package presented here, the main function uses multi-band 'tiff' raster, one per variable and with each band for one of the years of the time series. However, some functions are included in the package to pre-read in NetCDF and BIL files(i.e. "read_nc()" and "read_bil()", respectivelly)
+
 
 
 
@@ -282,7 +323,7 @@ The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS)
 
 Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the Standing Biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
 
-In the case study, the Cyclic Fraction was derived from *Phenolo* for the period between 2008 and 2012, and each pixel subsequently averaged. That period coincides with the last five years of the time series used for the generation of the Long Term Change Map. The computation process for averaging was done again using parallelization, as seen in the following code:
+In the case study, the Cyclic Fraction was derived from *Phenolo* for the period between 1999 and 2012, and each pixel subsequently averaged. That period coincides with the last five years of the time series used for the generation of the Long Term Change Map. The computation process for averaging was done again using parallelization, as seen in the following code:
 
 ```r
 beginCluster(cors2use)   # it uses 'cors2use' cores for parallelizing
