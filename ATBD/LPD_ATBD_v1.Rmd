@@ -136,8 +136,7 @@ But if not, I keep it here for Lorenzo to fill it.
 
 A case study is presented in this document in order to illustrate the methodology implemented in the *LPDynR* package to calculate the LPD indicator. So, in this case it is used a data set of `r length(vrbls_lst)` phenological and productivity-related variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used to calculate the LPD map are `r paste0("*", paste0(vrbls_lst_names[-length(vrbls_lst_names)], collapse = "*, *"), "*", " and ", "*", vrbls_lst_names[length(vrbls_lst_names)], "*")`, and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
 
-In the first version of *LPDynR* presented here, the main function uses multi-band "tiff" rasters to start the process, one per variable and with each band for one of the years of the time series. However, some functions are also included in the package to pre-read NetCDF and BIL files (i.e. *read_nc()* and *read_bil()*, respectively).
-
+In the first version of *LPDynR* presented here, the main function uses multi-band "tiff" rasters to start the process, one per variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
 
 
 
