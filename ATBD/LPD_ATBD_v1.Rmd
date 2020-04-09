@@ -95,7 +95,21 @@ tb1 <- table_num(name = "t1", caption = "bla bla bla")
 a) general introduction
 UNCCD, SDG 15.3, Indicator
 
+Beginning in the 1970s, the international community recognized that land degrada- tion/desertification was an economic, social, and environmental problem and began a process which ultimately resulted in the creation of the UN Convention to Combat Desertification (CCD). The convention defines desertification as land degradation in arid, semi-arid, and dry sub-humid areas resulting from various factors, including climatic variations and human activities (UNCCD 1994) [@Yengoh_2015]
+
 [@Prince_2009]: Techniques for measurement of Net Primary Production (NPP) using Earth-observing satellite data were first developed in the mid 1980s
+
+Accurate quantification of NPP at local to global scales is a central topic for carbon cycle, forest, land and ressource managers and politicians [@white_2000]
+
+Reduced NPP is a consistent symptom of land degradation relative to the potential in the site [@Prince_2009]
+
+Land degradation is measured through change in land productivity using, as a proxy, NPP, which is estimated through remotely sensed NDVI [@Yengoh_2015]
+
+Land degradation can be caused by local human activities and biophysical pro- cesses as well as by activities and processes that are not tied to the local human or physical landscape, such as climate change [@Yengoh_2015]. 
+
+Potential for the use of NDVI as a proxy for land productivity (one of the indicators of the state of land degradation) is based on numerous and rigorous studies that have identified a strong relationship between NDVI and NPP  [@Yengoh_2015, and references therein]
+
+In detecting the status and trend of desertification, researchers have built on the relationship between NDVI and biomass productivity that has been well established in the literature [@Yengoh_2015, and references therein]
 
 
 b) Land Productivity Dynamics Map: 
@@ -126,7 +140,7 @@ Qualitative indicator...
 
 # Phenolo
 Should this part be removed?? I think *Phenolo* should have its own document.
-But if not, I keep it here for Lorenzo to fill it.
+But if not, I keep it here for Lorenzo to fill it (???).
 
 
 
@@ -142,10 +156,9 @@ In the first version of *LPDynR* presented here, the main function uses multi-ba
 
 # Long-Term Change Map of Land-Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. 
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator are described in the following subsections.
 
-The way these three sources of information are calculated for the LPD indicator are described in the following subsections.
-
+Standing biomass (i.e. Earth's covering biomass) has been shown as a good approximation of the gross primary production (GPP)
 
 
 
