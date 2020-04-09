@@ -142,6 +142,12 @@ In the first version of *LPDynR* presented here, the main function uses multi-ba
 
 # Long-Term Change Map of Land-Productivity
 
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. 
+
+The way these three sources of information are calculated for the LPD indicator are described in the following subsections.
+
+
+
 
 
 ## Steadiness Index for Standing Biomass
