@@ -1,6 +1,6 @@
 ---
 title: "Land Productivity Dynamics Indicator: LPDynR package"
-subtitle: "The name of the R package can/should be discussed!!!"
+subtitle: "The name of the R package can be discussed!!!"
 
 author:
   - Xavier Rotllan-Puig:
@@ -167,6 +167,11 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 fig1 <- fig_num(name = "f1", caption = "ble ble ble")
 slp_rstr <- paste0(path2saveTests, "/slope_rstr.jpg")
 ```
+
+The first of the three metrics which integrates the Long-Term Change map represents the long-term tendency of degradation the natural system tends towards, either positive or negative. It is the "Steadiness Index" which, in turn, is based on the combination of two metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
+
+The use of a linear regression would imply to respect some strict statistical assumptions if confidence intervals and significance tests want to be representative. This, together with the fact that the LPD indicatior is qualitative, is why the Steadiness Index only keeps classes of tendency. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point.
+
 
 
 `r fig_num("f1", display = "cite")`
