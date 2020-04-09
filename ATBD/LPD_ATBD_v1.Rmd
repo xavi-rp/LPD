@@ -111,6 +111,8 @@ Potential for the use of NDVI as a proxy for land productivity (one of the indic
 
 In detecting the status and trend of desertification, researchers have built on the relationship between NDVI and biomass productivity that has been well established in the literature [@Yengoh_2015, and references therein]
 
+Changes in NPP or, rather, its proxy NDVI induced by land degradation can be measured using a range of remote sensing techniques so remote sensing has become an essential tool for global, regional, and national studies of land degradation [@Yengoh_2015] 
+
 
 b) Land Productivity Dynamics Map: 
 
@@ -156,14 +158,10 @@ In the first version of *LPDynR* presented here, the main function uses multi-ba
 
 # Long-Term Change Map of Land-Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator are described in the following subsections.
-
-Standing biomass (i.e. Earth's covering biomass) has been shown as a good approximation of the gross primary production (GPP)
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the standing biomass variable (i.e. SB) produced by *Penolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above ground biomass, can be used as a good approximation of the gross primary production of each spatial unit [GPP; @ivits_ecosystem_2013].
 
 
-
-
-## Steadiness Index for Standing Biomass
+## Steadiness Index
 
 ```{r echo=FALSE}
 fig1 <- fig_num(name = "f1", caption = "ble ble ble")
