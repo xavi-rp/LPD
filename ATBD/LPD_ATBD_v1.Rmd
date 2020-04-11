@@ -7,16 +7,19 @@ author:
       email: xavi.rotllan.puig@gmail.com
       institute: [jrc, aster]
       correspondence: true
-#  - Lorenzo:
-#      institute: [jrc]
-#  - Federico:
-#      institute: [jrc]
+  - Eva:
+      institute: [jrc, eea]
+  - Lorenzo:
+      institute: [jrc]
+  - Federico:
+      institute: [jrc]
   - Michael Cherlet:
       institute: [jrc]
  
 institute:
   - jrc: Joint Research Centre
   - aster: ASTER-Projects
+  - eea: Should we include Eva (she mainly developed LPD)???
 
 
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
@@ -164,19 +167,56 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 ## Steadiness Index
 
 ```{r echo=FALSE}
-fig1 <- fig_num(name = "f1", caption = "ble ble ble")
-slp_rstr <- paste0(path2saveTests, "/slope_rstr.jpg")
+fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study")
+slp_rstr <- paste0(path2saveTests, "/SteadInd_rstr.jpg")
+
+tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived from the combination of the slope of the linear function and the net change category")
+SteadInd <- as.data.frame(matrix(nrow = 4, ncol = 4,
+                                 c("Steadiness1", "Steadiness2", "Steadiness3", "Steadiness4", "-", "-", "+", "+", "-", "+", "-", "+", "Strong negative ecosyst. dynamics (possibility changing equil.)", "Moderate negative ecosyst. dynamics (likely remain current equil.)", "Moderate positive ecosyst. dynamics (likely remain current equil.)", "Strong positive ecosyst. dynamics (possibility changing equil.)")))
+names(SteadInd) <- c("Steadiness Class", "Slope", "Net Change", "Description")
+
 ```
 
-The first of the three metrics which integrates the Long-Term Change map represents the long-term tendency of degradation the natural system tends towards, either positive or negative. It is the "Steadiness Index" which, in turn, is based on the combination of two metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
+The first of the three metrics which integrates the Long-Term Change map represents the long-term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
 
-The use of a linear regression would imply to respect some strict statistical assumptions if confidence intervals and significance tests want to be representative. This, together with the fact that the LPD indicatior is qualitative, is why the Steadiness Index only keeps classes of tendency. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point.
+The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the phenological/productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Then, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as follows:
 
+`r table_num("tabSteadIndex", display = "full")`
+```{r echo = FALSE}
+pander(SteadInd)
+```
+\n
 
+`r fig_num("f1", display = "cite")` shows a map of the Steadiness Index for the case study. While in the following lines of code are shown the main parts of the script for this section (notice that parallelization is implemented):
 
-`r fig_num("f1", display = "cite")`
+```r
+years <- nlayers(var2process)
+
+## Fitting a linear regression and getting the slope ####
+yrs <- 1:years
+beginCluster(cors2use)   
+slope_rstr <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
+endCluster()
+
+## Computing net change: MTID (Multi Temporal Image Differencing) ####
+beginCluster(cors2use)   
+mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
+endCluster()
+
+## Calculating Steadiness classes ####
+SteadInd_rstr <- raster(mtid_rstr)
+SteadInd_rstr[slope_rstr < 0 & mtid_rstr > 0] <- 1   # strong negative ecosystem dynamics
+SteadInd_rstr[slope_rstr < 0 & mtid_rstr < 0] <- 2   # moderate negative ecoystem dynamics
+SteadInd_rstr[slope_rstr > 0 & mtid_rstr < 0] <- 3   # moderate positive ecosystem dynamics
+SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem dynamics
+
+```
+\n
+\n
 
 ![`r fig1`](`r slp_rstr`)
+
+Make the map nicer!!!
 
 
 
