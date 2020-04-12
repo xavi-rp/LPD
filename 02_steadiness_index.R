@@ -225,7 +225,7 @@ if(rning_plts == "y"){
        units = "cm", width = 20, height = 13.9,
        pointsize = 12, quality = 75, res = 300)
 
-  par(mar = c(3, 4, 4, 0))
+  par(mar = c(3, 3, 2, 0), bty = "n")
   pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
   par(xpd = FALSE)
   plot(SteadInd_rstr, col = pal(4), legend = FALSE) 
@@ -234,8 +234,13 @@ if(rning_plts == "y"){
          title = "Ecosystem Dynamics",
          legend = c("Strong Negative", "Moderate Negative",
                     "Moderate Positive", "Strong Positive"),
+         ncol = 2,
          fill = pal(4), inset = 0.01)
-  title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
+  #title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
+  title(main = "Steadiness Index of Standing Biomass",
+        outer = TRUE,
+        line = - 3.5,
+        cex.main = 2)
   
   dev.off()
 }
