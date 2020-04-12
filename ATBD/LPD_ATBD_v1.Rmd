@@ -170,6 +170,12 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study")
 slp_rstr <- paste0(path2saveTests, "/SteadInd_rstr.jpg")
 
+figBasline <- fig_num(name = "figBasLev", caption = "Representation of the Baseline Levels of Standing Biomass for the case study")
+bsl_lev <- paste0(path2saveTests, "/StandingBiomass_3class.jpg")
+
+figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the Baseline Levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
+stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
+
 tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived from the combination of the slope of the linear function and the net change category")
 SteadInd <- as.data.frame(matrix(nrow = 4, ncol = 4,
                                  c("Steadiness1", "Steadiness2", "Steadiness3", "Steadiness4", "-", "-", "+", "+", "-", "+", "-", "+", "Strong negative ecosyst. dynamics (possibility changing equil.)", "Moderate negative ecosyst. dynamics (likely remain current equil.)", "Moderate positive ecosyst. dynamics (likely remain current equil.)", "Strong positive ecosyst. dynamics (possibility changing equil.)")))
@@ -177,15 +183,17 @@ names(SteadInd) <- c("Steadiness Class", "Slope", "Net Change", "Description")
 
 ```
 
-The first of the three metrics which integrates the Long-Term Change map represents the long-term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
+The first of the three metrics which integrates the Long-Term Change Map represents the long-term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
 
 The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the phenological/productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Then, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as follows:
 
 `r table_num("tabSteadIndex", display = "full")`
 ```{r echo = FALSE}
 pander(SteadInd)
+
 ```
-\n
+&nbsp;
+
 
 `r fig_num("f1", display = "cite")` shows a map of the Steadiness Index for the case study. While in the following lines of code are shown the main parts of the script for this section (notice that parallelization is implemented):
 
@@ -211,19 +219,77 @@ SteadInd_rstr[slope_rstr > 0 & mtid_rstr < 0] <- 3   # moderate positive ecosyst
 SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem dynamics
 
 ```
-\n
-\n
+&nbsp;
+&nbsp;
 
 ![`r fig1`](`r slp_rstr`)
 
-Make the map nicer!!!
 
 
+## Baseline Levels of Standing Biomass
+
+The second source of information for the derivation of the Long-Term Change Map of Land Productivity is the baseline levels of the phenological or productivity variable in study, in this case Standing Biomass. 
+
+For the calculation of the baseline levels of standing biomass at the beginning of the time series on study, *LPDynR* categorizes the results into three categories: low, medium and high. To do that, it averages the first three years in order to avoid extreme events such as abnormal droughts in wet areas, etc. On the other hand, averaging more years would move the value closer to the mean of the time series, which is not desirable.
+
+After the average is calculated, *LPDynR* classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) as an intermediate step. The reason for this is that, if directly opted for three, the number of pixels per category would have been classified homogeneously, and this is in contrast with what is stated by the Drylands Development Centre (www.undp.org). DDC declares that 40% of the World's land resources are drylands and, then, 40% of the pixels must be classified as "low level" of Standing Biomass. Therefore, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with larger baseline levels, as "high".
+
+In the following lines of code, it can be observed the main steps used by *LPDynR* to categorize the baseline levels of Standing Biomass, first into 10 categories and secondly into the 3 final classes.
+
+```r
+## Averaging first 3 years (using parallelization)
+beginCluster(cors2use)   
+yrs <- 1:3
+var2process_avg13 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
+endCluster()
+
+## Categorizing into 10
+# Method: it calculates percentiles in order to make groups with similar number of pixels
+pix_categs <- raster::quantile(var2process_avg13, probs =  seq(0, 1, 0.1), names = TRUE)
+pix_categs01 <- c(pix_categs[- length(pix_categs)])
+pix_categs1 <- as.data.frame(pix_categs[-1])
+pix_categs1$from <- pix_categs01 
+pix_categs1$becomes <- 1:(length(pix_categs) - 1)
+pix_categs1 <- pix_categs1[, c(2, 1, 3)]
+names(pix_categs1)[2] <- "to"
+pix_categs1
+var2process_10class <- reclassify(var2process_avg13, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
+
+## Categorizing into 3
+pix_categs2 <- pix_categs1
+pix_categs2$becomes <- c(rep(1, 4), rep(2, 5), 3)
+var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename='', include.lowest = TRUE, right = TRUE)
+
+```
+&nbsp;
+&nbsp;
+
+![`r figBasline`](`r bsl_lev`)
 
 
+Once the baseline levels of Standing Biomass have been calculated per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index, resulting 12 combined categories as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
 
+```r
+SteadInd_Baseline <- raster(var2process_3class)
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 1] <- 1   # Steadiness Index 1 (Strong Negative) - Standing Biomass 1 (low)      -> St1-low
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 2] <- 2   # Steadiness Index 1 (Strong Negative) - Standing Biomass 2 (medium)   -> St1-medium
+SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 3] <- 3   # Steadiness Index 1 (Strong Negative) - Standing Biomass 3 (high)     -> St1-high
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 1] <- 4   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 1 (low)    -> St2-low
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 2] <- 5   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 2 (medium) -> St2-medium
+SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 3] <- 6   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 3 (high)   -> St2-high
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 1] <- 7   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 1 (low)    -> St3-low
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 2] <- 8   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 2 (medium) -> St3-medium
+SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 3] <- 9   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 3 (high)   -> St3-high
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 1] <- 10   # Steadiness Index 4 (Strong Positive) - Standing Biomass 1 (low)     -> St4-low
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 2] <- 11   # Steadiness Index 4 (Strong Positive) - Standing Biomass 2 (medium)  -> St4-medium
+SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadiness Index 4 (Strong Positive) - Standing Biomass 3 (high)    -> St4-high
 
-## Combining Steadiness Index with Baseline Levels of Standing Biomass
+```
+&nbsp;
+&nbsp;
+
+![`r figStead_Basline`](`r stead_bsl_lev`)
+
 
 
 ## Standing Biomass State Change

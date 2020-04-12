@@ -192,21 +192,31 @@ save(list = stuff2save, file = paste0(path2tempResults, "/results_Step3.RData"))
 #rning_plts <- "y"
 #rning_plts <- "n"
 if(rning_plts == "y"){
-  jpeg(paste0(path2saveTests, "/StandingBiomass_3class.jpg"))
-  #plot(SeasonIntegral_3class)
-  par(mar = c(3, 4, 4, 6))
-  pal <- colorRampPalette(c("red4", "coral1", "darkseagreen1", "darkgreen"))
+  #var2process_3class <- raster(paste0(path2tempResults, "/SeasonIntegral_3class_begin.tif"))
+  jpeg(paste0(path2saveTests, "/StandingBiomass_3class.jpg"),
+       units = "cm", width = 20, height = 13.9,
+       pointsize = 12, quality = 75, res = 300)
+  par(mar = c(3, 3, 2, 0), bty = "n")
+  pal <- colorRampPalette(c("red4", "yellow", "darkgreen"))
   par(xpd = FALSE)
-  plot(var2process_3class, col = pal(4), legend = FALSE) 
+  plot(var2process_3class, col = pal(3), legend = FALSE) 
   par(xpd = TRUE)
-  legend("right",
-         title = "Ecosystem Dynamics",
-         legend = c("Strong Negative", "Moderate Negative",
-                    "Moderate Positive", "Strong Positive"),
-         fill = pal(4), inset = - 0.4)
-  title(main = paste0("Steadiness Index: ", var2process_name), cex.main = 1.3)
+  legend("bottom",
+         #title = "First 3 years averaged",
+         legend = c("Low", "Medium", "High"),
+         ncol = 3,
+         fill = pal(3), inset = 0.07)
+  title(main = "Baseline Levels of Standing Biomass",
+        outer = TRUE,
+        line = - 3.5,
+        cex.main = 2)
+  mtext("Note: Used the average of the first 3 years of the time series", 
+        side = 1, line = 2, 
+        #at = 5,
+        adj = 0,
+        cex = 0.7)
   dev.off()
-}
+} 
 
 
 
