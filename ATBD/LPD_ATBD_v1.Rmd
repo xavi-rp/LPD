@@ -161,7 +161,7 @@ In the first version of *LPDynR* presented here, the main function uses multi-ba
 
 # Long-Term Change Map of Land-Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the standing biomass variable (i.e. SB) produced by *Penolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above ground biomass, can be used as a good approximation of the gross primary production of each spatial unit [GPP; @ivits_ecosystem_2013].
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the standing biomass variable (i.e. SB) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above ground biomass, can be used as a good approximation of the gross primary production of each spatial unit [GPP; @ivits_ecosystem_2013].
 
 
 ## Steadiness Index
@@ -329,18 +329,46 @@ var2process_3classChange <- reclassify(var2process_10class_dif, rcl = pix_categs
 ![`r figStateCh`](`r state_change`)
 
 
-
-
-
 ## Land-Productivity Long Term Change Map
 
 ```{r echo=FALSE}
-figLandProd_change <- fig_num(name = "figLandProd_change", caption = "blu blu blu")
-LandProd_change <- paste0(path2saveTests, "/LandProd_change.jpg")
+figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land-Productivity Long Term Change Map for the case study, based on the combination of Steadiness Index, base line levels and state change of standing biomass. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
+LongTerm_change <- paste0(path2saveTests, "/LandProd_change.jpg")
+
+
+tb_LongTerm <- table_num(name = "tb_LngTrm", caption = "Lookup table for the Land Productivity Long Term Change Map (Steadiness Index + Base Line Levels + State Change)")
+LookUpLongTerm <- as.data.frame(matrix(nrow = 3, ncol = 14,
+                                       
+                                       c("No Change", "Changed 1 class", "Changed ≥ 2 classes", rep(" ", 3),
+                                         1:9, rep(10, 3), rep(11, 3), rep(12, 3),
+                                         rep(13, 3), rep(14, 3), rep(15, 3), 16:21,
+                                         rep(22, 3))
+                                       ))
+LookUpLongTerm <- rbind(t(as.data.frame(c("Class Change", "Stead.Ind./BaseL.", paste0(c(rep("St1", 3), rep("St2", 3),
+                                                                   rep("St3", 3), rep("St4", 3)),
+                                                                 c(" low", " med.", " high"))))), 
+                        LookUpLongTerm)
+
+#LookUpLongTerm <- rbind(t(as.data.frame(c(rep(" ", 6), "Stead.Ind./BaseL.", #rep(" ", 6)))), LookUpLongTerm)
+
+rownames(LookUpLongTerm) <- NULL
+colnames(LookUpLongTerm) <- NULL
+
 ```
 
+`r table_num("tb_LngTrm", display = "full")`
+```{r echo = FALSE}
+LookUpLongTerm <- t(LookUpLongTerm)
+emphasize.strong.cols(1)
+#emphasize.strong.rows(1)
+pander(LookUpLongTerm)
+```
 
-![`r figLandProd_change`](`r LandProd_change`)
+&nbsp;
+&nbsp;
+
+
+![`r figLongTerm_change`](`r LongTerm_change`)
 
 
 # Current Status Map of Land-Productivity
@@ -516,12 +544,12 @@ For the calculation of the final LPD indicator, these levels of local productivi
 # Combined Assessment of Land-Productivity
 `r # # Long Term Change Map + Current Status Map of Land-Productivity`
 ```{r echo=FALSE}
-figCombAss <- fig_num(name = "figCombAss", caption = "Land-Productivity Dynamics indicator final map. Combined assessment of the Long-Term Channge Map of standing biomass and the Current Status Map of Land-Productivity based on the cyclic fraction")
+figCombAss <- fig_num(name = "figCombAss", caption = "Land-Productivity Dynamics indicator final map. Combined assessment of the Long-Term Change Map of standing biomass and the Current Status Map of Land-Productivity based on the cyclic fraction")
 LPD_CombinedAssessment <- paste0(path2saveTests, "/LPD_CombinedAssessment.jpg")
 
 LookUpCombAss_categs <- "'d', Declining L-P; 'ew', Early signs of decline L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increase L-P; 'si', Strong increase of L-P"
 
-tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = paste0("Lookup table for the combination of the two branches assessment (i.e. Long-Term Channge Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories (i.e. ", LookUpCombAss_categs, ")"))
+tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = paste0("Lookup table for the combination of the two branches assessment (i.e. Long-Term Change Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories (i.e. ", LookUpCombAss_categs, ")"))
 
 LookUpCombAss <- as.data.frame(matrix(nrow = 22, ncol = 5,
                                       c(rep("st1", 9), rep("st2", 3), rep("st3", 3), rep("st4", 7),
