@@ -109,6 +109,10 @@ if(rning_plts == "y"){
 
 ## Classification of averaged pixels ####
 
+#The assumption of 40% of World's land area is dryland and, therefore, 40% of pixels is "low"
+#is fine at Global level. It must be adjustable for local studies!!!
+
+
 # Method found in 'zonal10class.pro'; However, it's not reclassifying into groups with similar number of pixels, 
 #                                     but groups with regular range of values. It's not an ISODATA methodology either
 #rg_SI <- range(getValues(SeasonIntegral_01_avg13), na.rm = TRUE)

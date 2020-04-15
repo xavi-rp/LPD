@@ -167,13 +167,13 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 ## Steadiness Index
 
 ```{r echo=FALSE}
-fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study")
+fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study based on Standing Biomass")
 slp_rstr <- paste0(path2saveTests, "/SteadInd_rstr.jpg")
 
-figBasline <- fig_num(name = "figBasLev", caption = "Representation of the Baseline Levels of Standing Biomass for the case study")
+figBasline <- fig_num(name = "figBasLev", caption = "Representation of the baseline levels of Standing Biomass for the case study")
 bsl_lev <- paste0(path2saveTests, "/StandingBiomass_3class.jpg")
 
-figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the Baseline Levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
+figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the baseline levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
 stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
 
 tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived from the combination of the slope of the linear function and the net change category")
@@ -226,13 +226,13 @@ SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem
 
 
 
-## Baseline Levels of Standing Biomass
+## Baseline levels of the phenological/productivity variable
 
-The second source of information for the derivation of the Long-Term Change Map of Land Productivity is the baseline levels of the phenological or productivity variable in study, in this case Standing Biomass. 
+The second source of information for the derivation of the Long-Term Change Map of Land Productivity is the baseline levels of the phenological or productivity variable in study, in the example case, Standing Biomass. 
 
 For the calculation of the baseline levels of standing biomass at the beginning of the time series on study, *LPDynR* categorizes the results into three categories: low, medium and high. To do that, it averages the first three years in order to avoid extreme events such as abnormal droughts in wet areas, etc. On the other hand, averaging more years would move the value closer to the mean of the time series, which is not desirable.
 
-After the average is calculated, *LPDynR* classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) as an intermediate step. The reason for this is that, if directly opted for three, the number of pixels per category would have been classified homogeneously, and this is in contrast with what is stated by the Drylands Development Centre (www.undp.org). DDC declares that 40% of the World's land resources are drylands and, then, 40% of the pixels must be classified as "low level" of Standing Biomass. Therefore, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with larger baseline levels, as "high".
+After the average is calculated, *LPDynR* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, then, 40% of pixels at global level must be classified as "low level" of Standing Biomass. Therefore, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with larger baseline levels, as "high". This assumption is valid at global level, however, the proportion of drylands/low level standing biomass should be modified for local studies **(must be implemented as an argument -adjustable- in the package!!!)**.
 
 In the following lines of code, it can be observed the main steps used by *LPDynR* to categorize the baseline levels of Standing Biomass, first into 10 categories and secondly into the 3 final classes.
 
@@ -267,7 +267,7 @@ var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename=
 ![`r figBasline`](`r bsl_lev`)
 
 
-Once the baseline levels of Standing Biomass have been calculated per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index, resulting 12 combined categories as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
+Once the baseline levels of Standing Biomass have been calculated and categorized per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index classes, resulting 12 combined categories as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
 
 ```r
 SteadInd_Baseline <- raster(var2process_3class)
@@ -293,6 +293,9 @@ SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadi
 
 
 ## Standing Biomass State Change
+
+
+
 
 
 ## Land-Productivity Long Term Change Map
