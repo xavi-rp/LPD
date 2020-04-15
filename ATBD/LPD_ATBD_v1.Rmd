@@ -167,14 +167,9 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 ## Steadiness Index
 
 ```{r echo=FALSE}
+
 fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study based on Standing Biomass")
 slp_rstr <- paste0(path2saveTests, "/SteadInd_rstr.jpg")
-
-figBasline <- fig_num(name = "figBasLev", caption = "Representation of the baseline levels of Standing Biomass for the case study")
-bsl_lev <- paste0(path2saveTests, "/StandingBiomass_3class.jpg")
-
-figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the baseline levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
-stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
 
 tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived from the combination of the slope of the linear function and the net change category")
 SteadInd <- as.data.frame(matrix(nrow = 4, ncol = 4,
@@ -227,6 +222,15 @@ SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem
 
 
 ## Baseline levels of the phenological/productivity variable
+
+```{r echo=FALSE}
+figBasline <- fig_num(name = "figBasLev", caption = "Representation of the baseline levels of Standing Biomass for the case study")
+bsl_lev <- paste0(path2saveTests, "/StandingBiomass_3class.jpg")
+
+figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the baseline levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
+stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
+
+```
 
 The second source of information for the derivation of the Long-Term Change Map of Land Productivity is the baseline levels of the phenological or productivity variable in study, in the example case, Standing Biomass. 
 
@@ -292,7 +296,37 @@ SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadi
 
 
 
-## Standing Biomass State Change
+## State Change of the phenological/productivity variable
+
+```{r echo=FALSE}
+figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of Standing Biomass (baseline levels - final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study. Also the proportion of pixels/group")
+state_change <- paste0(path2saveTests, "/SeasInt_Change.jpg")
+
+```
+
+The third layer used for the Land-Productivity Long Term Change Map is the change of the state of the phenological/productivity variable during the window time of the study. This point is necessary for land degradation assessments as it reports whether productivity thresholds have been passed or not, as a consequence of either that natural resilience thresholds have been surpassed or that new land use/practices have been introduced by humans [@Ivits_report_2013].
+
+To calculate this state change per pixel, *LPDynR* uses both the state level at the beggining of the time series, as calculated in the previous subsection, and the state level at the end of the period. This final state is calculated in the same way than the base line level (i.e. (1) averaging the last 3 years; (2) classifying into 10 categories using 10-quantiles). The reason for not using the final 3-class classification is because it would be difficult to appreciate if the change of one state to another was due to a big or small change. Instead, using the 10-class classification, one can see if a pixel has moved from class 5 to 4 (small change) or from class 9 to 4 (big change).
+
+Once the class change per pixel has been calculated, either positively or negatively, the result is categorized into 3 final classes: (1) no change, (2) changed 1 class or (3) changed 2 or more classes. See `r fig_num("figStateCh", display = "cite")` for a map of the state change. The followng lines show the main part of the code performing the final classification:
+
+```r
+## Calculating Standing Biomass change (difference begin - end)
+## after retrieve base line levels
+var2process_10class_dif <- get(paste0(var2process_name, "_10class_begin")) - var2process_10class_end
+
+# Table for reclassification
+pix_categs3 <- as.data.frame(matrix(nrow = 5, ncol = 0))
+pix_categs3$from    <- c(-10, -1.5, -0.5, 0.5, 1.5)
+pix_categs3$to      <- c( -2,   -1,    0,   1,   9)
+pix_categs3$becomes <- c(  3,    2,    1,   2,   3)
+
+var2process_3classChange <- reclassify(var2process_10class_dif, rcl = pix_categs3, filename='', include.lowest = TRUE, right = TRUE)
+```
+&nbsp;
+&nbsp;
+
+![`r figStateCh`](`r state_change`)
 
 
 
