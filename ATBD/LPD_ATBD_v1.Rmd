@@ -122,7 +122,7 @@ b) Land Productivity Dynamics Map:
 Include here a diagram of the whole process
 
 ```{r echo=FALSE}
-fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land-Productivity Dynamics indicator")
+fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land Productivity Dynamics indicator")
 grph02 <- paste0(path2tempResults, "/graph02.png")
 ```
 
@@ -132,7 +132,7 @@ grph02 <- paste0(path2tempResults, "/graph02.png")
 
 Phenological variables (Phenolo or others), Net Primary Productivity, etc (include here Eva's graph: Figure 3: Schematic representation of the main phenological and productivity variables calculated by Phenolo (reprint from Ivits et al., 2013a).)
 
-Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term Change Map + Current Status Map of Land-Productivity
+Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term Change Map + Current Status Map of Land Productivity
 
 
 ![`r fig0`](`r grph02`)
@@ -159,9 +159,9 @@ In the first version of *LPDynR* presented here, the main function uses multi-ba
 
 
 
-# Long-Term Change Map of Land-Productivity
+# Long Term Change Map of Land Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long-Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the standing biomass variable (i.e. SB) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above ground biomass, can be used as a good approximation of the gross primary production of each spatial unit [GPP; @ivits_ecosystem_2013].
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the standing biomass variable (i.e. SB) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above ground biomass, can be used as a good approximation of the gross primary production (GPP) of each spatial unit [@ivits_ecosystem_2013].
 
 
 ## Steadiness Index
@@ -171,16 +171,16 @@ As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Pro
 fig1 <- fig_num(name = "f1", caption = "Representation of the Steadiness Index for the case study based on Standing Biomass")
 slp_rstr <- paste0(path2saveTests, "/SteadInd_rstr.jpg")
 
-tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived from the combination of the slope of the linear function and the net change category")
+tabSteadInd <- table_num(name = "tabSteadIndex", caption = "Description of the four Steadiness Index classes and how they are derived based on the combination of the signs of both the slope of the linear function and the net change")
 SteadInd <- as.data.frame(matrix(nrow = 4, ncol = 4,
                                  c("Steadiness1", "Steadiness2", "Steadiness3", "Steadiness4", "-", "-", "+", "+", "-", "+", "-", "+", "Strong negative ecosyst. dynamics (possibility changing equil.)", "Moderate negative ecosyst. dynamics (likely remain current equil.)", "Moderate positive ecosyst. dynamics (likely remain current equil.)", "Strong positive ecosyst. dynamics (possibility changing equil.)")))
 names(SteadInd) <- c("Steadiness Class", "Slope", "Net Change", "Description")
 
 ```
 
-The first of the three metrics which integrates the Long-Term Change Map represents the long-term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
+The first of the three metrics which integrates the Long Term Change Map represents the long term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
 
-The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the phenological/productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Then, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as follows:
+The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Then, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as seen in `r table_num("tabSteadIndex", display = "cite")`
 
 `r table_num("tabSteadIndex", display = "full")`
 ```{r echo = FALSE}
@@ -190,7 +190,7 @@ pander(SteadInd)
 &nbsp;
 
 
-`r fig_num("f1", display = "cite")` shows a map of the Steadiness Index for the case study. While in the following lines of code are shown the main parts of the script for this section (notice that parallelization is implemented):
+While `r fig_num("f1", display = "cite")` represents a map of the Steadiness Index for the case study, the following lines of code show the main parts of the script for this section (notice that parallelization is implemented):
 
 ```r
 years <- nlayers(var2process)
@@ -232,11 +232,11 @@ stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
 
 ```
 
-The second source of information for the derivation of the Long-Term Change Map of Land Productivity is the baseline levels of the phenological or productivity variable in study, in the example case, Standing Biomass. 
+The second source of information for the derivation of the Long Term Change Map of Land Productivity is the baseline levels of the productivity variable in study, in the example case, Standing Biomass. 
 
-For the calculation of the baseline levels of standing biomass at the beginning of the time series on study, *LPDynR* categorizes the results into three categories: low, medium and high. To do that, it averages the first three years in order to avoid extreme events such as abnormal droughts in wet areas, etc. On the other hand, averaging more years would move the value closer to the mean of the time series, which is not desirable.
+For the calculation of the baseline levels of standing biomass at the beginning of the time series on study, *LPDynR* categorizes the results into three classes: low, medium and high. To do that, it averages the first three years in order to avoid extreme events such as abnormal droughts in wet areas, etc. On the other hand, averaging more years would move the value closer to the mean of the time series, which is not desirable.
 
-After the average is calculated, *LPDynR* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, then, 40% of pixels at global level must be classified as "low level" of Standing Biomass. Therefore, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with larger baseline levels, as "high". This assumption is valid at global level, however, the proportion of drylands/low level standing biomass should be modified for local studies **(must be implemented as an argument -adjustable- in the package!!!)**.
+After the average is calculated, *LPDynR* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, therefore, 40% of pixels at global level must be classified as "low level" of Standing Biomass. Consequently, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with the largest baseline levels, as "high". This assumption is valid at global level, however, the proportion of drylands/low level of standing biomass should be modified for local studies **(must be implemented as an argument -adjustable- in the package!!!)**.
 
 In the following lines of code, it can be observed the main steps used by *LPDynR* to categorize the baseline levels of Standing Biomass, first into 10 categories and secondly into the 3 final classes.
 
@@ -271,7 +271,7 @@ var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename=
 ![`r figBasline`](`r bsl_lev`)
 
 
-Once the baseline levels of Standing Biomass have been calculated and categorized per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index classes, resulting 12 combined categories as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
+Once the baseline levels of the productivity variable (e.g. SB) have been calculated and categorized per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index classes, resulting 12 combined categories, as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
 
 ```r
 SteadInd_Baseline <- raster(var2process_3class)
@@ -299,16 +299,16 @@ SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadi
 ## State Change of the phenological/productivity variable
 
 ```{r echo=FALSE}
-figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of Standing Biomass (baseline levels - final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study. Also the proportion of pixels/group")
+figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of Standing Biomass (baseline levels minus final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study. Also the proportion of pixels/group")
 state_change <- paste0(path2saveTests, "/SeasInt_Change.jpg")
 
 ```
 
-The third layer used for the Land-Productivity Long Term Change Map is the change of the state of the phenological/productivity variable during the window time of the study. This point is necessary for land degradation assessments as it reports whether productivity thresholds have been passed or not, as a consequence of either that natural resilience thresholds have been surpassed or that new land use/practices have been introduced by humans [@Ivits_report_2013].
+The third layer used for the Land Productivity Long Term Change Map is the change of the state of the productivity variable during the window time of the study. This point is necessary for land degradation assessments as it reports whether productivity thresholds have been passed or not, as a consequence of either that natural resilience thresholds have been surpassed or that new land use/practices have been introduced by humans [@Ivits_report_2013].
 
-To calculate this state change per pixel, *LPDynR* uses both the state level at the beggining of the time series, as calculated in the previous subsection, and the state level at the end of the period. This final state is calculated in the same way than the base line level (i.e. (1) averaging the last 3 years; (2) classifying into 10 categories using 10-quantiles). The reason for not using the final 3-class classification is because it would be difficult to appreciate if the change of one state to another was due to a big or small change. Instead, using the 10-class classification, one can see if a pixel has moved from class 5 to 4 (small change) or from class 9 to 4 (big change).
+To calculate this state change per pixel, *LPDynR* uses both the state level at the beginning of the time series, as calculated in the previous subsection, and the state level at the end of the period. This final state is calculated in the same way than the base line level (i.e. (1) averaging the last 3 years; (2) classifying into 10 categories using 10-quantiles). The reason for not using the final 3-class classification is because it would be difficult to appreciate if the change of one state to another was due to a big or small change. Instead, using the 10-class classification, one can see for instance if a pixel has moved from class 5 to 4 (small change) or from class 9 to 4 (big change).
 
-Once the class change per pixel has been calculated, either positively or negatively, the result is categorized into 3 final classes: (1) no change, (2) changed 1 class or (3) changed 2 or more classes. See `r fig_num("figStateCh", display = "cite")` for a map of the state change. The followng lines show the main part of the code performing the final classification:
+Once the class change per pixel has been calculated, either positively or negatively, the result is categorized into 3 final classes: (1) no change, (2) changed 1 class or (3) changed 2 or more classes. See `r fig_num("figStateCh", display = "cite")` for a map of the state change. The following lines show the main part of the code performing the final classification:
 
 ```r
 ## Calculating Standing Biomass change (difference begin - end)
@@ -329,10 +329,10 @@ var2process_3classChange <- reclassify(var2process_10class_dif, rcl = pix_categs
 ![`r figStateCh`](`r state_change`)
 
 
-## Land-Productivity Long Term Change Map
+## Land Productivity Long Term Change Map
 
 ```{r echo=FALSE}
-figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land-Productivity Long Term Change Map for the case study, based on the combination of Steadiness Index, base line levels and state change of standing biomass. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
+figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land Productivity Long Term Change Map for the case study, based on the combination of Steadiness Index, base line levels and state change of standing biomass. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
 LongTerm_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
@@ -354,7 +354,14 @@ LookUpLongTerm <- rbind(t(as.data.frame(c("Class Change", "Stead.Ind./BaseL.", p
 rownames(LookUpLongTerm) <- NULL
 colnames(LookUpLongTerm) <- NULL
 
+num_cats <- max(as.numeric(as.character(unlist(LookUpLongTerm[-1, 3:14]))))
+
 ```
+
+The Land Productivity Long Term Change Map is one of the two pillars of the LPD indicator (`r fig_num("f0", display = "cite")`) calculated with *LPDynR*. As seen in the previous subsections, the Long Term Change Map is developed, in turn, by the combination of the Steadiness Index, the base line levels and the state change of the productivity variable in use. The Standing Biomass derived with *Phenolo* is the variable used in the case study presented here. 
+
+The combination of the three qualitative metrics into the Long Term Change Map results in `r num_cats` new categories as shown in `r table_num("tb_LngTrm", display = "cite")`. The final map of the case study is presented in `r fig_num("figLngTrm_change", display = "cite")`.
+
 
 `r table_num("tb_LngTrm", display = "full")`
 ```{r echo = FALSE}
@@ -371,14 +378,14 @@ pander(LookUpLongTerm)
 ![`r figLongTerm_change`](`r LongTerm_change`)
 
 
-# Current Status Map of Land-Productivity
+# Current Status Map of Land Productivity
 
-The Land Productivity Dynamics indicator is composed by two base layers, as shown in `r fig_num("f0", display = "cite")`. After the long term productivity dynamics described previously, the second source of information needed is the current level of land productivity. For this purpose, a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, by means of Earth Observation imagery and remote sensing tools, the level of land productivity of each pixel relative to those neighbours with similar characteristics. Therefore, a first step has to be the derivation of homogeneous environmental units (i.e. Ecosystem Functional Types), which allow to estimate the potential level of productivity, or efficiency, of each pixel. 
+The Land Productivity Dynamics indicator is composed by two base layers, as shown in `r fig_num("f0", display = "cite")`. After the long term productivity dynamics described previously (i.e. Long Term Change Map), the second source of information needed is the current level of land productivity. For this purpose, a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, by means of Earth Observation imagery and remote sensing tools, the level of land productivity of each pixel relative to those neighbours with similar characteristics. Therefore, a first step has to be the derivation of homogeneous environmental units (i.e. Ecosystem Functional Types), which allow to estimate the potential level of productivity, or efficiency, of each pixel. 
 
 
 ## Ecosystem Functional Types (EFTs)
 ```{r echo=FALSE}
-figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|")
+figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|. sbd: Season Beginning Day; sed: Season End Day; sl: Season Length; si: Season Integral; mi: Standing Biomass")
 Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.jpg")
 
 figScreePlot <- fig_num(name = "ScreePlot", caption = "“Scree plot” method used to calculate the optimal number of clusters. The “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases")
@@ -388,7 +395,9 @@ figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) d
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
 ```
 
-The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process, using in this case phenological and productivity variables. Among the different unsupervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it’s recommended to standardize the data. Therefore, a three-steps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first Principal Component Analysis ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables to be used in a subsequent PCA, as well as the phenological variable most associated to those Principal Components (PCs); and (3) a "final PCA" is run with the results of the step 2 (i.e. number of PC axes and their most associated variables). After that, the K-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
+** In the package, this will be an independent function, which will be called only when necessary. The user will be able either to run it to calculate the EFTs or to imput another layer with the EFTs already calculated, avoiding this step, which is quite long**
+
+The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process, using in this case phenological and productivity variables. Among the different unsupervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it is recommended to standardize the data. Therefore, a three-steps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first Principal Component Analysis ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables to be used in a subsequent PCA, as well as the phenological variable most associated to those Principal Components (PCs); and (3) a "final PCA" is run with the results of the step 2 (i.e. number of PC axes and their most associated variables). After that, the K-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
 
 In order to check for multicollinearity among the variables, their average is calculated taking advantage of the parallelization tools (i.e. package *parallel*). Then, the process is run using the function *removeCollinearity()*, from the package *virtualspecies*. This function allows the user to set up the minimum Pearson's correlation absolute value, which in this case is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation. The default has been set to 10^6^ to speed up the process. Finally, the user can also choose to randomly select one of the variables of each group of correlation. `r fig_num("Multicoll", display = "cite")` shows a dendrogram to visualize the groups of intercorrelated variables in the present case study. The main part of the code is as follows:
 
@@ -398,11 +407,11 @@ vrbles_NoC <- virtualspecies::removeCollinearity(stack_rstrs_avg, multicollinear
 dev.copy(jpeg, paste0(path2tempResults, "/vars_collinearity.jpg"))
 dev.off() 
 ```
-\n
+&nbsp;
 
 ![`r figMulticoll`](`r Multicoll_plot`)
 
-The next step is to run the first "screening PCA", which is automatically done over the uncorrelated variables. In order to know the optimal number of variables to be used in the subsequent PCA (i.e. "final PCA"), a threshold of cumulative variance of the PCs is implemented. This threshold is established to be 0.9. The main parts of the code for running both the "screening PCA" and the "final PCA" are the following, respectively:
+The next step is to run the first "screening PCA", which is automatically done over the uncorrelated variables. In order to know the optimal number of variables to be used in the subsequent PCA (i.e. "final PCA"), a threshold of cumulative variance of the PCs is implemented. This threshold is established to be 0.9 as default. The main parts of the code for running both the "screening PCA" and the "final PCA" are the following, respectively:
 
 ```r
 # Running the "screening PCA"
@@ -427,7 +436,7 @@ screeningPCA_variables_df <- as.data.frame(unclass(screeningPCA_variables_df))
 screeningPCA_variables_df <- round(screeningPCA_variables_df, 0)[, c(1:nPCs)]
 screeningPCA_variables <- names(which(apply(screeningPCA_variables_df, 1, sum) != 0))
 ```
-\n
+&nbsp;
 
 
 ```r
@@ -439,10 +448,10 @@ pca_final <- prcomp(na.omit(stack_rstrs_avg_noC_df_final),
                     scale. = TRUE  # scaling variables to have unit variance
                     )   
 ```
-\n
+&nbsp;
 
 
-Finally, the clustering algorithm is implemented over the selected PCs using the function *kmeans()* from the package *stats*. K-means is an iterative, unsupervised, method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself, insted, it needs to be done externally. In this case, the optimal number of clusters was calculated to be around 20, using the “scree-plot method". Such method is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is made with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of this assessment.
+Finally, the clustering algorithm is implemented over the selected PCs using the function *kmeans()* from the package *stats*. K-means is an iterative unsupervised method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself. Insted, it needs to be done externally. In this case, the optimal number of clusters was calculated to be around 20, using the “scree-plot method". Such method is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is made with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of this assessment.
 
 
 ![`r figScreePlot`](`r ScreePlot_plot`)
@@ -450,7 +459,7 @@ Finally, the clustering algorithm is implemented over the selected PCs using the
 
 The “scree plot” method implemented in this study, undoubtedly has some level of subjectivity, as the user decides where the curve flattens enough. However, there exists several numerical methods to calculate the optimal number of clusters that remove such subjectivity, but which take also some statistical assumptions. They could be explored in the future if a higher level of accuracy is believed as necessary or if the whole process wants to be done without user's intervention.
 
-This is the main part of the code to perform the "scree-plot method". Notice that the clustering is run with nine different number of clusters to give a good amount of points to plot the curve. And also that the maximum number of iterations is set up to 10, although it is unlikely that the process gets any convergence with such a low number of iterations.
+This is the main part of the code to perform the "scree-plot method" **In the package this part will be an independent function to be run only if the optimal number of clusters wants to be assessed**. Notice that the clustering is run with nine different number of clusters to give a good amount of points to plot the curve. And also that the maximum number of iterations is set up to 10, although it is unlikely that the process gets any convergence with such a low number of iterations.
 
 ```r
 wss <- (nrow(pca_data_ini) - 1) * sum(apply(pca_data_ini[, - c(length(pca_data_ini))], 2, var))
@@ -464,12 +473,12 @@ plot(c(1, num_clstrs), wss, type = "b",
 dev.off() 
 
 ```
-\n
+&nbsp;
 
 
 Then, with the optimal number of clusters decided, the K-means is run again. As previous tests of K-means with up to 100 iterations were not converging, the maximum number of iterations is set to 500 as default. Within this limit, for all the tests performed, the process always did achieve convergence. 
 
-The very last step is to assign spatial information to the results of the K-means clustering. The EFTs resulted from the whole process can be seen in `r fig_num("EFTs", display = "cite")`, as well as the main lines of code of this section, which can bee seen below:
+The very last step is to assign spatial information to the results of the K-means clustering. The EFTs resulted from the whole process can be seen in `r fig_num("EFTs", display = "cite")`, as well as the main lines of code of this section can be seen below:
 
 
 ```r
@@ -496,7 +505,7 @@ pca_final_clstrs_raster <- raster(nrows = pca_final_raster@nrows,
 names(pca_final_clstrs_raster) <- "clusterNum"
 
 ```
-\n
+&nbsp;
 
 
 ![`r figEFTs`](`r EFTmap`)
@@ -511,11 +520,11 @@ figLocNetProd <- fig_num(name = "LocNetProd", caption = "Local Net Primary Produ
 LocNetProd <- paste0(path2saveTests, "/LocalNetProductivity_LSP.jpg")
 ```
 
-The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel in homogeneous land areas. It will be considered potential productivity that productivity which would have been were it not for human factors, and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein]. The current land production related to the local potential reflects the current level of productivity efficiency and, therefore, it is useful for the delineation of a productivity status map [@Ivits_report_2013]. 
+The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel in homogeneous land areas. It will be considered potential productivity that productivity which would have been without the influence of human factors, and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein]. The current land production related to the local potential reflects the current level of productivity efficiency and, therefore, it is useful for the delineation of a productivity status map [@Ivits_report_2013]. 
 
-Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the Standing Biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
+Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the standing biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
 
-In the case study, the Cyclic Fraction was derived from *Phenolo* for the period between 1999 and 2012, and each pixel subsequently averaged. That period coincides with the last five years of the time series used for the generation of the Long Term Change Map. The computation process for averaging was done again using parallelization, as seen in the following code:
+In the case study, the Cyclic Fraction was derived from *Phenolo* for the period between 2008 and 2012, and each pixel subsequently averaged. That period coincides with the last five years of the time series used for the generation of the Long Term Change Map. The computation process for averaging was done again using parallelization, as seen in the following code:
 
 ```r
 beginCluster(cors2use)   # it uses 'cors2use' cores for parallelizing
@@ -523,11 +532,11 @@ yrs <- (nlayers(CycleFraction_rstr) - 4):nlayers(CycleFraction_rstr)
 CycleFraction_rstr_average <- clusterR(CycleFraction_rstr, calc, args = list(fun = mean_years_function), export = "yrs")
 endCluster()
 ```
-\n
+&nbsp;
 
-Then, the potential productivity within each EFT was calculated. However, instead of the maximum value, its 90 percentile was established as the final potential, given that values higher than this threshold were considered as outliers. 
+Then, the potential productivity within each EFT was calculated. However, instead of the maximum value, its 90-percentile was established as the final potential, given that values higher than this threshold were considered as outliers. 
 
-Finally, the Local Net Scaling per pixel was calculated as the proportion of its annual production (i.e. the average of 5 years Cyclic Fraction) over the potential production within its EFT (i.e. the 90 percentile). The result, shown in `r fig_num("LocNetProd", display = "cite")`, was expressed in percentage and was computed as follows: 
+Finally, the Local Net Scaling per pixel was calculated as the proportion of its annual production (i.e. the average of 5 years Cyclic Fraction) over the potential production within its EFT (i.e. the 90-percentile). The result, shown in `r fig_num("LocNetProd", display = "cite")`, was expressed in percentage and was computed as follows: 
 &nbsp;
 ```r
 CycleFraction_average_df$LSP <- round(((CycleFraction_average_df$CyclicFraction / CycleFraction_average_df$CyclicFraction_90perc) * 100), 1)
@@ -541,15 +550,16 @@ For the calculation of the final LPD indicator, these levels of local productivi
 
 
 
-# Combined Assessment of Land-Productivity
-`r # # Long Term Change Map + Current Status Map of Land-Productivity`
+# Combined Assessment of Land Productivity
+`r # # Long Term Change Map + Current Status Map of Land Productivity`
 ```{r echo=FALSE}
-figCombAss <- fig_num(name = "figCombAss", caption = "Land-Productivity Dynamics indicator final map. Combined assessment of the Long-Term Change Map of standing biomass and the Current Status Map of Land-Productivity based on the cyclic fraction")
+LookUpCombAss_categs <- "'d', Declining Land-Productivity; 'ew', Early signs of decline of L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increaseing L-P; 'si', Strong increase of L-P"
+
+figCombAss <- fig_num(name = "figCombAss", caption = paste0("Land Productivity Dynamics indicator final map. Combined assessment of the Long Term Change Map and the Current Status Map of Land Productivity, based on Standing Biomass and Cyclic Fraction variables, respectively. Both variables are derived from time series of Earth Observation imagery using *Phenolo*. ", LookUpCombAss_categs))
 LPD_CombinedAssessment <- paste0(path2saveTests, "/LPD_CombinedAssessment.jpg")
 
-LookUpCombAss_categs <- "'d', Declining L-P; 'ew', Early signs of decline L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increase L-P; 'si', Strong increase of L-P"
 
-tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = paste0("Lookup table for the combination of the two branches assessment (i.e. Long-Term Change Map of standing biomass and Current Status Map of Land-Productivity of cyclic fraction) to derive the Land-Productivity Dynamics categories (i.e. ", LookUpCombAss_categs, ")"))
+tabLookUpCombAss <- table_num(name = "tabLookUpCombAss", caption = paste0("Lookup table for the combination of the two branches assessment (i.e. Long Term Change Map of standing biomass and Current Status Map of Land Productivity of cyclic fraction) to derive the Land Productivity Dynamics categories (i.e. ", LookUpCombAss_categs, ")"))
 
 LookUpCombAss <- as.data.frame(matrix(nrow = 22, ncol = 5,
                                       c(rep("st1", 9), rep("st2", 3), rep("st3", 3), rep("st4", 7),
@@ -564,9 +574,9 @@ names(LookUpCombAss) <- c("Steadiness I.", "Baseline L.", "State Change", "Local
 ```
 
 
-The Land-Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long-Term Change Map (`r fig_num("figLandProd_change", display = "cite")`), based on the standing biomass, and the Current Status Map of Land-Productivity (`r fig_num("LocNetProd", display = "cite")`), based on the cyclic fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
+The Land Productivity Dynamics indicator final map (`r fig_num("figCombAss", display = "cite")`) is the result of the combined assessment of the Long Term Change Map (`r fig_num("figLandProd_change", display = "cite")`), based on the Standing Biomass, and the Current Status Map of Land Productivity (`r fig_num("LocNetProd", display = "cite")`), based on the Cyclic Fraction and derived through the Local Net Scaling approach. See the flowchart of the process for the derivation of the indicator in `r fig_num("f0", display = "cite")`.
 
-As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values or categories after the reclassification of each pixel as shown in the lookup table (`r table_num("tabLookUpCombAss", display = "cite")`). Such categories are `r LookUpCombAss_categs`.
+As seen above in this document, both branches to calculate the indicator are qualitative methods. Therefore, the final LPD indicator is also a qualitative measure with 6 possible values or categories after the reclassification of each pixel as shown in `r table_num("tabLookUpCombAss", display = "cite")`. Such categories are `r LookUpCombAss_categs`.
 
 
 `r table_num("tabLookUpCombAss", display = "full")`
@@ -593,7 +603,7 @@ pander(LookUpCombAss)
 
 # Conclusions
 
-According to the flowchart presented at the beginning of this document (`r fig_num("f0", display = "cite")`), the Land-Productivity Dynamics indicator (LPD) is derived from several phenological and productivity variables, in turn, obtained from time series of earth observation imagery.
+According to the flowchart presented at the beginning of this document (`r fig_num("f0", display = "cite")`), the Land Productivity Dynamics indicator (LPD) is derived from several phenological and productivity variables, in turn, obtained from time series of earth observation imagery.
 
 
 # References
