@@ -93,6 +93,12 @@ tb1 <- table_num(name = "t1", caption = "bla bla bla")
  
 ```
  
+
+The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals (SDGs), with the general aim of achieving a better and more sustainable future for all, and which were intended to be acomplished by the year 2030. Each of these SDGs is subdivided into a list of targets which, in turn, go together with indicators to be able to measure its success. The SDG-15 entitled Life on Land has among its targets the 15.3 which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state of the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time. 
+
+The indicator 15.3.1 is the one adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators: (1)Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. 
+
+
 `r table_num("t1", display = "cite")`
 
 a) general introduction
