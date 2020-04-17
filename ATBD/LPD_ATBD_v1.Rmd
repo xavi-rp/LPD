@@ -94,9 +94,18 @@ tb1 <- table_num(name = "t1", caption = "bla bla bla")
 ```
  
 
-The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals (SDGs), with the general aim of achieving a better and more sustainable future for all, and which were intended to be acomplished by the year 2030. Each of these SDGs is subdivided into a list of targets which, in turn, go together with indicators to be able to measure its success. The SDG-15 entitled Life on Land has among its targets the 15.3 which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state of the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time. 
+The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals (SDGs), with the general aim of achieving a better and more sustainable future for all, and which were intended to be accomplished by the year 2030. Each of these SDGs is subdivided into a list of targets which, in turn, go together with indicators to be able to measure their success. The SDG-15 entitled Life on Land has among its targets the 15.3 which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time. 
 
-The indicator 15.3.1 is the one adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators: (1)Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. 
+The indicator 15.3.1 is the one adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory. These three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
+
+The Land Productivity sub-indicator (LP), the one addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land, and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits et al. [-@ivits_ecosystem_2013], which is the methodological basis of the *LPDynR* package presented in this document. 
+
+The LPD approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Yengoh_2015, and references therein].
+
+
+
+
+
 
 
 `r table_num("t1", display = "cite")`
@@ -110,17 +119,13 @@ Beginning in the 1970s, the international community recognized that land degrada
 
 Accurate quantification of NPP at local to global scales is a central topic for carbon cycle, forest, land and ressource managers and politicians [@white_2000]
 
-Reduced NPP is a consistent symptom of land degradation relative to the potential in the site [@Prince_2009]
 
-Land degradation is measured through change in land productivity using, as a proxy, NPP, which is estimated through remotely sensed NDVI [@Yengoh_2015]
 
 Land degradation can be caused by local human activities and biophysical pro- cesses as well as by activities and processes that are not tied to the local human or physical landscape, such as climate change [@Yengoh_2015]. 
 
-Potential for the use of NDVI as a proxy for land productivity (one of the indicators of the state of land degradation) is based on numerous and rigorous studies that have identified a strong relationship between NDVI and NPP  [@Yengoh_2015, and references therein]
 
-In detecting the status and trend of desertification, researchers have built on the relationship between NDVI and biomass productivity that has been well established in the literature [@Yengoh_2015, and references therein]
 
-Changes in NPP or, rather, its proxy NDVI induced by land degradation can be measured using a range of remote sensing techniques so remote sensing has become an essential tool for global, regional, and national studies of land degradation [@Yengoh_2015] 
+
 
 
 b) Land Productivity Dynamics Map: 
@@ -401,7 +406,7 @@ figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) d
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
 ```
 
-** In the package, this will be an independent function, which will be called only when necessary. The user will be able either to run it to calculate the EFTs or to imput another layer with the EFTs already calculated, avoiding this step, which is quite long**
+**In the package, this will be an independent function, which will be called only when necessary. The user will be able either to run it to calculate the EFTs or to input another layer with the EFTs already calculated, avoiding this step, which is quite long**
 
 The methodology implemented to derive the Ecosystem Functional Types (EFTs) is basically a clustering process, using in this case phenological and productivity variables. Among the different unsupervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. However, as for the other iterative clustering algorithms based on minimum distance among similar data points, it is recommended to standardize the data. Therefore, a three-steps process has been implemented to prepare the data to be clustered: (1) the `r length(vrbls_lst)` phenological and productivity-related variables are checked against multicollinearity, removing those highly correlated (|r| > 0.7); (2) a first Principal Component Analysis ("screening PCA") with the less-correlated variables is run in order to know the optimal number of variables to be used in a subsequent PCA, as well as the phenological variable most associated to those Principal Components (PCs); and (3) a "final PCA" is run with the results of the step 2 (i.e. number of PC axes and their most associated variables). After that, the K-means clustering algorithm is applied to the rotated components of the final PCA instead of to the phenological variables because the former are normalized with zero mean and 1 SD [@Ivits_report_2013].
 
