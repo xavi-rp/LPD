@@ -80,19 +80,19 @@ fig_num <- captioner::captioner(prefix = "Figure")
 
 **Abstract**
 
-[@ivits_assessing_2016]
-
 
 
 
 # Introduction (Background)
 
 ```{r echo=FALSE}
+fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land Productivity Dynamics indicator")
+grph02 <- paste0(path2tempResults, "/graph02.png")
 
-tb1 <- table_num(name = "t1", caption = "bla bla bla")
- 
+#tb1 <- table_num(name = "t1", caption = "bla bla bla")
+
 ```
- 
+
 
 The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals (SDGs), with the general aim of achieving a better and more sustainable future for all, and which were intended to be accomplished by the year 2030. Each of these SDGs is subdivided into a list of targets which, in turn, go together with indicators to be able to measure their success. The SDG-15 entitled Life on Land has among its targets the 15.3 which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time. 
 
@@ -100,48 +100,10 @@ The indicator 15.3.1 is the one adopted to measure the LDN, and it is expressed 
 
 The Land Productivity sub-indicator (LP), the one addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land, and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits et al. [-@ivits_ecosystem_2013], which is the methodological basis of the *LPDynR* package presented in this document. 
 
-The LPD approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Yengoh_2015, and references therein].
+The LPD approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. This approach uses phenological and productivity related variables derived from time series of NDVI given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophisical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginnig, end and maximum date of the vegetation growing season, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
 
+The final result of the LPD indicator is a map with 
 
-
-
-
-
-
-`r table_num("t1", display = "cite")`
-
-a) general introduction
-UNCCD, SDG 15.3, Indicator
-
-Beginning in the 1970s, the international community recognized that land degrada- tion/desertification was an economic, social, and environmental problem and began a process which ultimately resulted in the creation of the UN Convention to Combat Desertification (CCD). The convention defines desertification as land degradation in arid, semi-arid, and dry sub-humid areas resulting from various factors, including climatic variations and human activities (UNCCD 1994) [@Yengoh_2015]
-
-[@Prince_2009]: Techniques for measurement of Net Primary Production (NPP) using Earth-observing satellite data were first developed in the mid 1980s
-
-Accurate quantification of NPP at local to global scales is a central topic for carbon cycle, forest, land and ressource managers and politicians [@white_2000]
-
-
-
-Land degradation can be caused by local human activities and biophysical pro- cesses as well as by activities and processes that are not tied to the local human or physical landscape, such as climate change [@Yengoh_2015]. 
-
-
-
-
-
-
-b) Land Productivity Dynamics Map: 
-
-Include here a diagram of the whole process
-
-```{r echo=FALSE}
-fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land Productivity Dynamics indicator")
-grph02 <- paste0(path2tempResults, "/graph02.png")
-```
-
-
-
-
-
-Phenological variables (Phenolo or others), Net Primary Productivity, etc (include here Eva's graph: Figure 3: Schematic representation of the main phenological and productivity variables calculated by Phenolo (reprint from Ivits et al., 2013a).)
 
 Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term Change Map + Current Status Map of Land Productivity
 
@@ -149,7 +111,6 @@ Land Productivity Dynamics Map (`r fig_num("f0", display = "cite")`)= Long Term 
 ![`r fig0`](`r grph02`)
 
 
-Qualitative indicator...
 
 
 
