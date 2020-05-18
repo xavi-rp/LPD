@@ -3,10 +3,11 @@ if(Sys.info()[4] == "D01RI1700371"){
   source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 }else if(Sys.info()[4] == "h05-wad.ies.jrc.it"){
   source("/home/rotllxa/LPD/LPD/00_settings.R")
+}else if(Sys.info()[4] == "MacBook-MacBook-Pro-de-Xavier.local"){
+  source("/Users/xavi_rp/Documents/D6_LPD/LPD/00_settings.R")
 }else{
   stop("Define your machine before to run LPD")
 }
-
 
 ## Reading in 'Phenolo' data
 nc <- nc_open(paste0(path2data, "/", nc_file))

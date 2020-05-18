@@ -4,14 +4,18 @@
 # These are the data sets used (probably) to perform the published study
 # They are derived from SPOT
 
-#rm(list = ls()[!ls() %in% c("path2project", "path2data", "path2saveTests", "path2tempResults")])
+rm(list = ls())
+
 if(Sys.info()[4] == "D01RI1700371"){
   source("E:\\rotllxa\\LPD\\LPD/00_settings.R")
 }else if(Sys.info()[4] == "h05-wad.ies.jrc.it"){
   source("/home/rotllxa/LPD/LPD/00_settings.R")
+}else if(Sys.info()[4] == "MacBook-MacBook-Pro-de-Xavier.local"){
+  source("/Users/xavi_rp/Documents/D6_LPD/LPD/00_settings.R")
 }else{
   stop("Define your machine before to run LPD")
 }
+
 
 
 
@@ -356,6 +360,70 @@ save(list = stuff2save, file = paste0(path2tempResults, "/OldDataSets_EndStep011
 #varbl_simask
 #
 #summary(getValues(varbl_simask$X1999))
+
+
+
+## Cropping for package ####
+
+vrbls_lst <- c("sbd", "sed", "si", "sl", "mi")
+
+for (vbl in vrbls_lst){
+  print(vbl)
+  
+  if(vbl == "sed"){
+    rstr_name <- paste0(path2tempResults, "/", vbl, "_cleanGood.tif")
+  }else{
+    rstr_name <- paste0(path2tempResults, "/", vbl, "_clean.tif")
+  }
+  
+  varbl <- brick(rstr_name)
+  names(varbl) <- paste0(vbl, "_", 1999:2012)
+  
+  cat_extnt <- extent(c(0.3, 3.4, 40.4, 43))
+  varbl <- crop(varbl, cat_extnt, filename = paste0(path2tempResults, "/", vbl, "_clean_Cat.tif"), overwrite = TRUE)
+  
+  
+  if(vbl == "sbd"){
+    extent_good <- extent(get(paste0(vbl, "_clean_Cat")))
+  }else if(vbl %in% c("sed", "si")){
+    extent(varbl) <- extent_good
+  }
+    
+  assign(paste0(vbl, "_clean_Cat"), varbl)
+  
+  if(vbl == "sed"){
+    writeRaster(get(paste0(vbl, "_clean_Cat")), paste0(path2tempResults, "/sed_clean_Cat_1.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+    sed_clean_Cat <- brick(paste0(path2tempResults, "/sed_clean_Cat_1.tif"))
+    writeRaster(sed_clean_Cat, paste0(path2tempResults, "/sed_clean_Cat.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+    if (file.exists(paste0(path2tempResults, "/sed_clean_Cat_1.tif"))) file.remove(paste0(path2tempResults, "/sed_clean_Cat_1.tif"))
+    sed_clean_Cat <- brick(paste0(path2tempResults, "/sed_clean_Cat.tif"))
+  }
+  if(vbl == "si"){
+    writeRaster(get(paste0(vbl, "_clean_Cat")), paste0(path2tempResults, "/si_clean_Cat_1.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+    si_clean_Cat <- brick(paste0(path2tempResults, "/si_clean_Cat_1.tif"))
+    writeRaster(si_clean_Cat, paste0(path2tempResults, "/si_clean_Cat.tif"), options = "INTERLEAVE=BAND", overwrite = TRUE)
+    if (file.exists(paste0(path2tempResults, "/si_clean_Cat_1.tif"))) file.remove(paste0(path2tempResults, "/si_clean_Cat_1.tif"))
+    si_clean_Cat <- brick(paste0(path2tempResults, "/si_clean_Cat.tif"))
+  }
+}
+
+
+# Checks
+for (vbl in vrbls_lst){
+  #print(paste0("resolution ", vbl, ": "))
+  #print(res(get(paste0(vbl, "_clean_Cat"))))
+  #
+  print(paste0("dim ", vbl, ": "))
+  print(dim(get(paste0(vbl, "_clean_Cat"))))
+
+  #print(paste0("extent ", vbl, ": "))
+  #print(as.vector(extent(get(paste0(vbl, "_clean_Cat")))))
+}
+
+
+
+
+
 
 
 
