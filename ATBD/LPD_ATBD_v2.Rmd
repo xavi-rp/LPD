@@ -116,9 +116,9 @@ grph02 <- paste0(path2tempResults, "/graph02.png")
 
 The Land Productivity Dynamics approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. This approach uses phenological and productivity-related variables derived from time series of NDVI, given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of the ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophysical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginning, the end and the maximum date of the vegetation growing season, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
 
-The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. It is the result of a combined assessment of two sources of information, as seen in `r fig_num("f0", display = "cite")`. On the one hand, the first layer is the Long Term Change Map and, in general terms, it shows the tendency of change of land productivity (positive or negative) and the effect that this tendency might have had on a particular original point after a certain period of time. On the other hand, the second layer is the Current Status Map, which provides information on the current efficiency levels of vegetation on the productivity or, in other words, the current level of land productivity in relation to its potential. Further explanations for both branches will be given in their own sections below. 
+The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. It is the result of a combined assessment of two sources of information, as seen in `r fig_num("f0", display = "cite")`. On the one hand, the first layer is the Long Term Change Map. In general terms, it shows the tendency of change of land productivity (positive or negative) and the effect that this tendency might have had on a particular original point after a certain period of time. On the other hand, the second layer is the Current Status Map, which provides information on the current efficiency levels of vegetation on the productivity or, in other words, the current level of land productivity in relation to its potential. Further explanations for both branches will be given in their own sections below. 
 
-Following the LPD approach, the *LPDynR* package allows the user to produce the final Land Productivity Dynamics Map from scratch, using as inputs a set of time series of phenological and/or productivity variables (multi-band GeoTIFF rasters). However, by means of different functions included in the package, it is able to produce only intermediate layers (e.g. Steadiness Index, Ecosystem Functional Types, etc.) or to input these layers to the general process if they have been previously calculated. In addition, several parameters can be set along the process in order to fit them with the preferences of the user. The functions included in the package have no limitations regarding number of time series, variables to use or spatial extent and resolution. The source code of the last version of *LPDynR* can be found at https://github.com/xavi-rp/LPDynR.
+Following the LPD approach, the *LPDynR* package allows the user to produce the final Land Productivity Dynamics Map using as inputs a set of time series of phenological and/or productivity variables (multi-band GeoTIFF rasters). By means of the different functions included in the package, it produces intermediate layers (e.g. Steadiness Index, Ecosystem Functional Types, etc.) or to input these layers to the general process if they have been previously calculated. In addition, several parameters can be set along the process in order to fit them with the preferences of the user. The functions included in the package have no limitations regarding number of time series, variables to use or spatial extent and resolution. The source code of the last version of *LPDynR* can be found at https://github.com/xavi-rp/LPDynR.
 
 
 ![`r fig0`](`r grph02`)
@@ -138,13 +138,13 @@ Following the LPD approach, the *LPDynR* package allows the user to produce the 
 
 A case study is presented in this document in order to illustrate the methodology implemented in the *LPDynR* package to calculate the LPD indicator. So, in this case it is used a data set of `r length(vrbls_lst)` phenological and productivity-related variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used to calculate the LPD map are `r paste0("*", paste0(vrbls_lst_names[-length(vrbls_lst_names)], collapse = "*, *"), "*", " and ", "*", vrbls_lst_names[length(vrbls_lst_names)], "*")`, and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
 
-In the first version of *LPDynR* presented here, the main function uses multi-band "tiff" rasters to start the process, one per variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
+In the first version of *LPDynR* presented in this document, the main function uses multi-band "tiff" rasters to start the process, one per variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
 
 
 
 # Long Term Change Map of Land Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long Term Change Map, which incorporates information both on the progression of the general process of land degradation (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the Standing Biomass variable (i.e. *SB* or *mi*) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above-ground biomass, can be used as a good approximation of the gross primary production (GPP) of each spatial unit [@ivits_ecosystem_2013].
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long Term Change Map, which incorporates information both on the progression of the general process of land dynamics (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the Standing Biomass variable (i.e. *SB* or *mi*) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above-ground biomass, can be used as a good approximation of the gross primary production (GPP) of each spatial unit [@ivits_ecosystem_2013].
 
 
 ## Steadiness Index
@@ -163,7 +163,7 @@ names(SteadInd) <- c("Steadiness Class", "Slope", "Net Change", "Description")
 
 The first of the three metrics which integrates the Long Term Change Map represents the long term tendency of degradation of the natural systems on study, either positive or negative. This metrics is the "Steadiness Index" which, in turn, is based on the combination of two other metrics calculated per pixel: (1) the slope derived from a linear regression of the different years of the time series and (2) the net change on the same period.
 
-The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Then, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as seen in `r table_num("tabSteadIndex", display = "cite")`.
+The use of a linear regression would imply to respect some strict statistical assumptions for confidence intervals and significance tests to be representative. This is why the Steadiness Index only keeps classes of tendency and no more tests are run for assessing its significance. See Ivits et al. [-@Ivits_report_2013] for further explanations on this point. Therefore, only the sign (positive or negative) of the slope of the trend is kept as the value of each pixel's tendency of ecosystem dynamics. In addition, the net change of the productivity variable is calculated for the same time window and per pixel using the Multi-Temporal Image Differencing method [MTID; @Guo_2008]. And, afterwards, it is transformed also into positive or negative net change. Finally, both metrics (slope of the linear function and net change category) are combined to get four "steadiness" categories as seen in `r table_num("tabSteadIndex", display = "cite")`.
 
 `r table_num("tabSteadIndex", display = "full")`
 ```{r echo = FALSE}
@@ -173,29 +173,13 @@ pander(SteadInd)
 &nbsp;
 
 
-While `r fig_num("f1", display = "cite")` represents a map of the Steadiness Index for the case study, the following lines of code show the main parts of the script for this section (notice that parallelization is implemented):
+While `r fig_num("f1", display = "cite")` represents a 4-class map of the Steadiness Index for the case study, the following lines of code show how to run the function *steadiness* of the package to calculate the Steadiness Index.
 
 ```r
-years <- nlayers(var2process)
-
-## Fitting a linear regression and getting the slope ####
-yrs <- 1:years
-beginCluster(cors2use)   
-slope_rstr <- clusterR(var2process, calc, args = list(fun = slp_lm), export = "yrs")
-endCluster()
-
-## Computing net change: MTID (Multi Temporal Image Differencing) ####
-beginCluster(cors2use)   
-mtid_rstr <- clusterR(var2process, calc, args = list(fun = mtid_function), export = "years")
-endCluster()
-
-## Calculating Steadiness classes ####
-SteadInd_rstr <- raster(mtid_rstr)
-SteadInd_rstr[slope_rstr < 0 & mtid_rstr > 0] <- 1   # strong negative ecosystem dynamics
-SteadInd_rstr[slope_rstr < 0 & mtid_rstr < 0] <- 2   # moderate negative ecoystem dynamics
-SteadInd_rstr[slope_rstr > 0 & mtid_rstr < 0] <- 3   # moderate positive ecosystem dynamics
-SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem dynamics
-
+?steadiness
+SteadInd <- steadiness(obj2process = sb,  # 'sb' is the productivity variable with the time series 
+                       cores2use = 3,     # for parallel processing
+                       filename = "SteadInd.tif")
 ```
 &nbsp;
 &nbsp;
@@ -204,48 +188,30 @@ SteadInd_rstr[slope_rstr > 0 & mtid_rstr > 0] <- 4   # strong positive ecosystem
 
 
 
-## Baseline levels of the phenological/productivity variable
+## Baseline levels of the productivity variable
 
 ```{r echo=FALSE}
 figBasline <- fig_num(name = "figBasLev", caption = "Representation of the baseline levels of Standing Biomass for the case study")
 bsl_lev <- paste0(path2saveTests, "/StandingBiomass_3class.jpg")
 
-figStead_Basline <- fig_num(name = "figStead_BasLev", caption = "Combination of the Steadiness Index with the baseline levels of Standing Biomass for the case study. Map and graph with the number of pixels per each of the 12 combination classes")
-stead_bsl_lev <- paste0(path2saveTests, "/SteadInd_Baseline.jpg")
-
 ```
 
 The second source of information for the derivation of the Long Term Change Map of Land Productivity is the baseline levels of the productivity variable in study, in the example case, Standing Biomass. 
 
-For the calculation of the baseline levels of standing biomass at the beginning of the time series on study, *LPDynR* categorizes the results into three classes: low, medium and high. To do that, it averages the first three years in order to avoid extreme events such as abnormal droughts in wet areas, etc. On the other hand, averaging more years would move the value closer to the mean of the time series, which is not desirable.
+For the calculation of the baseline levels of land productivity at the beginning of the time series on study, *LPDynR* categorizes the results into three classes: low, medium and high. To do that, the function *baseline_lev* averages the first *n* years of the time series in order to avoid extreme events such as abnormal droughts in wet areas, etc. This number of years can be set by passing the argument *yearsBaseline* to the function. Its default is 3, given that averaging more years would move the value closer to the mean of the time series, which is not desirable.
 
-After the average is calculated, *LPDynR* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, therefore, 40% of pixels at global level must be classified as "low level" of Standing Biomass. Consequently, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with the largest baseline levels, as "high". This assumption is valid at global level, however, the proportion of drylands/low level of standing biomass should be modified for local studies **(must be implemented as an argument -adjustable- in the package!!!)**.
+After the average is calculated, *LPDynR* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, therefore, 40% of pixels at global level must be classified as "low level" of productivity. Consequently, as default, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with the largest baseline levels, as "high". Both the proportion of pixels classified as low level and high level of land productivity can be set by passing to *baseline_lev* the arguments *drylandProp* and *highprodProp*, respectively. The function classifies the rest of pixels ((100 - (*drylandProp* + *highprodProp*)) as medium level. The assumption of classifying 40% of pixels as low productive is valid at global level, however, the proportion of drylands/low level of productivity should be modified for local studies. For example, at the European level, drylands cover 20% of total land [@FAO_2019].
 
-In the following lines of code, it can be observed the main steps used by *LPDynR* to categorize the baseline levels of Standing Biomass, first into 10 categories and secondly into the 3 final classes.
+In the following lines of code, it can be observed how to run *baseline_lev* to categorize the baseline levels of productivity, resulting in a 3-class map.
 
 ```r
-## Averaging first 3 years (using parallelization)
-beginCluster(cors2use)   
-yrs <- 1:3
-var2process_avg13 <- clusterR(var2process, calc, args = list(fun = mean_years_function), export = "yrs")
-endCluster()
-
-## Categorizing into 10
-# Method: it calculates percentiles in order to make groups with similar number of pixels
-pix_categs <- raster::quantile(var2process_avg13, probs =  seq(0, 1, 0.1), names = TRUE)
-pix_categs01 <- c(pix_categs[- length(pix_categs)])
-pix_categs1 <- as.data.frame(pix_categs[-1])
-pix_categs1$from <- pix_categs01 
-pix_categs1$becomes <- 1:(length(pix_categs) - 1)
-pix_categs1 <- pix_categs1[, c(2, 1, 3)]
-names(pix_categs1)[2] <- "to"
-pix_categs1
-var2process_10class <- reclassify(var2process_avg13, rcl = pix_categs1, filename='', include.lowest = TRUE, right = TRUE)
-
-## Categorizing into 3
-pix_categs2 <- pix_categs1
-pix_categs2$becomes <- c(rep(1, 4), rep(2, 5), 3)
-var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename='', include.lowest = TRUE, right = TRUE)
+?baseline_lev
+Baseline_Level <- baseline_lev(obj2process = sb, 
+                               yearsBaseline = 3, 
+                               drylandProp = 0.4,  # 40% as dryland
+                               highprodProp = 0.1, # 10% highly productive land 
+                               cores2use = 3, 
+                               filename = "Baseline_Level.tif")
 
 ```
 &nbsp;
@@ -254,32 +220,9 @@ var2process_3class <- reclassify(var2process_avg13, rcl = pix_categs2, filename=
 ![`r figBasline`](`r bsl_lev`)
 
 
-Once the baseline levels of the productivity variable (e.g. SB) have been calculated and categorized per pixel (`r fig_num("figBasLev", display = "cite")`), they are combined with the Steadiness Index classes, resulting 12 combined categories, as seen in `r fig_num("figStead_BasLev", display = "cite")`. The following lines of code show how *LPDynR* proceeds to do it:
-
-```r
-SteadInd_Baseline <- raster(var2process_3class)
-SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 1] <- 1   # Steadiness Index 1 (Strong Negative) - Standing Biomass 1 (low)      -> St1-low
-SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 2] <- 2   # Steadiness Index 1 (Strong Negative) - Standing Biomass 2 (medium)   -> St1-medium
-SteadInd_Baseline[SteadInd_rstr == 1 & var2process_3class == 3] <- 3   # Steadiness Index 1 (Strong Negative) - Standing Biomass 3 (high)     -> St1-high
-SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 1] <- 4   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 1 (low)    -> St2-low
-SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 2] <- 5   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 2 (medium) -> St2-medium
-SteadInd_Baseline[SteadInd_rstr == 2 & var2process_3class == 3] <- 6   # Steadiness Index 2 (Moderate Negative) - Standing Biomass 3 (high)   -> St2-high
-SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 1] <- 7   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 1 (low)    -> St3-low
-SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 2] <- 8   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 2 (medium) -> St3-medium
-SteadInd_Baseline[SteadInd_rstr == 3 & var2process_3class == 3] <- 9   # Steadiness Index 3 (Moderate Positive) - Standing Biomass 3 (high)   -> St3-high
-SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 1] <- 10   # Steadiness Index 4 (Strong Positive) - Standing Biomass 1 (low)     -> St4-low
-SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 2] <- 11   # Steadiness Index 4 (Strong Positive) - Standing Biomass 2 (medium)  -> St4-medium
-SteadInd_Baseline[SteadInd_rstr == 4 & var2process_3class == 3] <- 12   # Steadiness Index 4 (Strong Positive) - Standing Biomass 3 (high)    -> St4-high
-
-```
-&nbsp;
-&nbsp;
-
-![`r figStead_Basline`](`r stead_bsl_lev`)
 
 
-
-## State Change of the phenological/productivity variable
+## State Change of the productivity variable
 
 ```{r echo=FALSE}
 figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of Standing Biomass (baseline levels minus final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study. Also the proportion of pixels/group")
