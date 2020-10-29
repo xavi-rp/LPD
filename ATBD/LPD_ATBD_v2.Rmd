@@ -395,13 +395,15 @@ pca_final <- prcomp(na.omit(stack_rstrs_avg_noC_df_final),
 &nbsp;
 
 
-Finally, the clustering algorithm is implemented over the selected PCs using the function *kmeans()* from the package *stats*. K-means is an iterative unsupervised method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself. Insted, it needs to be done externally. In this case, the optimal number of clusters was calculated to be around 20, using the “scree-plot method". Such method is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is made with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of this assessment.
+Finally, the clustering algorithm is implemented over the selected PCs using the function *kmeans()* from the package *stats*. K-means is an iterative unsupervised method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself. Insted, it needs to be done externally. In this case, the optimal number of clusters was calculated to be **around 20**, using the “scree-plot method". Such method is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is made with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of this assessment.
 
 
 ![`r figScreePlot`](`r ScreePlot_plot`)
 
 
 The “scree plot” method implemented in this study, undoubtedly has some level of subjectivity, as the user decides where the curve flattens enough. However, there exists several numerical methods to calculate the optimal number of clusters that remove such subjectivity, but which take also some statistical assumptions. They could be explored in the future if a higher level of accuracy is believed as necessary or if the whole process wants to be done without user's intervention.
+
+In addition, *k-means()* can use different algorithms to perform the clustering (e.g. "MacQueen", "Hartigan-Wong", etc.). As stated in the function documentation (*?k-means*), "Hartigan-Wong" usually gives better results, althoug it is recommended to try several starts (*nstart>1*; the function chooses the best result). However, when using "Hartigan-Wong" with a (too) large number of clusters and a lot of values of the variables are very similar, *k-means()* is not able to converge in an acceptable amount of time (even increasing the number of iterations). In these cases, the user has to be careful because *k-means()* only gives a warning, so the final clustering is based on a non converged process. Diminishing the number of clusters or rounding variables' values might be good strategies to help *k-means()* to converge.
 
 This is the main part of the code to perform the "scree-plot method" **In the package this part will be an independent function to be run only if the optimal number of clusters wants to be assessed**. Notice that the clustering is run with nine different number of clusters to give a good amount of points to plot the curve. And also that the maximum number of iterations is set up to 10, although it is unlikely that the process gets any convergence with such a low number of iterations.
 
@@ -546,6 +548,8 @@ pander(LookUpCombAss)
 
 
 # Conclusions
+
+As stated by the Intergovernmental Science-Policy Platform on Biodiversity and Ecosystem Services (IPBES), land degradation leads to a loss of biodiversity and a reduction of ecosystem functions and delivered services all over the world. Therefore, combating land degradation and restoring degraded lands has become an urgent priority in order to protect all life on Earth as well as to ensure human well-being [@IPBES_2018]. 
 
 According to the flowchart presented at the beginning of this document (`r fig_num("f0", display = "cite")`), the Land Productivity Dynamics indicator (LPD) is derived from several phenological and productivity variables, in turn, obtained from time series of earth observation imagery.
 
