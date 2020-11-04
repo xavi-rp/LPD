@@ -100,7 +100,7 @@ The United Nations General Assembly designed in 2015 a collection of 17 global g
 
 The indicator 15.3.1 [@sdg_15_3_1_2018] is adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory. These three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
 
-The Land Productivity sub-indicator (LP), addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013], which is the methodological basis of the *LPDynR* package presented in this document. 
+The Land Productivity sub-indicator (LP), addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013], which is the methodological basis of the *LPDynR* tool presented in this document. 
 
 
 # Land Productivity Dynamics and *LPDynR*
@@ -114,14 +114,17 @@ grph02 <- paste0(path2tempResults, "/graph02.png")
 ```
 
 
-The Land Productivity Dynamics approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. This approach uses phenological and productivity-related variables derived from time series of NDVI, given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of the ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophysical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginning, the end and the maximum date of the vegetation growing season, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
+The Land Productivity Dynamics approach is based fundamentally on the use of time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. This approach uses phenological and productivity-related variables derived from time series of NDVI, given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of the ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophysical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginning and the end date of the vegetation growing season, together with the season length in number of days, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
 
 The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. It is the result of a combined assessment of two sources of information, as seen in `r fig_num("f0", display = "cite")`. On the one hand, the first layer is the Long Term Change Map. In general terms, it shows the tendency of change of land productivity (positive or negative) and the effect that this tendency might have had on a particular original point after a certain period of time. On the other hand, the second layer is the Current Status Map, which provides information on the current efficiency levels of vegetation on the productivity or, in other words, the current level of land productivity in relation to its potential. Further explanations for both branches will be given in their own sections below. 
 
-Following the LPD approach, the *LPDynR* package allows the user to produce the final Land Productivity Dynamics Map using as inputs a set of time series of phenological and/or productivity variables (multi-band GeoTIFF rasters). By means of the different functions included in the package, it produces intermediate layers (e.g. Steadiness Index, Ecosystem Functional Types, etc.) or to input these layers to the general process if they have been previously calculated. In addition, several parameters can be set along the process in order to fit them with the preferences of the user. The functions included in the package have no limitations regarding number of time series, variables to use or spatial extent and resolution. The source code of the last version of *LPDynR* can be found at https://github.com/xavi-rp/LPDynR.
-
 
 ![`r fig0`](`r grph02`)
+&nbsp;
+
+
+Following the LPD approach, *LPDynR* is an R-based tool (i.e. an R package) which allows the user to produce the final Land Productivity Dynamics Map using as inputs a set of time series of phenological and/or productivity variables (multi-band GeoTIFF rasters). By means of the different functions included in the package, it produces intermediate layers (e.g. Steadiness Index, Ecosystem Functional Types, etc.) which are used to calculate both the Long Term Change Map and the Current Status Map. In addition, several parameters can be set along the process in order to fit them with the preferences of the user. The functions included in the package have no limitations regarding the number of years included in the time series, the variables to use or the spatial extent and resolution. The source code of the last version of *LPDynR* can be found at https://github.com/xavi-rp/LPDynR.
+
 
 
 
@@ -138,13 +141,28 @@ Following the LPD approach, the *LPDynR* package allows the user to produce the 
 
 A case study is presented in this document in order to illustrate the methodology implemented in the *LPDynR* package to calculate the LPD indicator. So, in this case it is used a data set of `r length(vrbls_lst)` phenological and productivity-related variables, at global level and 1km of spatial resolution, obtained with *Phenolo*, a software developed at the EC-Joint Research Centre. *Phenolo* uses time series from different satellite sensors (NOAA, SPOT, etc.) and products (NDVI, fAPAR, etc.) to derive several ecosystem dynamism indicators [@ivits_ecosystem_2013]. In this case, the *Phenolo* products used to calculate the LPD map are `r paste0("*", paste0(vrbls_lst_names[-length(vrbls_lst_names)], collapse = "*, *"), "*", " and ", "*", vrbls_lst_names[length(vrbls_lst_names)], "*")`, and they have been derived from SPOT Vegetation NDVI of the period 1999-2012.
 
-In the first version of *LPDynR* presented in this document, the main function uses multi-band "tiff" rasters to start the process, one per variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
+In the *LPDynR* v.1.0.0 the main function uses multi-band "GeoTIFF" rasters to start the process, one per phenological/productivity variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
+
+In addition, *LPDynR* comes with a small data set which can be used to run tests, as well as some examples in the form of "vignettes" attached to the package. Once the package is installed, a basic example can be seen loading the following lines of R code:
+
+```r
+# To install the latest version of LPDynR
+library(devtools)
+install_github("xavi-rp/LPDynR")
+
+# Launching the example
+library(LPDynR)
+vignette(topic = "LPD_simple_example", package = "LPDynR")
+
+```
+&nbsp;
+
 
 
 
 # Long Term Change Map of Land Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long Term Change Map, which incorporates information both on the progression of the general process of land dynamics (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the Standing Biomass variable (i.e. *SB* or *mi*) produced by *Phenolo* are described in the following subsections. Standing biomass, or the yearly integration of all observed above-ground biomass, can be used as a good approximation of the gross primary production (GPP) of each spatial unit [@ivits_ecosystem_2013].
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers. The first one is the Long Term Change Map, which incorporates information both on the progression of the general process of land dynamics (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. This is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which these three sources of information are calculated for the LPD indicator using the Standing Biomass variable produced by *Phenolo* (i.e. *SB* or *mi*) are described in the following subsections. Standing biomass, or the yearly integration of all observed above-ground biomass, can be used as a good approximation of the gross primary production (GPP) of each spatial unit [@ivits_ecosystem_2013].
 
 
 ## Steadiness Index
