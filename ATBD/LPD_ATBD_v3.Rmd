@@ -250,20 +250,21 @@ Baseline_Level <- baseline_lev(obj2process = cf,
 ## State Change of the productivity variable
 
 ```{r echo=FALSE}
-figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of Standing Biomass (baseline levels minus final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study. Also the proportion of pixels/group")
-state_change <- paste0(path2saveTests, "/SeasInt_Change.jpg")
+figStateCh <- fig_num(name = "figStateChange", caption = "Representation of the state change map of the productivity variable (baseline levels minus final levels), after being reclassified into 3 categories (1: no change; 2: changed 1 class; 3: changed 2 or more classes) for the case study")
+state_change <- paste0(path2saveTests, "/State_Change.jpg")
 
 ```
 
-The third layer used for the Land Productivity Long Term Change Map is the change of the state of the productivity variable during the time window of the study. This point is necessary for land degradation assessments as it reports whether productivity thresholds have been passed or not. The state change can be a consequence of either that natural resilience thresholds have been surpassed or new land use/practices have been introduced by humans [@Ivits_report_2013].
+The third layer used for the land productivity Long Term Change Map is the change of the state of the productivity variable during the time window of the study. This point is necessary for land degradation assessments as it reports whether productivity thresholds have been passed or not. The state change can be a consequence of either the natural resilience thresholds have been surpassed or new land use/practices have been introduced by humans [@Ivits_report_2013].
 
 To calculate this state change per pixel, *LPDynR* uses both the state level at the beginning of the time series, as calculated in the previous subsection, and the state level at the end of the period. This final state is calculated in the same way than the base line level, i.e. (1) averaging the last 3 years and (2) classifying into 10 categories using 10-quantiles. The reason for not using the final 3-class classification is because it would be difficult to appreciate if the change of one state to another was due to a big or a small change. Instead, using the 10-class classification, one can see for instance if a pixel has moved from class 5 to 4 (small change) or from class 9 to 4 (big change).
 
-Once the class change per pixel has been calculated, either with positive or negative results, the map is categorized into 3 final classes: (1) no change, (2) changed 1 class or (3) changed 2 or more classes. See `r fig_num("figStateChange", display = "cite")` for a map of the state change in the case study. The following code shows how to run the function *state_change* to perform the final classification:
+Once the class change per pixel has been calculated, either with positive or negative results, the map is categorized into 3 final classes: (1) no change, (2) changed 1 class or (3) changed 2 or more classes. See `r fig_num("figStateChange", display = "cite")` for a map of the state change in the case study. The following code shows how to run the function *state_change()* to perform the final classification.
 
 ```r
 ?state_change
-State_Change <- state_change(obj2process = sb, 
+
+State_Change <- state_change(obj2process = cf, 
                              yearsBaseline = 3, 
                              cores2use = 3,
                              filename = "State_Change.tif")
@@ -277,11 +278,11 @@ State_Change <- state_change(obj2process = sb,
 ## Land Productivity Long Term Change Map
 
 ```{r echo=FALSE}
-figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land Productivity Long Term Change Map for the case study, based on the combination of Steadiness Index, base line levels and state change of standing biomass. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
+figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land productivity Long Term Change Map for the case study based on the combination of the Steadiness Index, the baseline levels and change of states of land productivity. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
 LongTerm_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
-tb_LongTerm <- table_num(name = "tb_LngTrm", caption = "Lookup table for the Land Productivity Long Term Change Map (Steadiness Index + Base Line Levels + State Change)")
+tb_LongTerm <- table_num(name = "tb_LngTrm", caption = "Lookup table for the land productivity Long Term Change Map (Steadiness Index + BaseLine Levels + State Change)")
 LookUpLongTerm <- as.data.frame(matrix(nrow = 3, ncol = 14,
                                        
                                        c("No Change", "Changed 1 class", "Changed ≥ 2 classes", rep(" ", 3),
