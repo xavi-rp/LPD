@@ -100,7 +100,7 @@ As an example of *LPDynR* usage...
 
 The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals [SDGs; @UN_SDGs_2015], with the general aim of "achieving a better and more sustainable future for all", and which were intended to be accomplished by the year 2030. Each SDG is subdivided into a list of targets which, in turn, go together with indicators to be able to measure their success. Such indicators have to be credible, based on standardized methodologies and, often, spatially explicit [@dubovyk_2017]. The SDG-15 entitled Life on Land has among its targets the 15.3, which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time [@LDN_2015].
 
-The indicator 15.3.1 is adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory. These three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
+The indicator 15.3.1 is adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators calculated separatedly: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks [@sims_2017; @SIMS20201]. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory [@orr_2017]. Following a "one-out-all-out" process, the indicator identifies an area as degraded if one of the sub-indicators shows degradation. The three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
 
 The Land Productivity sub-indicator (LP), addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013], which is the methodological basis of the *LPDynR* tool presented in this document. 
 
@@ -355,7 +355,7 @@ plot(LPD_finalMap)
 
 # Current Status Map of Land Productivity
 
-The Land Productivity Dynamics indicator is composed by two base layers, as shown in `r fig_num("f0", display = "cite")`. After the long term productivity dynamics described previously (i.e. Long Term Change Map), the second source of information needed is the current level of land productivity. For this purpose, a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, by means of Earth Observation imagery and remote sensing tools, the level of land productivity of each pixel relative to its neighbours with similar characteristics. In other words, it calculates the potential level of productivity of each pixel within a homogeneous land unit at the time under study. The Current Status Map may help, for instance, to identify areas which, although having a positive trend of productivity over time, their levels of current productivity are low relative to the pixels in the same homogeneous land unit and, thus, they might be still suffering land degradation [@sims_2017]. A first step for the calculation of the Current Status Map, therefore, must be the derivation of the homogeneous land units across the area of study. 
+The Land Productivity Dynamics indicator is composed by two base layers, as shown in `r fig_num("f0", display = "cite")`. After the long term productivity dynamics described previously (i.e. Long Term Change Map), the second source of information needed is the current level of land productivity. For this purpose, a Local Net Scaling approach is implemented [@Prince_2009]. Such approach estimates, by means of Earth Observation imagery and remote sensing tools, the level of land productivity of each pixel relative to its neighbours with similar characteristics. In other words, it calculates the potential level of productivity of each pixel within a homogeneous land unit at the time under study. The Current Status Map may help, for instance, to identify areas which, although having a positive trend of productivity over time, their levels of current productivity are low relative to the pixels in the same homogeneous land unit and, thus, they might be still suffering land degradation [@sims_2017] **here would perfectly fit the examples that Eva mentioned in her emails, which are included in the GPGv2 (still unpublished) but not in GPGv1**. A first step for the calculation of the Current Status Map, therefore, must be the derivation of the homogeneous land units across the area of study. 
 
 
 ## Ecosystem Functional Types (EFTs)
@@ -492,9 +492,9 @@ For the calculation of the final LPD indicator (i.e. Combined Assessment), these
 # Combined Assessment of Land Productivity
 `r # # Long Term Change Map + Current Status Map of Land Productivity`
 ```{r echo=FALSE}
-#LookUpCombAss_categs <- "'d', Declining Land-Productivity; 'ew', Early signs of decline of #L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increaseing L-P; #'si', Strong increase of L-P"
-LookUpCombAss_categs <- "(1) d-Declining land-productivity, (2) ew-Early signs of decline of land productivity, (3) nf-Stable but stressed land productivity, (4) pf-Stable and not stressed land productivity and (5) i-Increaseing land productivity"
-LookUpCombAss_categs_short <- "(1) d-Declining, (2) ew-Early signs of decline, (3) nf-Stable but stressed, (4) pf-Stable and not stressed and (5) i-Increasing"
+#LookUpCombAss_categs <- "'d', Declining Land-Productivity; 'ew', Early signs of decline of #L-P; 'nf', Stable but stressed L-P; 'pf', Stable, not stressed L-P; 'i', Increasing L-P; #'si', Strong increase of L-P"
+LookUpCombAss_categs <- "(1) d - Declining land-productivity, (2) ew - Early signs of decline of land productivity, (3) nf - Stable but stressed land productivity, (4) pf - Stable and not stressed land productivity and (5) i - Increasing land productivity"
+LookUpCombAss_categs_short <- "(1) d - Declining, (2) ew - Early signs of decline, (3) nf - Stable but stressed, (4) pf - Stable and not stressed and (5) i - Increasing"
 
 figCombAssess <- fig_num(name = "figCombAss", caption = paste0("Land Productivity Dynamics indicator final map. Combined assessment of the Long Term Change Map and the Current Status Map of land productivity.", LookUpCombAss_categs))
 LPD_CombinedAssessment <- paste0(path2saveTests, "/LPD_finalMap.jpg")
@@ -574,19 +574,18 @@ figCombAssess2 <- fig_num(name = "figCombAss2", caption = paste0("Land Productiv
 LPD_CombinedAssessment2 <- paste0(path2saveTests, "/LPD_finalMap_NoCombined_Comp.png")
 
 
-tableCombAssesVsNonComb2 <- table_num(name = "tabCombAssesVsNonComb2", caption = paste0("Number of pixels showing different class in the Combined Assessment approach and in the Non Combined (i.e. Reclassification of the Long Term Change Map). Only these three combinations have been found in the case study"))
+tableCombAssesVsNonComb2 <- table_num(name = "tabCombAssesVsNonComb2", caption = paste0("Number of pixels showing different class in the Combined Assessment approach and in the non combined one (i.e. reclassification of the Long Term Change Map). Only these three combinations have been found in the case study"))
 
 npixels_CombAssesVsNonComb2 <- read.csv(paste0(path2saveTests, "/npixels_CombAssesVsNonComb2.csv"), header = TRUE)
 names(npixels_CombAssesVsNonComb2) <- c("No Combined Assessment - Class", "Combined Assessment - Class", "Number Pixels", "Description")
 
 
-figCombAssess3 <- fig_num(name = "figCombAss3", caption = paste0("Land Productivity Dynamics indicator final maps  derived by the reclassification of the Long Term Change Map of land productivity (Map 1) and produced by the Combined Assessment (Map 2; Long Term Change Map + Current Status Map). Differences Map (Map 1 - Map2) represents in red those pixels showing different resulting classes from both approaches. "))
+figCombAssess3 <- fig_num(name = "figCombAss3", caption = paste0("Proportion of pixels per LPD class for the Combined Assessment (light blue) and for the reclassified Long Term Change Map (purple), for Europe and by biogeographical regions"))
 LPD_CombinedAssessment3 <- paste0(path2saveTests, "/comp_LPD_Methods_CombAssess.jpg")
 
 ```
 
-
-Although it has been shown previously the importance of including the Current Status Map in the production of the LPD indicator, the user might want to derive the final product based only on the tendency map (i.e. Long Term Change Map). The function *LPD_CombAssess()* has the potentiality to do it by passing the argument *LandProd_current = NULL*. By doing so, the function reclassifies the Long Term Change Map into the same 5 categories of the LPD indicator described above, as shown in `r table_num("tabLookUpCombAss2", display = "cite")`.
+It has been shown previously that it is important to include in the LPD calculation the current level of land productivity relative to its potential, given that it may indicate degradation in areas with a positive tendency of productivity, but where the level of productivity still remains low relative to other similar areas nearby. Despite this, the user might want to derive the final product based only on the tendency map (i.e. Long Term Change Map), avoiding the inclusion of the Current Status Map derived with the Local Net Scaling approach. The function *LPD_CombAssess()* has the potentiality to do it by passing the argument *LandProd_current = NULL*. By doing so, the function reclassifies the Long Term Change Map into the same 5 categories of the LPD indicator described above, as shown in `r table_num("tabLookUpCombAss2", display = "cite")`.
 
 `r table_num("tabLookUpCombAss2", display = "full")`
 ```{r echo=FALSE}
@@ -601,7 +600,7 @@ pander(LookUpCombAss2)
 ```
 &nbsp;
 
-A comparison of the final LPD indicator map produced using the Combined Assessment (i.e. Long Term Change Map + Current Status Map) with the one developed avoiding the Current Status Map for the case study can be seen in `r fig_num("figCombAss2", display = "cite")` (Map 1 and Map 2, respectively). In addition, the "differences map" in the same figure represents those pixels showing a different class from one approach to the other. Notice that this difference is always equal to minus 1, which means that the pixels only change 1 class and that the Combined Assessment has always classes with larger values (i.e. better conditions in terms of land productivity). `r table_num("tableCombAssesVsNonComb2", display = "cite")` shows the number of pixels which change from one class to another. From this table it can be seen how pixels never change from negative to positive dynamics (class 3 to 4) or from positive to negative (class 4 to 3).
+A comparison of the final LPD indicator map produced using the Combined Assessment (i.e. Long Term Change Map + Current Status Map) with the one developed avoiding the Current Status Map for the case study can be seen in `r fig_num("figCombAss2", display = "cite")` (Map 1 and Map 2, respectively). In addition, the "differences map" in the same figure represents those pixels showing a different class from one approach to the other. Notice that this difference is always equal to minus 1, which means that the pixels only change 1 class and that the Combined Assessment has always classes with larger values (i.e. better conditions in terms of land productivity). `r table_num("tabCombAssesVsNonComb2", display = "cite")` shows the number of pixels which change from one class to another. From this table it can be seen how pixels never change from negative to positive dynamics (class 3 to 4) or from positive to negative (class 4 to 3).
 &nbsp;
 
 ![`r figCombAssess2`](`r LPD_CombinedAssessment2`)
@@ -617,9 +616,9 @@ pander(npixels_CombAssesVsNonComb2, split.cells = 20)
 &nbsp;
 
 
-Finally, `r fig_num("figCombAss3", display = "cite")` shows the proportion of pixels under each approach for the whole extent (i.e. Europe) and also splitting the map by biogeographical regions. The biogeographical regions have been defined with the official delineations used in the Habitats Directive (92/43/EEC) and for the EMERALD Network, which are freely distributed as a spatial data set by the European Environmental Agenct - Europeam Commission (https://www.eea.europa.eu/data-and-maps/figures/biogeographical-and-marine-regions-in).
+Finally, `r fig_num("figCombAss3", display = "cite")` shows the proportion of pixels per LPD class under each approach, both for the whole extent (i.e. Europe) and also splitting the map by biogeographical regions. The biogeographical regions have been defined with the official delineations used in the Habitats Directive (92/43/EEC) and for the EMERALD Network, which are freely distributed as a spatial data set by the European Environmental Agenct - Europeam Commission (https://www.eea.europa.eu/data-and-maps/figures/biogeographical-and-marine-regions-in).
 
-The plots show that there are not many differences in the proportion of pixels per class for each of the two approaches. The Anatolian and the Arctic regions are the two showing more differences, but never bigger than 15%.
+The plots show that there are some differences in the proportion of pixels per class for each of the two approaches. For example, the Anatolian, the Arctic and the Steppic regions are the three showing more differences, which range from 10 to 12.5% for some LPD classes. This fact supports the importance of including the Current Status Map in the calculations to refine the LPD indicator final results. 
 
 
 ![`r figCombAssess3`](`r LPD_CombinedAssessment3`)
@@ -630,10 +629,19 @@ The plots show that there are not many differences in the proportion of pixels p
 
 
 ## Land Productivity Dynamics partial indicator
+```{r echo=FALSE}
+figPartLPD <- fig_num(name = "figPartialLPD", caption = paste0(""))
+LPD_partial <- paste0(path2saveTests, "/LPD_PartialTimeSeries/lpd_partial1_5categ_modif.jpg")
+```
+
+As seen in the previous subsections related to the derivation of the tendency map (i.e. Long Term Change Map), its final result is quite related to the extremes of the time series. Then, if the time series is long, the LPD indicator shows a big picture of what has happened regarding the land productivity dynamics between the beginning and the end of the period under study. However, to understand the dynamics of the biomass within this period of time, as well as to assess the stability of the final product, it might be useful to produce several "partial LPD indicators" using different time windows of the time series.
+
+This process is not implemented in *LPDynR*, but we propose the following code to produce partial LPD maps of *n* years and with an overlap of *y* years between the end of the last period and the beginning of the next one. This example is implemented for the same case study shown along this document and the final partial LPD maps can be seen in `r fig_num("figPartialLPD", display = "cite")`.
 
 
 
 
+![`r figPartLPD`](`r LPD_partial`)
 
 
 # Conclusions
