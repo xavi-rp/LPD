@@ -361,10 +361,10 @@ The Land Productivity Dynamics indicator is composed by two base layers, as show
 ## Ecosystem Functional Types (EFTs)
 ```{r echo=FALSE}
 figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|. sbd: Season Beginning Day; sed: Season End Day; sl: Season Length; si: Season Integral; mi: Standing Biomass")
-Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.jpg")
+Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.png")
 
 figScreePlot <- fig_num(name = "ScreePlot", caption = "“Scree plot” method used to calculate the optimal number of clusters. The “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases")
-ScreePlot_plot <- paste0(path2tempResults, "/optim_num_clusters.jpg")
+ScreePlot_plot <- paste0(path2tempResults, "/OptimalNumClusters.jpg")
 
 figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) derived from phenological and productivity variables using the K-means clustering method")
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
@@ -394,6 +394,7 @@ variables_noCor <- rm_multicol(dir2process = variables_dir,
 
 
 ![`r figMulticoll`](`r Multicoll_plot`)
+
 &nbsp;
 
 
@@ -425,6 +426,7 @@ dev.off()
 
 
 ![`r figScreePlot`](`r ScreePlot_plot`)
+
 &nbsp;
 
 The “scree plot” method, undoubtedly has some level of subjectivity, as the user decides where the curve flattens enough. Alternatively, to remove such subjectivity, several numerical methods exist to calculate the optimal number of clusters, although they take also some statistical assumptions. These methods could be explored in the future if a higher level of accuracy is believed as necessary or if the whole process wants to be done without user's intervention. In addition, other hierarchical clustering methods could be explored in order to avoid calculating the optimal number of clusters beforehand, although previous tests run with ISODATA have been shown to be highly resource demanding, especially in terms of computing time.
@@ -454,6 +456,7 @@ EFTs <- EFTs[[1]]           # RasterLayer object with the clusters (i.e. EFTs)
 
 
 ![`r figEFTs`](`r EFTmap`)
+
 &nbsp;
 
 
@@ -630,18 +633,62 @@ The plots show that there are some differences in the proportion of pixels per c
 
 ## Land Productivity Dynamics partial indicator
 ```{r echo=FALSE}
-figPartLPD <- fig_num(name = "figPartialLPD", caption = paste0(""))
+figPartLPD <- fig_num(name = "figPartialLPD", caption = paste0("Partial LPD indicators (plots A to D) and LPD indicator for the whole time series (plot E). The partial LPD indicators have been produced for time windows of 5 years with an overlap of 1 year between the end of the last period and the beginning of the next one."))
 LPD_partial <- paste0(path2saveTests, "/LPD_PartialTimeSeries/lpd_partial1_5categ_modif.jpg")
 ```
 
-As seen in the previous subsections related to the derivation of the tendency map (i.e. Long Term Change Map), its final result is quite related to the extremes of the time series. Then, if the time series is long, the LPD indicator shows a big picture of what has happened regarding the land productivity dynamics between the beginning and the end of the period under study. However, to understand the dynamics of the biomass within this period of time, as well as to assess the stability of the final product, it might be useful to produce several "partial LPD indicators" using different time windows of the time series.
+As seen in the previous subsections regarding the derivation of the tendency map (i.e. Long Term Change Map), its final result is quite related to the extremes of the time series. Then, if the time series is long, the LPD indicator shows a big picture of what has happened regarding the land productivity dynamics between the beginning and the end of the period under study. However, to understand the dynamics of the biomass within this period of time, as well as to assess the stability of the final product, it might be useful to produce several "partial LPD indicators" using different time windows of the time series.
 
-This process is not implemented in *LPDynR*, but we propose the following code to produce partial LPD maps of *n* years and with an overlap of *y* years between the end of the last period and the beginning of the next one. This example is implemented for the same case study shown along this document and the final partial LPD maps can be seen in `r fig_num("figPartialLPD", display = "cite")`.
+This process is not yet implemented in *LPDynR* but we propose the following code to produce partial LPD maps of *n* years and with an overlap of *y* years between the end of the last period and the beginning of the next one. This example is implemented for the same case study shown along this document and the final partial LPD maps can be seen in `r fig_num("figPartialLPD", display = "cite")`.
+
+&nbsp;
+
+```r
+## Running LPDynR for partial time series ## 
+ 
+ts_length <- 5                               # time series length to run 'partial LPD maps'
+ts_years_overlap <- 1                        # number of years of overlapping
+partial_dir <- "/LPD_partial"                # directory to save the 'partial LPD' results
+first_year <- 1                              # first year of the whole time series
+last_year <- nlayers(cf)                     # last year of the whole time series
+last_year_run <- first_year + ts_length - 1  # last year of the 'partial LPD'
+
+while(last_year_run <= last_year){
+  # subsetting the years (layers) to run
+  cf_run <- cf[[first_year:last_year_run]]
+
+  # a directory to save the data
+  dir2save0 <- paste0(getwd(), partial_dir)
+  if(!dir.exists(dir2save0)) dir.create(dir2save0)
+  dir2save <- paste0(getwd(), partial_dir, "/LPD_", first_year, "_", last_year_run, "/")
+  if(!dir.exists(dir2save)) dir.create(dir2save)
+ 
+ ##                                       ##
+ ##                                       ##
+ ## Here all the steps to calculate the   ## 
+ ## final LPD map as in the examples      ##
+ ##                                       ##
+ ##                                       ##                                            
 
 
+  # Parameters for the loop
+  first_year <- last_year_run - ts_years_overlap + 1
+  last_year_run <- first_year + ts_length - 1
+}
+
+```
+
+&nbsp;
 
 
 ![`r figPartLPD`](`r LPD_partial`)
+
+&nbsp;
+
+The complete LPD indicator (i.e. for the whole time series; `r fig_num("figPartialLPD", display = "cite")`E) shows in general terms a positive trend pattern accross Europe (i.e. more greens). However, the intermediate plots, especially `r fig_num("figPartialLPD", display = "cite")`B to D, show more negative trends (i.e. yellow and light red pixels). In addition, the first partial indicator shows much more increasing land productivity in the period between years 1 to 5. This, besides demonstrating the highly fluctuating character of vegetation, confirms the notable influence of the extremes of the time series on the final result. In this sense, in the time series of the example, the first year(s) seems to be quite low in terms of productivity for most of the pixels in Central/Northern Europe, and they suffer a big increase around year 5/6. Such increase still influences the dynamics of the following periods , resulting in areas with stressed vegetation. 
+
+The fact that the LPD indicator calculated with the approach included in *LPDynR* is highly influenced by the beginning and the end of the time series 
+
 
 
 # Conclusions
