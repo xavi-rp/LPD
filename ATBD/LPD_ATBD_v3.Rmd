@@ -1,10 +1,10 @@
 ---
-title: "Land Productivity Dynamics Indicator: LPDynR package"
+title: "Land Productivity Dynamics Indicator: LPDynR Package"
 subtitle: ""
 
 author:
   - Xavier Rotllan-Puig:
-      email: xavi.rotllan.puig@gmail.com
+      email: xavier.rotllan.puig@aster-projects.cat
       institute: [jrc, aster]
       correspondence: true
   - Eva Ivits:
@@ -82,13 +82,11 @@ fig_num <- captioner::captioner(prefix = "Figure")
 
 **Abstract**
 
-As part of the UN Sustainable Development Goal 15 (Life on Land), the indicator 15.3.1 is adopted to measure the Land Degradation Neutrality (stable —or increasing— state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time). It is a binary indicator (i.e. degraded/not degraded), expressed as the proportion (%) of land that is degraded over total land area, and is based on three sub-indicators: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. 
+As part of the UN Sustainable Development Goal 15 (Life on Land), the indicator 15.3.1 is adopted to measure the Land Degradation Neutrality (stable —or increasing— state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time). It is a binary indicator (i.e. degraded/not degraded), expressed as the proportion of land that is degraded over total land area, and is based on three sub-indicators: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks. 
 
-The Land Productivity sub-indicator (LP) refers to the total above-ground Net Primary Production and reflects changes in health and productive capacity of the land. Its declining trends can be usually understood as land degradation. LP is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013]. 
+The Land Productivity sub-indicator (LP) refers to the total above-ground Net Primary Production and reflects changes in health and productive capacity of the land. Its declining trends can be usually understood as land degradation. LP is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet ["Land-Productivity Dynamics Towards Integrated Assessment of Land Degradation at Global Scales." Technical Report EUR 26052. Joint Research Centre of the European Commission (2013)]. 
 
-The LPD is the methodological basis of the *LPDynR* package. It uses phenological and productivity variables derived from time series of remote sensed imagery, particularly the normalized difference vegetation index (NDVI), to estimate ecosystem dynamics and change. The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity.
-
-As an example of *LPDynR* usage...
+The LPD is the methodological basis of the R-based tool *LPDynR* presented in this document. It uses vegetation-related indices (phenology and productivity) derived from time series of remote sensed imagery to estimate ecosystem dynamics and change. The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. As an example of *LPDynR* functionalities, we present a case study for Europe.
 
 
 
@@ -98,17 +96,19 @@ As an example of *LPDynR* usage...
 
 ```
 
-The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals [SDGs; @UN_SDGs_2015], with the general aim of "achieving a better and more sustainable future for all", and which were intended to be accomplished by the year 2030. Each SDG is subdivided into a list of targets which, in turn, go together with indicators to be able to measure their success. Such indicators have to be credible, based on standardized methodologies and, often, spatially explicit [@dubovyk_2017]. The SDG-15 entitled Life on Land has among its targets the 15.3, which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time [@LDN_2015].
+The United Nations General Assembly designed in 2015 a collection of 17 global goals, so called Sustainable Development Goals [SDGs; @UN_SDGs_2015], with the general aim of "achieving a better and more sustainable future for all", and which were intended to be accomplished by the year 2030. Each SDG is subdivided into a list of targets which, in turn, go together with indicators to be able to measure their success. Such indicators have to be credible, based on standardized methodologies and, often, spatially explicit [@dubovyk_2017]. 
 
-The indicator 15.3.1 is adopted to measure the LDN, and it is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators calculated separatedly: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks [@sims_2017; @SIMS20201]. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory [@orr_2017]. Following a "one-out-all-out" process, the indicator identifies an area as degraded if one of the sub-indicators shows degradation. The three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
+The SDG-15, entitled Life on Land, has among its targets the 15.3, which expects "to combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world". In this context, Land Degradation Neutrality (LDN) is defined as the stable (or increasing) state regarding the amount and quality of land resources required to support ecosystem functions and services and enhance food security during a certain period of time [@LDN_2015].
 
-The Land Productivity sub-indicator (LP), addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. It is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013], which is the methodological basis of the *LPDynR* tool presented in this document. 
+The indicator 15.3.1 is adopted to measure the LDN and is expressed as the proportion (%) of land that is degraded over total land area. It is a binary indicator (i.e. degraded/not degraded) based on three sub-indicators calculated separately: (1) Trends in Land Cover, (2) Land Productivity and (3) Carbon Stocks [@sims_2017; @SIMS20201]. While the first two can capture relatively fast changes, carbon stocks reflect slower changes which suggest a longer term trajectory [@orr_2017]. Following a "one-out-all-out" process, the indicator identifies an area as degraded if one of the sub-indicators shows degradation. The three sub-indicators must be comparable among territories and based on standardized sources and methods. The data can be collected through existing sources, such as maps, reports or databases, but also can be derived from Earth Observation (EO) imagery using remote sensing tools. 
+
+The Land Productivity sub-indicator (LP), addressed in this document, refers to the total above-ground net primary production (NPP), which can be defined as the total energy fixed by plants minus their respiration. Such energy is transformed into biomass which, in turn, allows ecosystems to develop their functions and deliver essential services. Therefore, LP reflects changes in health and productive capacity of the land and its declining trends can be usually understood as land degradation [@WAD_2018; @Prince_2009; @Yengoh_2015]. The LP sub-indicator is calculated using the Land Productivity Dynamics (LPD) approach, first developed by Ivits and Cherlet [-@Ivits_report_2013], which is the methodological basis of the *LPDynR* tool presented in this document. 
 
 
 # Land Productivity Dynamics and *LPDynR*
 
 ```{r echo=FALSE}
-fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land Productivity Dynamics indicator and followed by *LPDynR*")
+fig0 <- fig_num(name = "f0", caption = "Flowchart of the process to calculate the Land Productivity Dynamics indicator and used by *LPDynR*")
 grph02 <- paste0("/Users/xavi_rp/Documents/D6_LPD/LPDynR/doc", "/graph02.png")
 
 #tb1 <- table_num(name = "t1", caption = "bla bla bla")
@@ -116,12 +116,13 @@ grph02 <- paste0("/Users/xavi_rp/Documents/D6_LPD/LPDynR/doc", "/graph02.png")
 ```
 
 
-The Land Productivity Dynamics (LPD) approach is based fundamentally on the use of time series of vegetation-related indices derived from remote sensed imagery, such as the normalized difference vegetation index (NDVI). NDVI, for example, can be used as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. The LPD approach often uses phenological and productivity-related variables derived from time series of NDVI, given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of the ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophysical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginning and the end date of the vegetation growing season, together with the season length in number of days, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
+The Land Productivity Dynamics (LPD) approach is based fundamentally on the use of time series of vegetation-related indices derived from remote sensed imagery, such as the normalized difference vegetation index (NDVI) or the plant phenology index (PPI). NDVI, for example, can be used as a proxy for land productivity, as many studies at global and local scales have identified a strong relationship between NDVI and NPP [@Ivits_report_2013; @Prince_2009; @Yengoh_2015, and references therein]. The LPD approach often uses phenological and productivity-related variables derived from time series of NDVI, given that these can provide additional information on several aspects of vegetation/land cover functional composition in relation to ecosystem dynamics and change [@ivits_ecosystem_2013]. These dynamics of the ecosystems, which eventually might drive to land degradation, can be caused by human activities and/or biophysical processes, as well as other processes not tied to them, such as climate change [@Yengoh_2015]. While the most commonly used phenological parameters are the beginning and the end date of the vegetation growing season, together with the season length in number of days, the ones related to land productivity are those which approximates the measures to NPP and growing season production.    
 
-The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. It is the result of a combined assessment of two sources of information, as seen in `r fig_num("f0", display = "cite")`. On the one hand, the first layer is the Long Term Change Map. In general terms, it shows the tendency of change of land productivity (positive or negative) and the effect that this tendency might have had on a particular original point after a certain period of time. On the other hand, the second layer is the Current Status Map, which provides information on the current levels of land productivity in relation to its potential by comparing the local productivity with the range of productivity across similar areas in terms of land cover or bioclimatic traits [@sims_2017]. Further explanations for both branches will be given in their own sections below. 
+The final result of the LPD indicator is a categorical map with 5 classes of land productivity dynamics, ranging from declining to increasing productivity. It is the result of a combined assessment of two sources of information, as seen in `r fig_num("f0", display = "cite")`. On the one hand, the first layer is the Long Term Change Map. In general terms, it shows the tendency of change of land productivity (positive or negative) and the effect that this tendency might have had on a particular original point after a certain period of time. On the other hand, the second layer is the Current Status Map, which provides information on the current levels of land productivity in relation to its potential. It compares the local productivity with the range of productivity across similar areas in terms of land cover or bioclimatic traits [@sims_2017]. Further explanations for both branches will be given in their own sections below. 
 
 
 ![`r fig0`](`r grph02`)
+
 &nbsp;
 
 
@@ -150,9 +151,9 @@ A case study is presented in this document in order to illustrate the methodolog
 - Vegetation growing season length (from now on, SL): https://www.eea.europa.eu/data-and-maps/data/annual-above-ground-vegetation-season)
 
 
-In the *LPDynR* v.1.0.0 the main function uses multi-band "GeoTIFF" rasters to start the process, one per phenological/productivity variable. Each band of each raster contains one of the years of the time series. Therefore, the initial data set needs to be prepared accordingly.
+In the *LPDynR* v.1.0.0, the functions use multi-band GeoTIFF rasters to start the process, one per phenological/productivity variable. Each band of each raster contains one of the years of the time series.
 
-In addition, *LPDynR* comes with a small data set, which can be used to run tests, as well as some examples in the form of "vignettes" attached to the package. Once the package is installed, a basic example can be seen loading the following lines of R code:
+It is also important to notice that *LPDynR* comes with a small data set, which can be used to run tests, as well as some examples in the form of "vignettes" attached to the package. Once the package is installed, a basic example can be seen loading the following lines of R code:
 
 ```r
 # To install the latest version of LPDynR
@@ -171,7 +172,7 @@ vignette(topic = "LPD_simple_example", package = "LPDynR")
 
 # Long Term Change Map of Land Productivity
 
-As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers, being the first one the Long Term Change Map (also called “tendency map”). In turn, this tendency incorporates information both on the progression of the general process of land dynamics (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period of study [@Ivits_report_2013]. The multi-source information used for the Long Term Change Map derivation is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which the three sources of information are calculated for the Long Term Change Map using a land productivity variable is described in the following subsections.
+As seen in `r fig_num("f0", display = "cite")` and explained above, the Land Productivity Dynamics indicator is produced based in two different main layers, being the first one the Long Term Change Map (also called “tendency map”). In turn, this tendency incorporates information both on the progression of the general process of land dynamics (positive or negative) and on the original level of productivity of the ecosystem, as well as whether it has changed its state or not in the period under study [@Ivits_report_2013]. The multi-source information used for the Long Term Change Map derivation is necessary because, for instance, even though an ecosystem presents a long term negative dynamics, it might have not been strong enough to decrease its level of productivity to change its original state. The way in which the three sources of information are calculated for the Long Term Change Map using a land productivity variable is described in the following subsections.
 
 
 ## Steadiness Index
@@ -204,8 +205,9 @@ While `r fig_num("f1", display = "cite")` represents a 4-class map of the Steadi
 
 ```r
 ?steadiness
-SteadInd <- steadiness(obj2process = cf,  # 'cf' is the productivity variable with the time series 
-                       cores2use = 3,     # for parallel processing
+
+SteadInd <- steadiness(obj2process = cf,  # 'cf' productivity variable with the time series 
+                       cores2use = 3,     # parallel processing
                        filename = "SteadInd.tif")
 ```
 &nbsp;
@@ -226,7 +228,7 @@ The second source of information for the derivation of the Long Term Change Map 
 
 For the calculation of the baseline levels of land productivity at the beginning of the time series on study, *LPDynR* categorizes the results into three classes: low, medium and high. To do that, the function *baseline_lev()* averages the first *n* years of the time series in order to avoid extreme events such as abnormal droughts in wet areas, etc. This number of years can be set by passing the argument *yearsBaseline* to the function. Its default is 3, given that averaging more years would move the value closer to the mean of the time series, which is not desirable.
 
-After the average is calculated, *baseline_lev()* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, therefore, 40% of pixels at global level must be classified as "low level" of productivity. Consequently, as default, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with the largest baseline levels, as "high". Both the proportion of pixels classified as low level and high level of land productivity can be set by passing to *baseline_lev()* the arguments *drylandProp* and *highprodProp*, respectively. The function classifies the rest of the pixels ((100 - (*drylandProp* + *highprodProp*)) as medium level. The assumption of classifying 40% of pixels as low productive is valid at global level, however, the proportion of drylands/low level of productivity should be modified for local studies. For example, at the European level, drylands cover 20% of total land [@FAO_2019].
+After the average is calculated, *baseline_lev()* first classifies pixels into 10 classes instead of the final three (i.e. low, medium and high) using 10-quantiles. The reason for this intermediate step is that, if directly opted for three classes, the number of pixels per category would have been classified homogeneously (i.e. 33.3% of pixels/class), and this is in contrast with what is stated by the United Nations Development Programme (https://www.undp.org). UNPD declares that 40% of the World's land resources are drylands [@UNDP_drylands_2011] and, therefore, 40% of pixels at global level must be classified as "low level" of productivity. Consequently, as default, *LPDynR* classifies the first four groups of pixels as "low", whereas the five consecutive groups as "medium" and the rest 10% of pixels with the largest baseline levels, as "high". Both the proportion of pixels classified as low level and high level of land productivity can be set by passing to *baseline_lev()* the arguments *drylandProp* and *highprodProp*, respectively. The function classifies the rest of the pixels ((100 - (*drylandProp* + *highprodProp*)) as medium level. The assumption of classifying 40% of pixels as low productive is valid at global level, however, the proportion of drylands/low level of productivity should be modified for local and regional studies. For example, at the European level, drylands cover 20% of total land [@FAO_2019].
 
 In the following lines of code it can be observed how to run *baseline_lev()* to categorize the baseline levels of productivity, while adjusting the parameters to the European proportion of drylands. The result is a final 3-class map showing the estimation of the levels of productivity at the beginning of the time series (`r fig_num("figBasLev", display = "cite")`).
 
@@ -235,7 +237,7 @@ In the following lines of code it can be observed how to run *baseline_lev()* to
 
 Baseline_Level <- baseline_lev(obj2process = cf, 
                                yearsBaseline = 3, 
-                               drylandProp = 0.2,  # 20% as dryland
+                               drylandProp = 0.2,  # 20% dryland
                                highprodProp = 0.1, # 10% highly productive land 
                                cores2use = 3, 
                                filename = "Baseline_Level.tif")
@@ -278,7 +280,7 @@ State_Change <- state_change(obj2process = cf,
 ## Land Productivity Long Term Change Map
 
 ```{r echo=FALSE}
-figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land productivity Long Term Change Map for the case study based on the combination of the Steadiness Index, the baseline levels and change of states of land productivity. **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
+figLongTerm_change <- fig_num(name = "figLngTrm_change", caption = "Land productivity Long Term Change Map for the case study based on the combination of the Steadiness Index, the baseline levels and change of states of land productivity **I know that the colour palette is not 'colour-blind friendly', but it's hard to find such a palette with so many colours... any suggestion very welcome!!**")
 LongTerm_change <- paste0(path2saveTests, "/LandProd_change.jpg")
 
 
@@ -290,7 +292,7 @@ LookUpLongTerm <- as.data.frame(matrix(nrow = 3, ncol = 14,
                                          rep(13, 3), rep(14, 3), rep(15, 3), 16:21,
                                          rep(22, 3))
                                        ))
-LookUpLongTerm <- rbind(t(as.data.frame(c("Class Change", "Stead.Ind./BaseL.", paste0(c(rep("St1", 3), rep("St2", 3),
+LookUpLongTerm <- rbind(t(as.data.frame(c("Class Change", "Stead.Ind. / BaseL.", paste0(c(rep("St1", 3), rep("St2", 3),
                                                                    rep("St3", 3), rep("St4", 3)),
                                                                  c(" low", " med.", " high"))))), 
                         LookUpLongTerm)
@@ -342,8 +344,8 @@ At this point, the user might want to finalise the LPD calculation avoiding the 
 ```r
 ?LPD_CombAssess
 
-LPD_finalMap <- LPD_CombAssess(LandProd_change = "Long_Term_Change_Map", 
-                               LandProd_current =  NULL,
+LPD_finalMap <- LPD_CombAssess(LandProd_change = Long_Term_Change_Map, 
+                               LandProd_current = NULL,
                                filename = "LPD_finalMap.tif")
 
 plot(LPD_finalMap)
@@ -360,21 +362,21 @@ The Land Productivity Dynamics indicator is composed by two base layers, as show
 
 ## Ecosystem Functional Types (EFTs)
 ```{r echo=FALSE}
-figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables. Multicollinearity cutoff set to r > |0.7|. sbd: Season Beginning Day; sed: Season End Day; sl: Season Length; si: Season Integral; mi: Standing Biomass")
-Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.png")
+figMulticoll <- fig_num(name = "Multicoll", caption = "Dendrogram of groups of correlated variables (none in this case). Multicollinearity cutoff set to r > |0.7|. SBD: Start of vegetation growing season; SL: Vegetation growing season length; CF: Above ground vegetation productivity")
+Multicoll_plot <- paste0(path2tempResults, "/vars_collinearity.jpg")
 
 figScreePlot <- fig_num(name = "ScreePlot", caption = "“Scree plot” method used to calculate the optimal number of clusters. The “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases")
 ScreePlot_plot <- paste0(path2tempResults, "/OptimalNumClusters.jpg")
 
-figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) derived from phenological and productivity variables using the K-means clustering method")
+figEFTs <- fig_num(name = "EFTs", caption = "Ecosystem Functional Types (EFTs) derived from phenological and productivity variables using the K-means clustering method for the case study")
 EFTmap <- paste0(path2saveTests, "/clusters_EFTs.jpg")
 ```
 
-The methodology implemented in *LPDynR* to derive homogeneous land units, named Ecosystem Functional Types (EFTs), is adapted from Ivits, Cherlet, Horion et al. [-@ivits_global_2013]. It is basically a clustering process which uses, in this case, phenological and productivity variables to create the groups. Among the different unsupervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. 
+The methodology implemented in *LPDynR* to derive homogeneous land units, or Ecosystem Functional Types (EFTs), is adapted from Ivits, Cherlet, Horion et al. [-@ivits_global_2013]. It is basically a clustering process which uses, in this case, phenological and productivity variables to create the groups. Among the different unsupervised clustering techniques available for data grouping, K-means has been chosen. K-means is widely used in data science mainly due to its relative simplicity. 
 
 Originally, the unsupervised classification was performed after a three-steps preprocessing of the variables: (1) removing highly correlated variables; (2) a first Principal Component Analysis to know the optimal number of PCs and their associated variables showing the highest loadings; and (3) a final PCA to clearly associate each PC with one variable. However, some recent tests have shown that the final LPD indicator does not differ significantly when it is derived using the raw phenological/productivity variables. Therefore, although the two-PCAs step is also implemented in *LPDynR*, only removing those highly correlated variables (e.g. |r| > 0.7) is recommended before to run the k-means clustering.
 
-In order to check for multicollinearity among the variables, the function *rm_multicol()* first calculates their averages among the years of the time series. Then, the process is run using the function *removeCollinearity()* from the package *virtualspecies*. This function allows the user to set up the minimum Pearson's correlation absolute value, which is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation in case the rasters have a large number of pixels and the user wants to speed up the process. The default number of random points selected is 10% of total pixels in the raster. Finally, one of the variables of each group of correlation is randomly select. A dendrogram to visualize the groups of intercorrelated variables can be plotted. `r fig_num("Multicoll", display = "cite")` shows a dendrogram for the present case study, which has been run with three variables. In the following piece of code it can be seen an example of how to run *rm_multicol()* with all the parameters mentioned.
+In order to check for multicollinearity among the variables, the function *rm_multicol()* first calculates their averages among the years of the time series. Then, the process internally runs the function *removeCollinearity()* from the package *virtualspecies*. This function allows the user to set up the minimum Pearson's correlation absolute value, which is established to be 0.7 as default. It is also allowed to use a subset of random points of the data set to calculate the correlation in case the rasters have a large number of pixels and the user wants to speed up the process. The default number of randomly selected points is 10% of total pixels in the raster. Finally, one of the variables of each group of correlation is randomly selected. A dendrogram to visualize the groups of intercorrelated variables can be plotted. `r fig_num("Multicoll", display = "cite")` shows a dendrogram for the present case study, which has been run with three variables and no intercorrelation has been found among them at the cutoff 0.7. In the following piece of code it can be seen an example of how to run *rm_multicol()* with all the mentioned parameters.
 
 ```r
 ?rm_multicol
@@ -410,7 +412,7 @@ pca_final_brick <- PCAs4clust(obj2process = variables_noCor,
 &nbsp;
 
 
-Finally, the clustering algorithm can be run over either the selected PCs or the uncorrelated raw variables using the function *EFT_clust()*. This function uses *kmeans()* from the package *stats*. K-means is an iterative unsupervised method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself. Instead, it needs to be done externally. In this case, the optimal number of clusters can be determined using the “scree-plot method". Such method is implemented in *LPDynR* with the function *clust_optim()* and it is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is produced with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of the example presented in this document and the following code as an example of how to call the function. Notice that the clustering has been run with nine different number of clusters to give a good amount of points to plot the curve. And also that the maximum number of iterations is set up to 10. Although it is unlikely that the process gets any convergence with such a low number of iterations, the results are already valid for the purpose.
+Finally, the clustering algorithm can be run over either the selected PCs or the uncorrelated raw variables using the function *EFT_clust()*. This function uses *kmeans()* from the package *stats*. K-means is an iterative unsupervised method which has as one of the main limitations the fact that it is not able to optimize the number of clusters by itself. Instead, the optimal number of clusters needs to be calculated externally. In this case, it can be determined using the “scree-plot method”. Such method is implemented in *LPDynR* with the function *clust_optim()* and it is based on running several K-means clustering with different number of clusters each, in order to assess how the quality of the models change with the number of clusters. Then, a plot is produced with the results and an “elbow” indicates where the quality of the model no longer improves substantially as the number of clusters (model complexity) increases. See `r fig_num("ScreePlot", display = "cite")` for the results of the example presented in this document and the following code as an example of how to call the function. Notice that the clustering has been run with nine different number of clusters to give a good amount of points to plot the curve. And also that the maximum number of iterations is set up to 10. Although it is unlikely that the process gets any convergence with such a low number of iterations, the results are already valid for the purpose.
 
 ```r
 ?clust_optim
@@ -429,27 +431,27 @@ dev.off()
 
 &nbsp;
 
-The “scree plot” method, undoubtedly has some level of subjectivity, as the user decides where the curve flattens enough. Alternatively, to remove such subjectivity, several numerical methods exist to calculate the optimal number of clusters, although they take also some statistical assumptions. These methods could be explored in the future if a higher level of accuracy is believed as necessary or if the whole process wants to be done without user's intervention. In addition, other hierarchical clustering methods could be explored in order to avoid calculating the optimal number of clusters beforehand, although previous tests run with ISODATA have been shown to be highly resource demanding, especially in terms of computing time.
+The “scree plot” method undoubtedly has some level of subjectivity, as the user decides where the curve flattens enough. Alternatively, to remove such subjectivity, several numerical methods exist to calculate the optimal number of clusters, although they take also some statistical assumptions. These methods could be explored in the future if a higher level of accuracy is believed as necessary or if the whole process wants to be done without user's intervention. In addition, other hierarchical clustering methods could be explored in order to avoid calculating the optimal number of clusters beforehand, although previous tests run with ISODATA have been shown to be highly resource demanding, especially in terms of computing time.
 
-Once the optimal number of clusters are estimated, the final clustering is run with the function *EFT_clust()*. It is important to notice that when setting *nstart*, the larger, the more accurate result. This is because the function uses different sets of starting random centroids and runs the clustering *nstart* times, and the best result is chosen. Therefore, a larger *nstart* increases the chances of having a better cluster classification. *EFT_clust()* provides, together with a RasterLayer object with the clusters, a clustering performance evaluator. This value is calculated by the ratio of *betweenss* (i.e. between-cluster sum of squares) and *totss* (i.e. total sum of squares), in percentage, and it is expected to be as higher as possible.
+Once the optimal number of clusters is estimated, the final clustering is run with the function *EFT_clust()*. It is important to notice that when setting *nstart*, the larger, the more accurate result. This is because the function uses different sets of starting random centroids and runs the clustering *nstart* times, and the best result is chosen. Therefore, a larger *nstart* increases the chances of having a better cluster classification. *EFT_clust()* provides, together with a RasterLayer object with the clusters, a clustering performance evaluator. This value is calculated by the ratio of *betweenss* (i.e. between-cluster sum of squares) and *totss* (i.e. total sum of squares), in percentage, and it is expected to be as high as possible.
 
-In addition, *k-means()* can use different algorithms to perform the clustering (e.g. "MacQueen", "Hartigan-Wong", etc.). As stated in the function documentation (*?k-means*), "Hartigan-Wong" usually gives better results, although it is recommended to try several starts (*nstart > 1*). However, when using "Hartigan-Wong" with a (too) large number of clusters and a lot of values of the variables are very similar, *k-means()* is not able to converge in an acceptable amount of time (even increasing the number of iterations). In these cases, the user has to be careful because *k-means()* only gives a warning, so the final clustering is based on a non converged process. Diminishing the number of clusters or rounding variables' values might be good strategies to help *k-means()* to converge.
+In addition, *k-means()* can use different algorithms to perform the clustering (e.g. "MacQueen", "Hartigan-Wong", etc.). As stated in the function documentation (*?k-means*), "Hartigan-Wong" usually gives better results, although it is recommended to try several starts (*nstart > 1*). However, when using "Hartigan-Wong" with a (too) large number of clusters, and a lot of values of the variables are very similar, *k-means()* is not able to converge in an acceptable amount of time (even increasing the number of iterations). In these cases, the user has to be careful because *k-means()* only gives a warning, so the final clustering is based on a non converged process. Diminishing the number of clusters or rounding variables' values might be good strategies to help *k-means()* to converge.
 
 Finally, as previous tests of K-means with up to 100 iterations were not converging, the maximum number of iterations is set to 500 as default. Within this limit and rounding variables, for almost all the tests performed, the process did achieve convergence. 
 
-For the running example, the EFTs resulted from the whole process can be seen in `r fig_num("EFTs", display = "cite")`. In addition, the following code shows an example of the function call using the *BrickLayer* object produced in the previous "PCAs step" and setting the optimal number of clusters estimated with *clust_optim()*, a *nstart* value higher than 1 and the algorithm to be used.
+For the running example, the EFTs resulted from the whole process can be seen in `r fig_num("EFTs", display = "cite")`. In addition, the following code shows an example of the function call using the *BrickLayer* object produced in the previous step with *rm_multicol()*, and setting the optimal number of clusters estimated with *clust_optim()*, together with a *nstart* value higher than 1 and the algorithm to be used.
 
 ```r
 ?EFT_clust
 
-EFTs <- EFT_clust(obj2clust = pca_final_brick, 
+EFTs <- EFT_clust(obj2clust = variables_noCor, 
                   n_clust = 20, 
                   nstart = 5,  
                   algorithm = "Hartigan-Wong",
                   filename = "EFTs.tif")
 
 clust_eval <- EFTs[[2]]     # Evaluation of clustering performance
-EFTs <- EFTs[[1]]           # RasterLayer object with the clusters (i.e. EFTs)
+EFTs <- EFTs[[1]]           # RasterLayer object with the clusters
 
 ```
 &nbsp;
@@ -464,22 +466,22 @@ EFTs <- EFTs[[1]]           # RasterLayer object with the clusters (i.e. EFTs)
 ## Local Net Production Scaling
 
 ```{r echo=FALSE}
-figLocNetProd <- fig_num(name = "LocNetProd", caption = "Local Net Primary Production Scaling (LNS): proportion of annual production (i.e. average of 5 years of Cyclic Fraction) over the local potential production (i.e. the 90-percentile within the Ecosystem Functional Type)")
+figLocNetProd <- fig_num(name = "LocNetProd", caption = "Local Net Primary Production Scaling (LNS): proportion of annual production (i.e. average of the last 5 years of cyclic fraction) over the local potential production (i.e. the 90-percentile within the Ecosystem Functional Type)")
 LocNetProdMap <- paste0(path2saveTests, "/LocalNetProductivity_LSP.jpg")
 ```
 
-The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel in homogeneous land areas. It will be considered potential productivity that productivity which would have been without the influence of human factors, and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein]. The current land production related to the local potential reflects the current level of productivity efficiency and, therefore, it is useful for the delineation of a productivity status map [@Ivits_report_2013]. 
+The Local Net Primary Production Scaling (from now on, Local Net Scaling or LNS) method [@Prince_2009] is based on the use of multi-temporal satellite data to calculate the difference between the potential and actual NPP for each pixel in homogeneous land areas. It will be considered potential productivity to that productivity which would have been without the influence of human factors, and it is estimated as the maximum value of productivity within each EFT [@Prince_2009, and references therein]. The current land production related to the local potential reflects the current level of productivity efficiency and, therefore, it is useful for the delineation of a productivity status map [@Ivits_report_2013]. 
 
-Cyclic Fraction, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the standing biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
+The cyclic fraction of vegetation productivity, or the summed NDVI over the growing season, is widely used as a proxy for the estimation of the current land productivity [@Fensholt_2013], as it incorporates both natural and anthropogenic factors which define the inter-annual variability of land production. Therefore, it represents that part of the standing biomass which is potentially appropriated to be used by humans and the environment [@Ivits_report_2013].  
 
-The function *LNScaling()* is implemented in *LPDynR* to calculate the LNS. In the case study, the Cyclic Fraction derived from *Phenolo* for the period between 2008 and 2012 was passed to the function. This period coincides with the last five years of the time series used for the generation of the Long Term Change Map. Together with the productivity variable, the EFTs calculated previously are also passed to the function, and the potential productivity within each EFT is calculated. However, instead of the maximum value within each cluster, its 90-percentile is established as the final potential, given that values higher than this threshold can be considered as outliers. Finally, the LNS per pixel is calculated as the proportion of its annual production (i.e. the average of 5 years Cyclic Fraction) over the potential production within its EFT (i.e. the 90-percentile). The result for the case study is represented in `r fig_num("LocNetProd", display = "cite")`, and the following lines of code show an example on how to call the function.
+The function *LNScaling()* is implemented in *LPDynR* to calculate the LNS. In the case study, the above ground vegetation productivity variable (i.e. CF) for the period between 2000 and 2016 has been passed to the function, which runs the LNS using the average of the last 5 years. Together with the productivity variable, the EFTs calculated previously are also passed to the function, and the potential productivity within each EFT is calculated. However, instead of the maximum value within each cluster, its 90-percentile is established as the final potential, given that values higher than this threshold can be considered as outliers. Finally, the LNS per pixel is calculated as the proportion of its annual production (i.e. the average of 5 years cyclic fraction) over the potential production within its EFT (i.e. the 90-percentile). The result for the case study is represented in `r fig_num("LocNetProd", display = "cite")`, and the following lines of code show an example on how to call the function.
 
 
 ```r
 ?LNScaling
 
 LNScal <- LNScaling(EFTs = EFTs,   # RasterLayer with the EFTs
-                    ProdVar = si,  # Productivity variable (time series; last 5 years will be averaged)
+                    ProdVar = cf,  # Productivity variable
                     cores2use = 3,
                     filename = "LNScal.tif")
 ```
@@ -487,6 +489,7 @@ LNScal <- LNScaling(EFTs = EFTs,   # RasterLayer with the EFTs
 
 ![`r figLocNetProd`](`r LocNetProdMap`)
 
+&nbsp;
 
 For the calculation of the final LPD indicator (i.e. Combined Assessment), these levels of local productivity will be aggregated into two categories: (1) pixels with less than 50% of the highest annual local production (within the EFT) and (2) pixels with more or equal to 50% of annual local production.
 
@@ -547,6 +550,7 @@ The function to run the combined assessment to calculate the LPD indicator is *L
 LPD_finalMap <- LPD_CombAssess(LandProd_change = "Long_Term_Change_Map", 
                                LandProd_current =  "LNScal",
                                filename = "LPD_finalMap.tif")
+                               
 plot(LPD_finalMap)
 ```
 &nbsp;
@@ -633,7 +637,7 @@ The plots show that there are some differences in the proportion of pixels per c
 
 ## Land Productivity Dynamics partial indicator
 ```{r echo=FALSE}
-figPartLPD <- fig_num(name = "figPartialLPD", caption = paste0("Partial LPD indicators (plots A to D) and LPD indicator for the whole time series (plot E). The partial LPD indicators have been produced for time windows of 5 years with an overlap of 1 year between the end of the last period and the beginning of the next one."))
+figPartLPD <- fig_num(name = "figPartialLPD", caption = paste0("Partial LPD indicators (plots A to D) and LPD indicator for the whole time series (plot E). The partial LPD indicators have been produced for time windows of 5 years with an overlap of 1 year between the end of the last period and the beginning of the next one"))
 LPD_partial <- paste0(path2saveTests, "/LPD_PartialTimeSeries/lpd_partial1_5categ_modif.jpg")
 ```
 
@@ -670,7 +674,6 @@ while(last_year_run <= last_year){
  ##                                       ##
  ##                                       ##                                            
 
-
   # Parameters for the loop
   first_year <- last_year_run - ts_years_overlap + 1
   last_year_run <- first_year + ts_length - 1
@@ -685,17 +688,21 @@ while(last_year_run <= last_year){
 
 &nbsp;
 
-The complete LPD indicator (i.e. for the whole time series; `r fig_num("figPartialLPD", display = "cite")`E) shows in general terms a positive trend pattern accross Europe (i.e. more greens). However, the intermediate plots, especially `r fig_num("figPartialLPD", display = "cite")`B to D, show more negative trends (i.e. yellow and light red pixels). In addition, the first partial indicator shows much more increasing land productivity in the period between years 1 to 5. This, besides demonstrating the highly fluctuating character of vegetation, confirms the notable influence of the extremes of the time series on the final result. In this sense, in the time series of the example, the first year(s) seems to be quite low in terms of productivity for most of the pixels in Central/Northern Europe, and they suffer a big increase around year 5/6. Such increase still influences the dynamics of the following periods , resulting in areas with stressed vegetation. 
+The complete LPD indicator (i.e. for the whole time series; `r fig_num("figPartialLPD", display = "cite")`E) shows, in general terms, a positive trend pattern across Europe (i.e. more pixels in greens). However, the intermediate plots, especially `r fig_num("figPartialLPD", display = "cite")`B to D, show more negative trends (i.e. yellow and light red pixels). In addition, the first partial indicator shows much more increasing land productivity in the period between years 1 to 5. This, besides demonstrating the highly fluctuating character of vegetation, confirms the influence of the extremes of the time series on the final result. In this sense, in the time series of the example, the first year(s) seems to be quite low in terms of productivity for most of the pixels in Central/Northern Europe, and they suffer a big increase around years 5/6. Such increase causes a large number of areas belonging to the higher LPD class, and it still influences the dynamics of the following periods, resulting in areas with stressed vegetation. 
 
-The fact that the LPD indicator calculated with the approach included in *LPDynR* is highly influenced by the beginning and the end of the time series 
+The fact that the LPD indicator calculated with the approach included in *LPDynR* is quite influenced by the beginning and the end of the time series does not suppose a limitation, but it is convenient as the main goal of the LPD indicator is to know the current state of vegetation in relation to a distant previous state, and not the fluctuations due, for example, to exceptional or unusual climatic events. **Maybe furhter explanations would be good**
 
 
 
 # Conclusions
 
-As stated by the Intergovernmental Science-Policy Platform on Biodiversity and Ecosystem Services (IPBES), land degradation leads to a loss of biodiversity and a reduction of ecosystem functions and delivered services all over the world. Therefore, combating land degradation and restoring degraded lands has become an urgent priority in order to protect all life on Earth as well as to ensure human well-being [@IPBES_2018]. 
+As stated by the Intergovernmental Science-Policy Platform on Biodiversity and Ecosystem Services (IPBES), land degradation leads to a loss of biodiversity and a reduction of ecosystem functions and delivered services all over the world. Therefore, combating land degradation and restoring degraded lands has become an urgent priority in order to protect all life on Earth as well as to ensure human well-being [@IPBES_2018]. In this sense, satellite observations provide valuable data which might help to monitor the Earth's land cover to evaluate the state of land degradation.  
 
-According to the flowchart presented at the beginning of this document (`r fig_num("f0", display = "cite")`), the Land Productivity Dynamics indicator (LPD) is derived from several phenological and productivity variables, in turn, obtained from time series of earth observation imagery.
+The Land Productivity Dynamics indicator (LPD), as part of the SDG-15.3.1 indicator, aims at assessing the state of land degradation and desertification at global, regional and local scales. In turn, the *LPDynR* tool presented in this document has been developed to derive the LPD indicator using phenological and land productivity variables, which have been obtained from long-term time series of earth observation imagery. 
+
+*LPDynR* is a comprehensive set of programming code, written in the well-known R language and properly packaged, ready to be freely distributed in order to let the users with a minimum knowledge of the R language calculate the LPD indicator. The package, once installed, includes several examples and a small data set for testing the functionalities and the different parameters to tune them. The open source code of *LPDynR* version 1.0.0 can be found and installed from https://github.com/xavi-rp/LPDynR.
+
+
 
 
 # References
