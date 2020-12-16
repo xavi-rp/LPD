@@ -9,10 +9,6 @@ author:
       correspondence: true
   - Eva Ivits:
       institute: [eea]
-  - Pier Lorenzo Marasco:
-      institute: [jrc]
-  - Federico Gianoli:
-      institute: [jrc]
   - Michael Cherlet:
       institute: [jrc]
  
