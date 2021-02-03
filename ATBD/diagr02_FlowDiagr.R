@@ -24,12 +24,12 @@ node [shape = box
       fontname = ''
       fixedsize = ''
       width = '']
-'Phenological\nVariables'
+'Phenological\nProductivity\nVariables'
 
 edge[minlen = 3]
 
 {rank = same 
-'EO Imagery' -> 'Phenological\nVariables' 
+'EO Imagery' -> 'Phenological\nProductivity\nVariables' 
 [label = 'Phenolo, etc.']}
 
 
@@ -58,11 +58,11 @@ node [shape = box
 
 edge[color = black] 
 
-'Phenological\nVariables' -> 'Standing Biomass'
-'Phenological\nVariables' -> 'Season Integral'
-'Phenological\nVariables' -> 'Season Beginning Day'
-'Phenological\nVariables' -> 'Season End Day'
-'Phenological\nVariables' -> 'Season Length'
+'Phenological\nProductivity\nVariables' -> 'Standing Biomass'
+'Phenological\nProductivity\nVariables' -> 'Season Integral'
+'Phenological\nProductivity\nVariables' -> 'Season Beginning Day'
+'Phenological\nProductivity\nVariables' -> 'Season End Day'
+'Phenological\nProductivity\nVariables' -> 'Season Length'
 
 
 edge[minlen = ''
@@ -180,5 +180,5 @@ graph02
 export_svg(graph02) %>%
   charToRaw() %>%
   rsvg() %>%
-  png::writePNG("/Users/xavi_rp/Documents/D6_LPD/temp_results/graph02.png", dpi = 96)
+  png::writePNG("/Users/xavi_rp/Documents/D6_LPD/LPD/ATBD/graph02.png", dpi = 96)
 
