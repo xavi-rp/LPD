@@ -30,7 +30,7 @@ edge[minlen = 3]
 
 {rank = same 
 'EO Imagery' -> 'Phenological\nProductivity\nVariables' 
-[label = 'Phenolo, etc.']}
+[label = '']}
 
 
 #edge [arrowhead = vee]
